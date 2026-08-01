@@ -40,6 +40,7 @@ BUILD_TERMS = (
     "cargo build", "go build", "swift build", "npm run build", "pnpm build", "yarn build",
     "gradle build", "mvn package", "make", "cmake --build", "dotnet publish",
 )
+VERSION = "0.2.0"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -162,16 +163,42 @@ def commit_history(root: Path, limit: int) -> list[set[str]]:
 
 
 def state_path(root: Path) -> Path:
-    raw = git(root, "rev-parse", "--git-path", STATE_DIR, check=False).strip()
-    if raw:
-        state = Path(raw)
-        return (state if state.is_absolute() else root / state).resolve()
-    return root / f".{STATE_DIR}"
+    override = os.environ.get("DLO_CACHE_DIR")
+    if override:
+        cache_root = Path(override).expanduser()
+    elif sys.platform == "darwin":
+        cache_root = Path.home() / "Library" / "Caches" / STATE_DIR
+    elif os.name == "nt":
+        cache_root = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / STATE_DIR
+    else:
+        cache_root = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / STATE_DIR
+    slug = re.sub(r"[^a-z0-9_.-]+", "-", root.name.lower()).strip("-._") or "project"
+    identity = hashlib.sha256(str(root.resolve()).encode("utf-8")).hexdigest()[:16]
+    return (cache_root / f"{slug}-{identity}").resolve()
+
+
+def append_event(root: Path, event: dict) -> Path:
+    directory = state_path(root)
+    directory.mkdir(parents=True, mode=0o700, exist_ok=True)
+    try:
+        os.chmod(directory, 0o700)
+    except OSError:
+        pass
+    path = directory / EVENTS_FILE
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(event, sort_keys=True) + "\n")
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
+    return path
 
 
 def load_events(root: Path, limit: int = 500) -> list[dict]:
     path = state_path(root) / EVENTS_FILE
     if not path.is_file():
+        return []
+    if limit <= 0:
         return []
     events: list[dict] = []
     for line in path.read_text(encoding="utf-8").splitlines()[-limit:]:
@@ -280,15 +307,28 @@ def cochange_pairs(change_sets: Sequence[set[str]]) -> list[dict]:
 def observed_metrics(events: Sequence[dict]) -> dict:
     durations = [float(event["duration_seconds"]) for event in events if event.get("duration_seconds") is not None]
     pushed = [int(event["bytes_pushed"]) for event in events if event.get("bytes_pushed") is not None]
+    contexts = [int(event["context_bytes"]) for event in events if event.get("context_bytes") is not None]
+    measured_builds = [event for event in events if isinstance(event.get("steps"), dict)]
+    rebuilt = [int(event["steps"]["rebuilt"]) for event in measured_builds if event["steps"].get("rebuilt") is not None]
+    unmatched_diff_ids = [
+        int(event["image"].get("unmatched_diff_ids", event["image"].get("new"))) for event in measured_builds
+        if isinstance(event.get("image"), dict) and event["image"].get("has_baseline")
+        and event["image"].get("unmatched_diff_ids", event["image"].get("new")) is not None
+    ]
     return {
         "median_duration_seconds": round(statistics.median(durations), 3) if durations else None,
         "median_bytes_pushed": int(statistics.median(pushed)) if pushed else None,
+        "median_context_bytes": int(statistics.median(contexts)) if contexts else None,
+        "measured_builds": len(measured_builds),
+        "median_rebuilt_steps": round(statistics.median(rebuilt), 1) if rebuilt else None,
+        "median_unmatched_diff_ids": round(statistics.median(unmatched_diff_ids), 1) if unmatched_diff_ids else None,
     }
 
 
 def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
     instructions = parse_dockerfile(dockerfile)
-    files = tracked_files(root)
+    from build_observer import filter_context_files
+    files = filter_context_files(root, dockerfile, tracked_files(root))
     commits = commit_history(root, commit_limit)
     events = load_events(root)
     event_sets = event_change_sets(events)
@@ -369,11 +409,11 @@ def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
     if not recommendations:
         recommendations.append({
             "priority": "info", "line": None, "kind": "measure",
-            "message": "No obvious static layer split was found. Record representative warm builds to replace heuristic cost with evidence.",
+            "message": "No obvious static layer split was found. Run representative warm builds with `dlo build` to add measured evidence.",
         })
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "project_root": str(root),
         "dockerfile": str(dockerfile.relative_to(root) if dockerfile.is_relative_to(root) else dockerfile),
         "evidence": {"commits": len(commits), "local_observations": len(events), **observed_metrics(events)},
@@ -433,7 +473,7 @@ def record(args: argparse.Namespace) -> dict:
     except FileNotFoundError:
         pass
     event = {
-        "schema_version": 1,
+        "schema_version": 2,
         "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
         "kind": args.kind,
         "status": args.status,
@@ -445,11 +485,8 @@ def record(args: argparse.Namespace) -> dict:
         "invalidated_from": args.invalidated_from,
         "dockerfile": dockerfile,
     }
-    directory = state_path(root)
-    directory.mkdir(parents=True, exist_ok=True)
-    with (directory / EVENTS_FILE).open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(event, sort_keys=True) + "\n")
-    return {"recorded": True, "state_file": str(directory / EVENTS_FILE), "event": event}
+    path = append_event(root, event)
+    return {"recorded": True, "state_file": str(path), "event": event}
 
 
 def render(report: dict) -> str:
@@ -460,6 +497,11 @@ def render(report: dict) -> str:
     ]
     if evidence["median_duration_seconds"] is not None:
         lines.append(f"Observed median duration: {evidence['median_duration_seconds']}s")
+    if evidence["measured_builds"]:
+        lines.append(
+            f"Measured builds: {evidence['measured_builds']}; median rebuilt steps: "
+            f"{evidence['median_rebuilt_steps']}; median unmatched layer DiffIDs: {evidence['median_unmatched_diff_ids']}"
+        )
     lines.append("\nHighest-risk context layers:")
     if not report["layers"]:
         lines.append("  (no build-context COPY or ADD instructions found)")
@@ -476,18 +518,47 @@ def render(report: dict) -> str:
     for index, recommendation in enumerate(report["recommendations"], 1):
         lines.append(f"  {index}. [{recommendation['priority']}] {recommendation['message']}")
     if not evidence["local_observations"]:
-        lines.append("\nLearning profile is empty. Use the record command after relevant tasks and builds.")
+        lines.append("\nLearning profile is empty. Use `dlo build` for measured builds or `dlo record` after relevant tasks.")
     return "\n".join(lines)
 
 
 def parser() -> argparse.ArgumentParser:
     root_parser = argparse.ArgumentParser(description=__doc__)
+    root_parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
     subparsers = root_parser.add_subparsers(dest="command", required=True)
     analyze_parser = subparsers.add_parser("analyze", help="score Docker context layers")
     analyze_parser.add_argument("--root", default=".")
     analyze_parser.add_argument("--dockerfile")
     analyze_parser.add_argument("--commits", type=int, default=200)
     analyze_parser.add_argument("--json", action="store_true")
+
+    build_parser = subparsers.add_parser("build", help="run BuildKit and measure cache and image-layer changes")
+    build_parser.add_argument("--root", default=".")
+    build_parser.add_argument("--dockerfile")
+    build_parser.add_argument("--tag", "-t")
+    build_parser.add_argument("--platform")
+    build_parser.add_argument("--target")
+    build_parser.add_argument("--builder")
+    build_parser.add_argument("--build-arg", action="append", default=[])
+    build_parser.add_argument("--no-cache", action="store_true")
+    build_parser.add_argument("--pull", action="store_true")
+    build_parser.add_argument("--cache-from", action="append", default=[])
+    build_parser.add_argument("--cache-to", action="append", default=[])
+    build_parser.add_argument("--secret", action="append", default=[])
+    build_parser.add_argument("--ssh", action="append", default=[])
+    build_parser.add_argument("--label", action="append", default=[])
+    build_parser.add_argument("--build-context", action="append", default=[])
+    build_parser.add_argument("--provenance", action="append", default=[])
+    build_parser.add_argument("--sbom", action="append", default=[])
+    build_parser.add_argument("--network")
+    build_parser.add_argument("--push", action="store_true", help="push instead of loading locally; layer DiffIDs will be unavailable")
+    build_parser.add_argument("--quiet", action="store_true", help="hide Docker progress and print only the measurement summary")
+    build_parser.add_argument("--json", action="store_true", help="hide Docker progress and print the observation as JSON")
+
+    history_parser = subparsers.add_parser("history", help="show locally recorded observations")
+    history_parser.add_argument("--root", default=".")
+    history_parser.add_argument("--limit", type=int, default=20)
+    history_parser.add_argument("--json", action="store_true")
 
     record_parser = subparsers.add_parser("record", help="append a privacy-safe local observation")
     record_parser.add_argument("--root", default=".")
@@ -511,12 +582,26 @@ def main(argv: Sequence[str] | None = None) -> int:
             root = project_root(args.root)
             report = analyze(root, dockerfile_path(root, args.dockerfile), args.commits)
             print(json.dumps(report, indent=2, sort_keys=True) if args.json else render(report))
-        else:
+        elif args.command == "record":
             result = record(args)
             print(json.dumps(result, indent=2, sort_keys=True) if args.json else f"Recorded observation in {result['state_file']}")
+        elif args.command == "history":
+            root = project_root(args.root)
+            events = list(reversed(load_events(root, max(args.limit, 0))))
+            if args.json:
+                print(json.dumps(events, indent=2, sort_keys=True))
+            else:
+                from build_observer import render_history
+                print(render_history(events))
+        else:
+            import build_observer
+            return build_observer.run_build(args, sys.modules[__name__])
         return 0
     except (FileNotFoundError, RuntimeError, ValueError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        if getattr(args, "json", False):
+            print(json.dumps({"error": str(exc), "exit_code": 2}, sort_keys=True), file=sys.stderr)
+        else:
+            print(f"error: {exc}", file=sys.stderr)
         return 2
 
 

@@ -11,7 +11,7 @@
         "repo": "OliverTaylor246/docker-layer-optimizer"
       },
       "description": "Learn change patterns and reduce Docker rebuild and redeploy cost",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "development",
       "tags": ["docker", "buildkit", "cache", "optimization"]
     }

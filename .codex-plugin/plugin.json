@@ -1,6 +1,6 @@
 {
   "name": "docker-layer-optimizer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Learn how a project changes and reduce Docker cache invalidation and redeploy cost.",
   "author": {
     "name": "Oliver Taylor",
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Docker Layer Optimizer",
     "shortDescription": "Learn change patterns and reduce rebuild cost",
-    "longDescription": "Analyzes Git history and privacy-safe local build observations to find Docker layer layouts that reduce repeated work and deployment transfer cost.",
+    "longDescription": "Measures BuildKit cache hits and resulting image layers, then combines those observations with Git history to reduce repeated Docker build work.",
     "developerName": "Oliver Taylor",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
