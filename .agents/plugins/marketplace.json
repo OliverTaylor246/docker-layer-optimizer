@@ -1,0 +1,21 @@
+{
+  "name": "docker-optimization-tools",
+  "interface": {
+    "displayName": "Docker Optimization Tools"
+  },
+  "plugins": [
+    {
+      "name": "docker-layer-optimizer",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/OliverTaylor246/docker-layer-optimizer.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

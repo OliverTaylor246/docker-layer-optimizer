@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "docker-layer-optimizer",
+  "description": "Learn how a project changes and reduce Docker cache invalidation and redeploy cost.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Oliver Taylor",
+    "email": "35031747+OliverTaylor246@users.noreply.github.com",
+    "url": "https://github.com/OliverTaylor246"
+  },
+  "homepage": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "repository": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "license": "MIT",
+  "keywords": ["docker", "buildkit", "cache", "optimization", "deployment", "agent-skill"],
+  "skills": "./skills/"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "docker-layer-optimizer",
+  "version": "0.1.0",
+  "description": "Learn how a project changes and reduce Docker cache invalidation and redeploy cost.",
+  "author": {
+    "name": "Oliver Taylor",
+    "email": "35031747+OliverTaylor246@users.noreply.github.com",
+    "url": "https://github.com/OliverTaylor246"
+  },
+  "homepage": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "repository": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "license": "MIT",
+  "keywords": ["docker", "buildkit", "cache", "optimization", "deployment", "agent-skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Docker Layer Optimizer",
+    "shortDescription": "Learn change patterns and reduce rebuild cost",
+    "longDescription": "Analyzes Git history and privacy-safe local build observations to find Docker layer layouts that reduce repeated work and deployment transfer cost.",
+    "developerName": "Oliver Taylor",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+    "defaultPrompt": [
+      "Analyze this project's Docker layers and suggest the highest-impact cache improvement.",
+      "Use recent project changes to reorganize this Dockerfile for faster rebuilds."
+    ],
+    "brandColor": "#2496ED"
+  }
+}
