@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import dataclasses
 import datetime as dt
+import errno
 import fnmatch
 import hashlib
 import json
@@ -17,6 +19,7 @@ import shlex
 import statistics
 import subprocess
 import sys
+import time
 from typing import Iterable, Sequence
 
 
@@ -40,7 +43,7 @@ BUILD_TERMS = (
     "cargo build", "go build", "swift build", "npm run build", "pnpm build", "yarn build",
     "gradle build", "mvn package", "make", "cmake --build", "dotnet publish",
 )
-VERSION = "0.2.0"
+VERSION = "0.3.0b1"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -177,7 +180,44 @@ def state_path(root: Path) -> Path:
     return (cache_root / f"{slug}-{identity}").resolve()
 
 
-def append_event(root: Path, event: dict) -> Path:
+@contextmanager
+def file_lock(path: Path):
+    path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    handle = path.open("a+b")
+    acquired = False
+    try:
+        try:
+            os.chmod(path, 0o600)
+        except OSError:
+            pass
+        if os.name == "nt":
+            import msvcrt
+            handle.seek(0)
+            while True:
+                try:
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                    break
+                except OSError as exc:
+                    if exc.errno not in {errno.EACCES, errno.EDEADLK}:
+                        raise
+                    time.sleep(0.05)
+        else:
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        acquired = True
+        yield
+    finally:
+        if acquired and os.name == "nt":
+            import msvcrt
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        elif acquired:
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        handle.close()
+
+
+def append_event_unlocked(root: Path, event: dict) -> Path:
     directory = state_path(root)
     directory.mkdir(parents=True, mode=0o700, exist_ok=True)
     try:
@@ -192,6 +232,12 @@ def append_event(root: Path, event: dict) -> Path:
     except OSError:
         pass
     return path
+
+
+def append_event(root: Path, event: dict) -> Path:
+    directory = state_path(root)
+    with file_lock(directory / "state.lock"):
+        return append_event_unlocked(root, event)
 
 
 def load_events(root: Path, limit: int = 500) -> list[dict]:
@@ -315,6 +361,15 @@ def observed_metrics(events: Sequence[dict]) -> dict:
         if isinstance(event.get("image"), dict) and event["image"].get("has_baseline")
         and event["image"].get("unmatched_diff_ids", event["image"].get("new")) is not None
     ]
+    unmatched_compressed_bytes = [
+        int(event["registry"]["unmatched_compressed_bytes"]) for event in measured_builds
+        if isinstance(event.get("registry"), dict) and event["registry"].get("has_baseline")
+        and event["registry"].get("unmatched_compressed_bytes") is not None
+    ]
+    overhead_seconds = [
+        float(event["overhead"]["non_build_seconds"]) for event in measured_builds
+        if isinstance(event.get("overhead"), dict) and event["overhead"].get("non_build_seconds") is not None
+    ]
     return {
         "median_duration_seconds": round(statistics.median(durations), 3) if durations else None,
         "median_bytes_pushed": int(statistics.median(pushed)) if pushed else None,
@@ -322,6 +377,8 @@ def observed_metrics(events: Sequence[dict]) -> dict:
         "measured_builds": len(measured_builds),
         "median_rebuilt_steps": round(statistics.median(rebuilt), 1) if rebuilt else None,
         "median_unmatched_diff_ids": round(statistics.median(unmatched_diff_ids), 1) if unmatched_diff_ids else None,
+        "median_unmatched_compressed_bytes": int(statistics.median(unmatched_compressed_bytes)) if unmatched_compressed_bytes else None,
+        "median_non_build_overhead_seconds": round(statistics.median(overhead_seconds), 6) if overhead_seconds else None,
     }
 
 
@@ -413,7 +470,7 @@ def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
         })
 
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "project_root": str(root),
         "dockerfile": str(dockerfile.relative_to(root) if dockerfile.is_relative_to(root) else dockerfile),
         "evidence": {"commits": len(commits), "local_observations": len(events), **observed_metrics(events)},
@@ -473,10 +530,11 @@ def record(args: argparse.Namespace) -> dict:
     except FileNotFoundError:
         pass
     event = {
-        "schema_version": 2,
+        "schema_version": 3,
         "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
         "kind": args.kind,
         "status": args.status,
+        "project_root": str(root),
         "commit": commit,
         "changed_paths": sorted(set(normalized_paths)),
         "tags": clean_tags(args.tag or []),
@@ -502,6 +560,9 @@ def render(report: dict) -> str:
             f"Measured builds: {evidence['measured_builds']}; median rebuilt steps: "
             f"{evidence['median_rebuilt_steps']}; median unmatched layer DiffIDs: {evidence['median_unmatched_diff_ids']}"
         )
+        lines.append(f"Median DLO non-build overhead: {evidence['median_non_build_overhead_seconds']}s")
+        if evidence["median_unmatched_compressed_bytes"] is not None:
+            lines.append(f"Median unmatched compressed registry bytes: {evidence['median_unmatched_compressed_bytes']}")
     lines.append("\nHighest-risk context layers:")
     if not report["layers"]:
         lines.append("  (no build-context COPY or ADD instructions found)")
@@ -551,7 +612,11 @@ def parser() -> argparse.ArgumentParser:
     build_parser.add_argument("--provenance", action="append", default=[])
     build_parser.add_argument("--sbom", action="append", default=[])
     build_parser.add_argument("--network")
-    build_parser.add_argument("--push", action="store_true", help="push instead of loading locally; layer DiffIDs will be unavailable")
+    build_parser.add_argument("--push", action="store_true", help="push and compare compressed OCI registry blobs instead of loading locally")
+    build_parser.add_argument(
+        "--progress-format", choices=("auto", "rawjson", "plain"), default="auto",
+        help="BuildKit progress source; auto prefers structured rawjson and falls back to plain",
+    )
     build_parser.add_argument("--quiet", action="store_true", help="hide Docker progress and print only the measurement summary")
     build_parser.add_argument("--json", action="store_true", help="hide Docker progress and print the observation as JSON")
 
@@ -597,6 +662,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             import build_observer
             return build_observer.run_build(args, sys.modules[__name__])
         return 0
+    except KeyboardInterrupt:
+        print("error: interrupted", file=sys.stderr)
+        return 130
     except (FileNotFoundError, RuntimeError, ValueError) as exc:
         if getattr(args, "json", False):
             print(json.dumps({"error": str(exc), "exit_code": 2}, sort_keys=True), file=sys.stderr)

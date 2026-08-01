@@ -35,9 +35,11 @@ dlo build --root "$PROJECT_ROOT" --tag project-name:dlo
 dlo history --root "$PROJECT_ROOT"
 ```
 
-The build command deterministically counts Dockerfile step cache outcomes from BuildKit plain progress. For its default loaded output, it also compares exact image layer DiffIDs with the previous successful build. Use `--push` only when requested; pushed builds cannot provide local image-layer comparison unless separately loaded.
+The build command prefers BuildKit's structured `rawjson` progress, where cache outcomes are explicit, and falls back to plain progress only when unsupported. For its default loaded output, it compares exact image layer DiffIDs with the previous successful build. With `--push`, it resolves the pushed manifest and compares compressed registry blob digests and declared sizes.
 
-Never estimate missing timings, layer counts, or bytes. Do not claim that a Dockerfile instruction maps one-to-one to an image layer; BuildKit steps and resulting image layers are separate measurements.
+Treat `registry.unmatched_compressed_bytes` as bytes represented by current blobs absent from the previous observed manifest. Do not describe it as actual upload traffic or a cloud bill: a registry, mirror, or proxy can already contain those blobs.
+
+Never estimate missing timings, layer counts, or bytes. Report observer overhead separately from Docker build time. Do not claim that a Dockerfile instruction maps one-to-one to an image layer; BuildKit steps and resulting image layers are separate measurements.
 
 ## Change safely
 
@@ -63,4 +65,4 @@ Observations are stored in the operating system's user cache, outside the reposi
 
 ## Report
 
-Return the largest expected rebuild cost, evidence depth, measured cache and layer counts when available, the exact proposed or applied change, validation results, and remaining uncertainty such as dynamic paths, generated files, remote caches, or unmeasured pushed-image layers.
+Return the largest expected rebuild cost, evidence depth, measured cache and layer/blob counts when available, the exact proposed or applied change, validation results, and remaining uncertainty such as dynamic paths, generated files, remote caches, or unknown registry-side deduplication.

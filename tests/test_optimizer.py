@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 import unittest
 from unittest import mock
 
@@ -141,6 +142,36 @@ class OptimizerTests(unittest.TestCase):
         self.assertEqual(summary["items"][1]["duration_seconds"], 0.2)
         self.assertIsNone(summary["items"][2]["duration_seconds"])
 
+    def test_rawjson_progress_uses_cached_field_and_resolves_from(self):
+        parser = build_observer.RawJsonProgressParser()
+        events = [
+            {"vertexes": [{"digest": "context", "name": "[internal] load build context"}]},
+            {"statuses": [{"id": "transferring context:", "vertex": "context", "current": 4096}]},
+            {"vertexes": [
+                {"digest": "from", "name": "[1/3] FROM alpine", "started": "2026-01-01T00:00:00Z", "completed": "2026-01-01T00:00:00.01Z"},
+                {"digest": "copy", "name": "[2/3] COPY app.py /app/", "started": "2026-01-01T00:00:00Z", "completed": "2026-01-01T00:00:00Z", "cached": True},
+                {"digest": "run", "name": "[3/3] RUN python /app/app.py", "started": "2026-01-01T00:00:00Z", "completed": "2026-01-01T00:00:00.2Z"},
+            ]},
+        ]
+        for event in events:
+            parser.feed(json.dumps(event))
+        summary = parser.summary()
+        self.assertEqual(summary["progress_format"], "rawjson")
+        self.assertEqual((summary["cached"], summary["rebuilt"], summary["resolved"]), (1, 1, 1))
+        self.assertEqual(parser.context_bytes, 4096)
+        self.assertEqual(summary["items"][2]["duration_seconds"], 0.2)
+
+    def test_progress_history_does_not_persist_instruction_text(self):
+        parser = build_observer.RawJsonProgressParser()
+        secret = "DO_NOT_PERSIST_123"
+        parser.feed(json.dumps({"vertexes": [{
+            "digest": "run", "name": f"[1/1] RUN echo {secret}",
+            "started": "2026-01-01T00:00:00Z", "completed": "2026-01-01T00:00:01Z",
+        }]}))
+        serialized = json.dumps(parser.summary())
+        self.assertNotIn(secret, serialized)
+        self.assertIn("instruction_sha256", serialized)
+
     def test_layer_comparison_handles_reuse_and_order(self):
         result = build_observer.compare_layers(["a", "b", "d"], ["a", "b", "c"])
         self.assertEqual(result["new"], 1)
@@ -172,6 +203,21 @@ class OptimizerTests(unittest.TestCase):
         (root / "app.py").write_text("two\n", encoding="utf-8")
         second = build_observer.snapshot_context(root)
         self.assertEqual(build_observer.changed_paths(second, first), ["app.py"])
+
+    def test_snapshot_supports_negation_and_dockerfile_specific_ignore(self):
+        root = Path(tempfile.mkdtemp())
+        self.temporary_paths.append(root)
+        (root / "Dockerfile.custom").write_text("FROM scratch\n", encoding="utf-8")
+        (root / ".dockerignore").write_text("*.txt\n", encoding="utf-8")
+        (root / "Dockerfile.custom.dockerignore").write_text("dist/\n!dist/keep.txt\n", encoding="utf-8")
+        (root / "root.txt").write_text("included by specific rules\n", encoding="utf-8")
+        (root / "dist").mkdir()
+        (root / "dist" / "drop.txt").write_text("drop\n", encoding="utf-8")
+        (root / "dist" / "keep.txt").write_text("keep\n", encoding="utf-8")
+        snapshot = build_observer.snapshot_context(root, root / "Dockerfile.custom")
+        self.assertIn("root.txt", snapshot)
+        self.assertIn("dist/keep.txt", snapshot)
+        self.assertNotIn("dist/drop.txt", snapshot)
 
     def test_first_layer_observation_is_a_baseline(self):
         result = build_observer.compare_layers(["a", "b"], None)
@@ -214,10 +260,22 @@ class OptimizerTests(unittest.TestCase):
         self.assertEqual(evidence["median_context_bytes"], 1234)
         self.assertIsNotNone(report["layers"][0]["local_likelihood"])
 
+    def test_concurrent_event_appends_remain_valid(self):
+        root = self.make_repo()
+        count = 40
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            list(executor.map(
+                lambda index: optimizer.append_event(root, {"schema_version": 3, "kind": "task", "index": index}),
+                range(count),
+            ))
+        events = optimizer.load_events(root, count + 1)
+        self.assertEqual(len(events), count)
+        self.assertEqual({event["index"] for event in events}, set(range(count)))
+
     def test_build_observer_records_and_compares_successful_builds(self):
         root = self.make_repo()
         args = optimizer.parser().parse_args([
-            "build", "--root", str(root), "--tag", "example:test", "--quiet",
+            "build", "--root", str(root), "--tag", "example:test", "--quiet", "--progress-format", "plain",
         ])
         progress = [
             "#1 [1/2] FROM scratch\n", "#1 CACHED\n",
@@ -254,6 +312,32 @@ class OptimizerTests(unittest.TestCase):
         self.assertEqual(events[2]["changed_paths"], ["requirements.txt"])
         self.assertEqual(events[2]["image"]["new"], 1)
         self.assertEqual(events[2]["image"]["reused"], 1)
+        self.assertNotIn("display", json.dumps(events))
+
+    def test_inspection_failure_text_is_not_persisted(self):
+        root = self.make_repo()
+        args = optimizer.parser().parse_args([
+            "build", "--root", str(root), "--tag", "example:test", "--quiet", "--progress-format", "plain",
+        ])
+        private_error = "registry response contained PRIVATE_DETAIL"
+
+        class FakeProcess:
+            stdout = iter(["#1 [1/1] FROM scratch\n", "#1 CACHED\n"])
+
+            def __init__(self, command, **kwargs):
+                pass
+
+            def wait(self):
+                return 0
+
+        with mock.patch.object(build_observer.subprocess, "Popen", FakeProcess), \
+                mock.patch.object(build_observer, "inspect_image", side_effect=RuntimeError(private_error)), \
+                mock.patch("sys.stdout", new_callable=io.StringIO), \
+                mock.patch("sys.stderr", new_callable=io.StringIO):
+            self.assertEqual(build_observer.run_build(args, optimizer), 0)
+        serialized = json.dumps(optimizer.load_events(root))
+        self.assertIn("local-image-inspection-failed", serialized)
+        self.assertNotIn(private_error, serialized)
 
 
 if __name__ == "__main__":

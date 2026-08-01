@@ -1,43 +1,46 @@
 # Docker Layer Optimizer
 
-`dlo` is a deterministic CLI that measures Docker cache behavior and learns how a project changes. It counts cached and rebuilt Dockerfile steps, compares the resulting image layers with the previous successful build, and combines those observations with Git history to find expensive cache invalidation.
+`dlo` is a deterministic CLI for finding and verifying Docker cache improvements. It observes which BuildKit steps were cached or rebuilt, compares image layers between successful builds, and learns which project paths change from Git and local build history. The bundled Codex and Claude skill interprets those facts; Wendy is not required.
 
-The included Codex and Claude skill is a thin agent interface over the same tool. Wendy is not required.
+Wrapping a build does not itself make Docker faster. The speedup comes from Dockerfile and context changes that `dlo` identifies and measures.
 
-## Install the CLI
+## Install
 
-Python 3.9+, Git, and Docker Buildx are required for measured builds. Static analysis works without Docker.
+Python 3.9+, Git, Docker, and Docker Buildx are required for measured builds. Static analysis works without Docker.
+
+```sh
+python3 -m pip install docker-layer-optimizer==0.3.0b1
+```
+
+Until the beta is available from PyPI, install the repository directly:
 
 ```sh
 python3 -m pip install git+https://github.com/OliverTaylor246/docker-layer-optimizer.git
 ```
 
-Run a measured build:
+Maintainers: the release workflow publishes tags to GitHub. PyPI publishing remains gated by the `PYPI_TRUSTED_PUBLISHING=true` repository variable (or a deliberate manual run) so a missing first-project Trusted Publisher cannot make an otherwise valid GitHub release fail.
+
+## Measure a build
 
 ```sh
 dlo build --root /path/to/project --tag my-app:dev
 ```
 
-The command streams the normal build output, then reports:
+For the default `--load` build, the result includes:
 
-- cached, rebuilt, and failed Dockerfile steps from BuildKit plain progress;
-- matching and unmatched immutable layer DiffIDs, plus changed ordered-chain positions and common-prefix length;
-- build duration, transferred context size, and paths changed since the prior observed build attempt.
+- cached, rebuilt, resolved, failed, and incomplete Dockerfile steps from BuildKit's structured progress stream;
+- matching and unmatched uncompressed layer DiffIDs, changed ordered-chain positions, and common-prefix length;
+- build duration, transferred context size, paths changed since the prior attempt, and observer overhead.
 
-The default output is `--load`, which enables exact local image inspection. `--push` records BuildKit step measurements but deliberately leaves image-layer measurements unavailable rather than inspecting a possibly stale local tag.
-
-Analyze the Dockerfile and project history:
+For a pushed image, compare compressed OCI registry blobs instead:
 
 ```sh
-dlo analyze --root /path/to/project
-dlo analyze --root /path/to/project --json
+dlo build --root . --tag registry.example.com/team/app:dev --push
 ```
 
-Review observations:
+`unmatched_compressed_bytes` is the size of current compressed blobs absent from the previous observed manifest. It is a deterministic upper-bound-style comparison, not a measurement of network bytes uploaded; the registry or proxy may already contain blobs.
 
-```sh
-dlo history --root /path/to/project
-```
+BuildKit `rawjson` is preferred because it supplies an explicit cache flag. `dlo` falls back to plain progress only when the installed Buildx rejects `rawjson`; choose explicitly with `--progress-format rawjson|plain`.
 
 Pass common build settings directly:
 
@@ -46,33 +49,43 @@ dlo build --root . --dockerfile docker/Dockerfile --tag my-app:dev \
   --platform linux/amd64 --target runtime --build-arg VERSION=dev
 ```
 
-## What it optimizes
+## Analyze and learn
 
-- Maps `COPY` and `ADD` inputs to tracked project files.
-- Estimates path change likelihood using recency-weighted Git history and local build/task observations.
-- Ranks invalidation points by change likelihood × downstream comparative cost.
-- Finds broad copies before dependency installation and missing `.dockerignore` files.
-- Measures whether changes rebuild Dockerfile steps, introduce unmatched layer content, or change ordered layer-chain positions.
+```sh
+dlo analyze --root /path/to/project
+dlo analyze --root /path/to/project --json
+dlo history --root /path/to/project
+```
 
-The analyzer recommends changes; it does not rewrite Dockerfiles automatically. Layer order is constrained by build semantics, so proposed changes should be reviewed and validated with representative builds.
+The analyzer:
 
-## Local data and privacy
+- maps `COPY` and `ADD` inputs to tracked context files;
+- estimates change likelihood from recency-weighted Git and local observations;
+- ranks invalidation points by change likelihood × downstream comparative cost;
+- finds broad copies before dependency installation and missing `.dockerignore` files;
+- reports measured step, DiffID, registry-blob, context, and overhead evidence separately.
 
-Observations live in the operating system's user cache, keyed by a hash of the canonical project path:
+It recommends changes but does not rewrite Dockerfiles automatically. Layer order is constrained by build semantics, so validate every restructuring with representative builds.
 
-- macOS: `~/Library/Caches/docker-layer-optimizer/`
-- Linux: `${XDG_CACHE_HOME:-~/.cache}/docker-layer-optimizer/`
-- Windows: `%LOCALAPPDATA%/docker-layer-optimizer/`
-
-Set `DLO_CACHE_DIR` to override the base directory. The tool stores paths, hashes, coarse tags, timings, digests, and counts. It does not store prompts, source contents, build logs, secrets, environment values, or build-argument values.
-
-Manual task observations remain available:
+Builds automatically snapshot effective local context paths and hashes. A relevant non-build task can be recorded without storing its description:
 
 ```sh
 dlo record --root . --kind task --status success --from-git --tag dependencies
 ```
 
-## Install the agent skill
+## Privacy and state
+
+Observations live outside the repository in the operating system's user cache:
+
+- macOS: `~/Library/Caches/docker-layer-optimizer/`
+- Linux: `${XDG_CACHE_HOME:-~/.cache}/docker-layer-optimizer/`
+- Windows: `%LOCALAPPDATA%/docker-layer-optimizer/`
+
+Set `DLO_CACHE_DIR` to override the base directory. The tool persists paths and their hashes, project and image identifiers, coarse tags, timestamps, durations, layer/blob digests, sizes, and counts. It does not persist build logs, Dockerfile instruction text, source contents, prompts, secret contents, environment values, or build-argument values. State writes and same-target builds are locked for concurrent use.
+
+See [SECURITY.md](SECURITY.md) for the threat model and disclosure process and [the observation schema](docs/observation-schema-v3.json) for the machine-readable contract.
+
+## Agent skill
 
 Codex:
 
@@ -88,13 +101,33 @@ claude plugin marketplace add OliverTaylor246/docker-layer-optimizer
 claude plugin install docker-layer-optimizer@docker-optimization-tools
 ```
 
-Ask the agent to use `optimize-docker-layers`. It will use `dlo` as the deterministic measurement and analysis engine, then apply human-readable reasoning to safe Dockerfile changes.
+Ask the agent to use `optimize-docker-layers`. The CLI remains the deterministic measurement engine; the skill adds project-aware interpretation and safe edits.
 
-## Development
+## Compatibility
+
+| Capability | Requirement | Notes |
+|---|---|---|
+| Static analysis | Python 3.9+, Git | Docker is optional. |
+| Structured step counts | Docker Buildx with `--progress=rawjson` | Plain-progress fallback is less robust. |
+| Local layer comparison | A successful `--load` exporter | Compares uncompressed DiffIDs. |
+| Registry comparison | A readable pushed OCI/Docker manifest | Compares compressed blob digests and declared sizes. |
+| Platforms | Linux, macOS, Windows | Unit-tested on all three; real-Docker CI runs on Linux. |
+| Builders | Docker and docker-container Buildx drivers | Remote behavior depends on exporter and registry access. |
+
+## Benchmarks and development
+
+Run the reproducible Python, Node, Go, and monorepo matrix with five source edits, five dependency edits, and five no-op overhead measurements per layout:
+
+```sh
+python3 -m pip install -e .
+python3 benchmarks/run_benchmarks.py --iterations 5 --output benchmark.json
+```
+
+The benchmark compares an intentionally broad `COPY . .` control with a manifest-first Dockerfile. Results report medians and p95 values; they are not universal performance claims. See [the methodology](docs/benchmarking.md) and the [five-run Colima ARM64 result](benchmarks/results/2026-08-01-colima-arm64.md).
 
 ```sh
 python3 -m unittest discover -s tests -v
-python3 -m pip install -e .
+python3 tests/docker_integration.py --registry 127.0.0.1:5000
 dlo --help
 ```
 

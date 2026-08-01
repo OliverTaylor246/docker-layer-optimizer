@@ -1,0 +1,28 @@
+name: docker-integration
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install .
+      - name: Start disposable OCI registry
+        run: docker run -d --name dlo-ci-registry -p 127.0.0.1:5000:5000 registry:2
+      - name: Test cache, image, failure, privacy, concurrency, and push lifecycles
+        env:
+          DLO_TEST_REGISTRY: 127.0.0.1:5000
+        run: python tests/docker_integration.py
+      - name: Stop disposable OCI registry
+        if: always()
+        run: docker container rm --force dlo-ci-registry

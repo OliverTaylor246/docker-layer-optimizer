@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "docker-layer-optimizer",
-  "description": "Learn how a project changes and reduce Docker cache invalidation and redeploy cost.",
-  "version": "0.2.0",
+  "description": "Measure Docker cache invalidation and learn which project inputs change together.",
+  "version": "0.3.0-beta.1",
   "author": {
     "name": "Oliver Taylor",
     "email": "35031747+OliverTaylor246@users.noreply.github.com",
