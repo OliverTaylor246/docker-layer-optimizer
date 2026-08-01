@@ -7,6 +7,7 @@ import argparse
 from contextlib import contextmanager
 import dataclasses
 import datetime as dt
+import errno
 import fnmatch
 import hashlib
 import json
@@ -18,6 +19,7 @@ import shlex
 import statistics
 import subprocess
 import sys
+import time
 from typing import Iterable, Sequence
 
 
@@ -182,6 +184,7 @@ def state_path(root: Path) -> Path:
 def file_lock(path: Path):
     path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
     handle = path.open("a+b")
+    acquired = False
     try:
         try:
             os.chmod(path, 0o600)
@@ -190,21 +193,25 @@ def file_lock(path: Path):
         if os.name == "nt":
             import msvcrt
             handle.seek(0)
-            if handle.read(1) == b"":
-                handle.write(b"0")
-                handle.flush()
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+            while True:
+                try:
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                    break
+                except OSError as exc:
+                    if exc.errno not in {errno.EACCES, errno.EDEADLK}:
+                        raise
+                    time.sleep(0.05)
         else:
             import fcntl
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        acquired = True
         yield
     finally:
-        if os.name == "nt":
+        if acquired and os.name == "nt":
             import msvcrt
             handle.seek(0)
             msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
-        else:
+        elif acquired:
             import fcntl
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
         handle.close()
