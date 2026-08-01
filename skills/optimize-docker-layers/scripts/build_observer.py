@@ -25,59 +25,192 @@ TRANSFER = re.compile(r"transferring context:\s+(?P<size>[0-9.]+)(?P<unit>[kMGT]
 SIZE_MULTIPLIERS = {"b": 1, "kb": 1_000, "mb": 1_000_000, "gb": 1_000_000_000, "tb": 1_000_000_000_000}
 
 
+def _opcode(display: str) -> str:
+    return display.lstrip().split(" ", 1)[0].upper() if display.strip() else "UNKNOWN"
+
+
+def _duration_seconds(started: str | None, completed: str | None) -> float | None:
+    if not started or not completed:
+        return None
+    try:
+        def parse(value: str) -> dt.datetime:
+            normalized = value.replace("Z", "+00:00")
+            normalized = re.sub(
+                r"\.(\d+)(?=[+-])",
+                lambda match: "." + match.group(1)[:6].ljust(6, "0"),
+                normalized,
+            )
+            return dt.datetime.fromisoformat(normalized)
+        start = parse(started)
+        end = parse(completed)
+        return round(max(0.0, (end - start).total_seconds()), 3)
+    except ValueError:
+        return None
+
+
+def _public_item(item: dict) -> dict:
+    display = str(item.get("display", ""))
+    return {
+        "step": item.get("label"),
+        "opcode": _opcode(display),
+        "instruction_sha256": hashlib.sha256(display.encode("utf-8")).hexdigest(),
+        "status": item.get("status"),
+        "duration_seconds": item.get("duration_seconds"),
+    }
+
+
+def _summary(items: Sequence[dict], progress_format: str) -> dict:
+    values = list(items)
+    return {
+        "progress_format": progress_format,
+        "total": len(values),
+        "cached": sum(item["status"] == "cached" for item in values),
+        "rebuilt": sum(item["status"] == "rebuilt" for item in values),
+        "resolved": sum(item["status"] == "resolved" for item in values),
+        "failed": sum(item["status"] == "failed" for item in values),
+        "incomplete": sum(item["status"] == "running" for item in values),
+        "items": [_public_item(item) for item in values],
+    }
+
+
+def _render_completion(item: dict) -> str:
+    status = item["status"]
+    duration = item.get("duration_seconds")
+    suffix = f" {duration:.3f}s" if duration is not None else ""
+    return f"{status:8} [{item.get('label', '?')}] {item.get('display', '')}{suffix}"
+
+
+def _step_sort_key(item: dict) -> tuple[int, int, str]:
+    label = str(item.get("label", ""))
+    match = re.search(r"(\d+)/(\d+)$", label)
+    return (int(match.group(2)), int(match.group(1)), label) if match else (0, 0, label)
+
+
+class RawJsonProgressParser:
+    """Parse BuildKit's structured `--progress=rawjson` event stream."""
+
+    progress_format = "rawjson"
+
+    def __init__(self) -> None:
+        self.vertices: dict[str, dict] = {}
+        self.vertex_names: dict[str, str] = {}
+        self.context_bytes: int | None = None
+        self.invalid_lines: list[str] = []
+        self.failure_messages: list[str] = []
+        self.events_seen = 0
+
+    def feed(self, line: str) -> list[str]:
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            if line.strip():
+                self.invalid_lines.append(line.rstrip()[:1000])
+            return []
+        if not isinstance(value, dict):
+            return []
+        self.events_seen += 1
+        rendered: list[str] = []
+        for vertex in value.get("vertexes", []):
+            if not isinstance(vertex, dict):
+                continue
+            digest = str(vertex.get("digest", ""))
+            name = str(vertex.get("name", ""))
+            if digest and name:
+                self.vertex_names[digest] = name
+            start = STEP_START.match(name)
+            if not digest or not start:
+                continue
+            item = self.vertices.setdefault(digest, {
+                "label": start.group("label"), "display": start.group("display"),
+                "status": "running", "duration_seconds": None,
+            })
+            previous_status = item["status"]
+            item["label"] = start.group("label")
+            item["display"] = start.group("display")
+            if vertex.get("error"):
+                item["status"] = "failed"
+                item["duration_seconds"] = _duration_seconds(vertex.get("started"), vertex.get("completed"))
+                self.failure_messages.append(str(vertex["error"])[:2000])
+            elif vertex.get("completed"):
+                if vertex.get("cached") is True:
+                    item["status"] = "cached"
+                elif _opcode(item["display"]) == "FROM":
+                    item["status"] = "resolved"
+                else:
+                    item["status"] = "rebuilt"
+                item["duration_seconds"] = _duration_seconds(vertex.get("started"), vertex.get("completed"))
+            elif vertex.get("started"):
+                item["status"] = "running"
+            if item["status"] not in {"running", previous_status}:
+                rendered.append(_render_completion(item))
+
+        for status in value.get("statuses", []):
+            if not isinstance(status, dict):
+                continue
+            vertex_name = self.vertex_names.get(str(status.get("vertex", "")), "")
+            if vertex_name == "[internal] load build context" and str(status.get("id", "")).startswith("transferring context:"):
+                current = status.get("current")
+                if isinstance(current, (int, float)):
+                    self.context_bytes = max(self.context_bytes or 0, int(current))
+        return rendered
+
+    def summary(self) -> dict:
+        items = sorted(self.vertices.values(), key=_step_sort_key)
+        return _summary(items, self.progress_format)
+
+
 class BuildProgressParser:
-    """Parse stable facts from Docker's documented `--progress=plain` output."""
+    """Fallback parser for Docker's `--progress=plain` output."""
+
+    progress_format = "plain"
 
     def __init__(self) -> None:
         self.vertices: dict[str, dict] = {}
         self.context_bytes: int | None = None
+        self.invalid_lines: list[str] = []
+        self.failure_messages: list[str] = []
+        self.events_seen = 0
 
-    def feed(self, line: str) -> None:
+    def feed(self, line: str) -> list[str]:
         match = PROGRESS_LINE.match(line.strip())
         if not match:
-            return
+            if line.strip():
+                self.invalid_lines.append(line.rstrip()[:1000])
+            return []
+        self.events_seen += 1
         vertex_id, body = match.group("id"), match.group("body")
         transfer = TRANSFER.search(body)
         if transfer:
             size = float(transfer.group("size"))
-            multiplier = SIZE_MULTIPLIERS[transfer.group("unit").lower()]
-            self.context_bytes = int(size * multiplier)
-
+            self.context_bytes = int(size * SIZE_MULTIPLIERS[transfer.group("unit").lower()])
         start = STEP_START.match(body)
         if start:
             self.vertices[vertex_id] = {
-                "id": int(vertex_id),
-                "display": start.group("display"),
-                "status": "running",
-                "duration_seconds": None,
+                "label": start.group("label"), "display": start.group("display"),
+                "status": "running", "duration_seconds": None,
             }
-            return
+            return []
         item = self.vertices.get(vertex_id)
         if not item:
-            return
+            return []
         if body == "CACHED":
-            item["status"] = "cached"
-            item["duration_seconds"] = 0.0
+            item["status"], item["duration_seconds"] = "cached", 0.0
         elif done := DONE.match(body):
-            item["status"] = "rebuilt"
+            item["status"] = "resolved" if _opcode(item["display"]) == "FROM" else "rebuilt"
             item["duration_seconds"] = float(done.group("seconds")) if done.group("seconds") else None
         elif error := ERROR.match(body):
             item["status"] = "failed"
             item["duration_seconds"] = float(error.group("seconds")) if error.group("seconds") else None
+            self.failure_messages.append(body[:2000])
         elif body == "CANCELED":
-            item["status"] = "failed"
-            item["duration_seconds"] = None
+            item["status"], item["duration_seconds"] = "failed", None
+        else:
+            return []
+        return [_render_completion(item)]
 
     def summary(self) -> dict:
-        items = sorted(self.vertices.values(), key=lambda item: item["id"])
-        return {
-            "total": len(items),
-            "cached": sum(item["status"] == "cached" for item in items),
-            "rebuilt": sum(item["status"] == "rebuilt" for item in items),
-            "failed": sum(item["status"] == "failed" for item in items),
-            "incomplete": sum(item["status"] == "running" for item in items),
-            "items": items,
-        }
+        items = [self.vertices[key] for key in sorted(self.vertices, key=lambda value: int(value))]
+        return _summary(items, self.progress_format)
 
 
 def compare_layers(current: Sequence[str], previous: Sequence[str] | None) -> dict:
@@ -85,11 +218,11 @@ def compare_layers(current: Sequence[str], previous: Sequence[str] | None) -> di
 
     prior = list(previous or [])
     available = Counter(prior)
-    reused = 0
+    matching = 0
     for digest in current:
         if available[digest] > 0:
             available[digest] -= 1
-            reused += 1
+            matching += 1
     prefix = 0
     for left, right in zip(current, prior):
         if left != right:
@@ -97,23 +230,17 @@ def compare_layers(current: Sequence[str], previous: Sequence[str] | None) -> di
         prefix += 1
     unchanged_positions = sum(left == right for left, right in zip(current, prior))
     return {
-        "total": len(current),
-        "new": len(current) - reused,
-        "reused": reused,
-        "removed": len(prior) - reused,
-        "matching_diff_ids": reused,
-        "unmatched_diff_ids": len(current) - reused,
+        "total": len(current), "new": len(current) - matching, "reused": matching,
+        "removed": len(prior) - matching, "matching_diff_ids": matching,
+        "unmatched_diff_ids": len(current) - matching,
         "changed_positions": max(len(current), len(prior)) - unchanged_positions,
-        "common_prefix": prefix,
-        "has_baseline": previous is not None,
+        "common_prefix": prefix, "has_baseline": previous is not None,
     }
 
 
 def dockerignore_path(root: Path, dockerfile: Path | None = None) -> Path:
     specific = Path(f"{dockerfile}.dockerignore") if dockerfile else None
-    if specific and specific.is_file():
-        return specific
-    return root / ".dockerignore"
+    return specific if specific and specific.is_file() else root / ".dockerignore"
 
 
 def dockerignore_patterns(root: Path, dockerfile: Path | None = None) -> list[tuple[bool, str]]:
@@ -160,7 +287,7 @@ def filter_context_files(root: Path, dockerfile: Path, files: Iterable[str]) -> 
 
 
 def snapshot_context(root: Path, dockerfile: Path | None = None) -> dict[str, str]:
-    """Hash the effective local context without storing file contents."""
+    """Hash the approximate effective local context without retaining contents."""
 
     patterns = dockerignore_patterns(root, dockerfile)
     has_negations = any(negated for negated, _ in patterns)
@@ -182,15 +309,14 @@ def snapshot_context(root: Path, dockerfile: Path | None = None) -> dict[str, st
                 continue
             try:
                 if path.is_symlink():
-                    payload = os.readlink(path).encode("utf-8", errors="surrogateescape")
-                    digest = hashlib.sha256(payload).hexdigest()
+                    digest = hashlib.sha256(os.readlink(path).encode("utf-8", errors="surrogateescape")).hexdigest()
                 else:
                     hasher = hashlib.sha256()
                     with path.open("rb") as handle:
                         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
                             hasher.update(chunk)
                     digest = hasher.hexdigest()
-            except (OSError, PermissionError):
+            except OSError:
                 continue
             snapshot[relative] = digest
     return snapshot
@@ -199,24 +325,23 @@ def snapshot_context(root: Path, dockerfile: Path | None = None) -> dict[str, st
 def changed_paths(current: dict[str, str], previous: dict[str, str] | None) -> list[str]:
     if previous is None:
         return []
-    names = set(current) | set(previous)
-    return sorted(path for path in names if current.get(path) != previous.get(path))
+    return sorted(path for path in set(current) | set(previous) if current.get(path) != previous.get(path))
 
 
 def _load_snapshot(path: Path) -> dict:
     if not path.is_file():
-        return {"schema_version": 1, "targets": {}}
+        return {"schema_version": 2, "targets": {}}
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
         if isinstance(value, dict) and isinstance(value.get("targets"), dict):
             return value
     except (json.JSONDecodeError, OSError):
         pass
-    return {"schema_version": 1, "targets": {}}
+    return {"schema_version": 2, "targets": {}}
 
 
 def _write_snapshot(path: Path, value: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
     descriptor, temporary = tempfile.mkstemp(prefix="snapshot-", suffix=".json", dir=path.parent)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
@@ -241,8 +366,7 @@ def inspect_image(tag: str) -> dict:
         raise RuntimeError(f"docker image inspect returned no image for {tag}")
     value = values[0]
     return {
-        "id": value.get("Id"),
-        "size_bytes": value.get("Size"),
+        "id": value.get("Id"), "size_bytes": value.get("Size"),
         "repo_digests": value.get("RepoDigests") or [],
         "layer_diff_ids": ((value.get("RootFS") or {}).get("Layers") or []),
     }
@@ -268,10 +392,9 @@ def _metadata(path: Path) -> dict:
     return {key: value[key] for key in allowed if isinstance(value.get(key), str)}
 
 
-def build_command(args, root: Path, dockerfile: Path, metadata_file: Path, tag: str) -> list[str]:
-    command = ["docker", "buildx", "build", "--progress=plain", "--metadata-file", str(metadata_file)]
-    command.extend(["--file", str(dockerfile), "--tag", tag])
-    command.append("--push" if args.push else "--load")
+def build_command(args, root: Path, dockerfile: Path, metadata_file: Path, tag: str, progress_format: str) -> list[str]:
+    command = ["docker", "buildx", "build", f"--progress={progress_format}", "--metadata-file", str(metadata_file)]
+    command.extend(["--file", str(dockerfile), "--tag", tag, "--push" if args.push else "--load"])
     for option, value in (
         ("--platform", args.platform), ("--target", args.target),
         ("--builder", args.builder), ("--network", args.network),
@@ -287,13 +410,45 @@ def build_command(args, root: Path, dockerfile: Path, metadata_file: Path, tag: 
     for flag, values in (
         ("--cache-from", args.cache_from), ("--cache-to", args.cache_to),
         ("--secret", args.secret), ("--ssh", args.ssh), ("--label", args.label),
-        ("--build-context", args.build_context), ("--provenance", args.provenance),
-        ("--sbom", args.sbom),
+        ("--build-context", args.build_context), ("--provenance", args.provenance), ("--sbom", args.sbom),
     ):
         for value in values:
             command.extend([flag, value])
     command.append(str(root))
     return command
+
+
+def _execute_build(args, root: Path, dockerfile: Path, tag: str, metadata_path: Path, progress_format: str):
+    parser = RawJsonProgressParser() if progress_format == "rawjson" else BuildProgressParser()
+    command = build_command(args, root, dockerfile, metadata_path, tag, progress_format)
+    try:
+        process = subprocess.Popen(
+            command, cwd=root, text=True, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, bufsize=1,
+        )
+    except FileNotFoundError as exc:
+        raise RuntimeError("docker was not found; install Docker with Buildx or run `dlo analyze` only") from exc
+    assert process.stdout is not None
+    try:
+        for line in process.stdout:
+            rendered = parser.feed(line)
+            if not args.quiet and not args.json:
+                for message in rendered:
+                    print(message)
+    except KeyboardInterrupt:
+        process.terminate()
+        try:
+            process.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
+        raise
+    return process.wait(), parser, command
+
+
+def _rawjson_unsupported(parser: RawJsonProgressParser) -> bool:
+    text = "\n".join(parser.invalid_lines).lower()
+    return parser.events_seen == 0 and "rawjson" in text and any(word in text for word in ("unknown", "invalid", "unsupported"))
 
 
 def run_build(args, optimizer) -> int:
@@ -307,82 +462,92 @@ def run_build(args, optimizer) -> int:
     }, sort_keys=True)
     target_key = hashlib.sha256(key_payload.encode()).hexdigest()[:24]
     state_dir = optimizer.state_path(root)
-    state = _load_snapshot(state_dir / "snapshot.json")
-    previous = state["targets"].get(target_key)
-    current_snapshot = snapshot_context(root, dockerfile)
+    state_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
 
-    parser = BuildProgressParser()
-    started = time.monotonic()
-    with tempfile.TemporaryDirectory(prefix="dlo-build-") as directory:
-        metadata_path = Path(directory) / "metadata.json"
-        command = build_command(args, root, dockerfile, metadata_path, tag)
-        try:
-            process = subprocess.Popen(
-                command, cwd=root, text=True, stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT, bufsize=1,
-            )
-        except FileNotFoundError as exc:
-            raise RuntimeError("docker was not found; install Docker with Buildx or run `dlo analyze` only") from exc
-        assert process.stdout is not None
-        for line in process.stdout:
-            parser.feed(line)
-            if not args.quiet and not args.json:
-                print(line, end="")
-        return_code = process.wait()
-        duration = round(time.monotonic() - started, 3)
-        metadata = _metadata(metadata_path)
+    with optimizer.file_lock(state_dir / f"target-{target_key}.lock"):
+        with optimizer.file_lock(state_dir / "state.lock"):
+            state = _load_snapshot(state_dir / "snapshot.json")
+            previous = state["targets"].get(target_key)
 
-    image = None
-    inspect_error = None
-    if return_code == 0 and not args.push:
-        try:
-            image = inspect_image(tag)
-            comparison = compare_layers(
-                image["layer_diff_ids"],
-                (previous or {}).get("layer_diff_ids") if previous else None,
-            )
-            image.update(comparison)
-        except (RuntimeError, json.JSONDecodeError) as exc:
-            inspect_error = str(exc)
+        wrapper_started = time.monotonic()
+        snapshot_started = time.monotonic()
+        current_snapshot = snapshot_context(root, dockerfile)
+        snapshot_seconds = time.monotonic() - snapshot_started
+        build_started = time.monotonic()
+        with tempfile.TemporaryDirectory(prefix="dlo-build-") as directory:
+            metadata_path = Path(directory) / "metadata.json"
+            progress_format = "rawjson" if args.progress_format == "auto" else args.progress_format
+            return_code, progress, _ = _execute_build(args, root, dockerfile, tag, metadata_path, progress_format)
+            if args.progress_format == "auto" and progress_format == "rawjson" and _rawjson_unsupported(progress):
+                return_code, progress, _ = _execute_build(args, root, dockerfile, tag, metadata_path, "plain")
+            build_seconds = time.monotonic() - build_started
+            metadata = _metadata(metadata_path)
 
-    event = {
-        "schema_version": 2,
-        "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "kind": "build",
-        "status": "success" if return_code == 0 else "failure",
-        "project_root": str(root),
-        "target_key": target_key,
-        "dockerfile": {"path": _relative(root, dockerfile), "sha256": hashlib.sha256(dockerfile.read_bytes()).hexdigest()},
-        "tag": tag,
-        "platform": args.platform,
-        "target": args.target,
-        "builder": args.builder,
-        "output": output,
-        "duration_seconds": duration,
-        "context_bytes": parser.context_bytes,
-        "steps": parser.summary(),
-        "image": image,
-        "image_inspect_error": inspect_error,
-        "changed_paths": changed_paths(current_snapshot, (previous or {}).get("context") if previous else None),
-        "metadata": metadata,
-    }
-    optimizer.append_event(root, event)
-    target_state = dict(previous or {})
-    target_state["context"] = current_snapshot
-    target_state["last_observation"] = event["timestamp"]
-    if image:
-        target_state["layer_diff_ids"] = image["layer_diff_ids"]
-        target_state["last_successful_image"] = event["timestamp"]
-    state["targets"][target_key] = target_state
-    _write_snapshot(state_dir / "snapshot.json", state)
+        inspection_started = time.monotonic()
+        image = registry = None
+        inspect_error = None
+        inspection_failure = None
+        if return_code == 0 and not args.push:
+            try:
+                image = inspect_image(tag)
+                image.update(compare_layers(image["layer_diff_ids"], (previous or {}).get("layer_diff_ids") if previous else None))
+            except (RuntimeError, json.JSONDecodeError) as exc:
+                inspect_error = str(exc)
+                inspection_failure = "local-image-inspection-failed"
+        elif return_code == 0 and args.push:
+            try:
+                from registry_observer import inspect_registry_image
+                registry = inspect_registry_image(tag, args.platform, (previous or {}).get("registry_layers") if previous else None)
+            except (RuntimeError, ValueError) as exc:
+                inspect_error = str(exc)
+                inspection_failure = "registry-manifest-inspection-failed"
+        inspection_seconds = time.monotonic() - inspection_started
+
+        event = {
+            "schema_version": 3,
+            "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "kind": "build", "status": "success" if return_code == 0 else "failure",
+            "project_root": str(root), "target_key": target_key,
+            "dockerfile": {"path": _relative(root, dockerfile), "sha256": hashlib.sha256(dockerfile.read_bytes()).hexdigest()},
+            "tag": tag, "platform": args.platform, "target": args.target,
+            "builder": args.builder, "output": output,
+            "duration_seconds": round(build_seconds, 3),
+            "context_bytes": progress.context_bytes, "steps": progress.summary(),
+            "image": image, "registry": registry, "inspection_error": inspection_failure,
+            "changed_paths": changed_paths(current_snapshot, (previous or {}).get("context") if previous else None),
+            "metadata": metadata,
+            "overhead": {
+                "snapshot_seconds": round(snapshot_seconds, 6),
+                "inspection_seconds": round(inspection_seconds, 6),
+                "non_build_seconds": round(snapshot_seconds + inspection_seconds, 6),
+                "wrapper_seconds": round(time.monotonic() - wrapper_started, 6),
+            },
+        }
+
+        target_state = dict(previous or {})
+        target_state["context"] = current_snapshot
+        target_state["last_observation"] = event["timestamp"]
+        if image:
+            target_state["layer_diff_ids"] = image["layer_diff_ids"]
+            target_state["last_successful_image"] = event["timestamp"]
+        if registry:
+            target_state["registry_layers"] = registry["layers"]
+            target_state["last_successful_registry_image"] = event["timestamp"]
+
+        with optimizer.file_lock(state_dir / "state.lock"):
+            merged = _load_snapshot(state_dir / "snapshot.json")
+            merged["schema_version"] = 2
+            merged["targets"][target_key] = target_state
+            _write_snapshot(state_dir / "snapshot.json", merged)
+            optimizer.append_event_unlocked(root, event)
 
     if args.json:
         print(json.dumps(event, indent=2, sort_keys=True))
     else:
         steps = event["steps"]
         print(
-            f"dlo: {steps['cached']} cached, {steps['rebuilt']} rebuilt, {steps['failed']} failed, "
-            f"{steps['incomplete']} incomplete Dockerfile steps"
+            f"dlo: {steps['cached']} cached, {steps['rebuilt']} rebuilt, {steps['resolved']} resolved, "
+            f"{steps['failed']} failed, {steps['incomplete']} incomplete Dockerfile steps"
         )
         if image:
             baseline = " vs previous build" if image["has_baseline"] else " (baseline recorded)"
@@ -390,10 +555,17 @@ def run_build(args, optimizer) -> int:
                 f"dlo: {image['unmatched_diff_ids']} unmatched, {image['matching_diff_ids']} matching layer DiffIDs; "
                 f"{image['changed_positions']} changed chain positions{baseline}"
             )
-        elif args.push and return_code == 0:
-            print("dlo: pushed build recorded; resulting layer DiffIDs require a locally loaded image")
-        elif inspect_error:
-            print(f"dlo: build recorded, but image layers could not be inspected: {inspect_error}", file=sys.stderr)
+        if registry:
+            baseline = " vs previous push" if registry["has_baseline"] else " (baseline recorded)"
+            print(
+                f"dlo: {registry['unmatched_blobs']} unmatched/{registry['matching_blobs']} matching compressed blobs; "
+                f"{registry['unmatched_compressed_bytes']} unmatched compressed bytes{baseline}"
+            )
+        if inspect_error:
+            print(f"dlo: build recorded, but image inspection failed: {inspect_error}", file=sys.stderr)
+        if return_code != 0:
+            for message in progress.failure_messages[-3:]:
+                print(f"dlo: {message}", file=sys.stderr)
     return return_code
 
 
@@ -408,9 +580,10 @@ def render_history(events: Iterable[dict]) -> str:
             details.append(f"steps {steps.get('cached', 0)} cached/{steps.get('rebuilt', 0)} rebuilt")
         image = event.get("image")
         if isinstance(image, dict):
-            unmatched = image.get("unmatched_diff_ids", image.get("new", "?"))
-            matching = image.get("matching_diff_ids", image.get("reused", "?"))
-            details.append(f"DiffIDs {unmatched} unmatched/{matching} matching")
+            details.append(f"DiffIDs {image.get('unmatched_diff_ids', image.get('new', '?'))} unmatched/{image.get('matching_diff_ids', image.get('reused', '?'))} matching")
+        registry = event.get("registry")
+        if isinstance(registry, dict):
+            details.append(f"blobs {registry.get('unmatched_blobs', '?')} unmatched/{registry.get('matching_blobs', '?')} matching")
         changed = event.get("changed_paths")
         if isinstance(changed, list):
             details.append(f"{len(changed)} changed paths")

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OliverTaylor246/docker-layer-optimizer/blob/main/docs/observation-schema-v3.json",
+  "title": "Docker Layer Optimizer observation v3",
+  "type": "object",
+  "required": ["schema_version", "timestamp", "kind", "status", "project_root", "changed_paths"],
+  "properties": {
+    "schema_version": {"const": 3},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "kind": {"enum": ["build", "deploy", "task"]},
+    "status": {"enum": ["success", "failure", "partial"]},
+    "project_root": {"type": "string"},
+    "target_key": {"type": "string"},
+    "dockerfile": {
+      "type": ["object", "null"],
+      "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}},
+      "additionalProperties": false
+    },
+    "tag": {"type": ["string", "null"]},
+    "platform": {"type": ["string", "null"]},
+    "target": {"type": ["string", "null"]},
+    "builder": {"type": ["string", "null"]},
+    "output": {"enum": ["load", "push"]},
+    "duration_seconds": {"type": ["number", "null"], "minimum": 0},
+    "context_bytes": {"type": ["integer", "null"], "minimum": 0},
+    "changed_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "bytes_pushed": {"type": ["integer", "null"], "minimum": 0},
+    "invalidated_from": {"type": ["integer", "null"], "minimum": 0},
+    "steps": {
+      "type": ["object", "null"],
+      "properties": {
+        "progress_format": {"enum": ["rawjson", "plain"]},
+        "total": {"type": "integer", "minimum": 0},
+        "cached": {"type": "integer", "minimum": 0},
+        "rebuilt": {"type": "integer", "minimum": 0},
+        "resolved": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0},
+        "incomplete": {"type": "integer", "minimum": 0},
+        "items": {"type": "array", "items": {"$ref": "#/$defs/step"}}
+      },
+      "additionalProperties": true
+    },
+    "image": {"type": ["object", "null"], "additionalProperties": true},
+    "registry": {"type": ["object", "null"], "additionalProperties": true},
+    "metadata": {"type": "object", "additionalProperties": {"type": "string"}},
+    "inspection_error": {"type": ["string", "null"]},
+    "overhead": {
+      "type": ["object", "null"],
+      "properties": {
+        "snapshot_seconds": {"type": "number", "minimum": 0},
+        "inspection_seconds": {"type": "number", "minimum": 0},
+        "non_build_seconds": {"type": "number", "minimum": 0},
+        "wrapper_seconds": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": ["step", "opcode", "instruction_sha256", "status", "duration_seconds"],
+      "properties": {
+        "step": {"type": ["string", "null"]},
+        "opcode": {"type": "string"},
+        "instruction_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "status": {"enum": ["cached", "rebuilt", "resolved", "failed", "running"]},
+        "duration_seconds": {"type": ["number", "null"], "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
