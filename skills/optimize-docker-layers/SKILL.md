@@ -1,6 +1,6 @@
 ---
 name: optimize-docker-layers
-description: Measure, analyze, and improve Dockerfile or Containerfile layer caching using deterministic BuildKit observations, resulting image layer DiffIDs, Git change history, and local task history. Use when Docker builds or deployments are slow or expensive, COPY/RUN ordering causes cache invalidation, a container build needs review, or layer layout should adapt to how a project changes over time.
+description: Measure, analyze, and improve Dockerfile or Containerfile layer caching and deployment latency using deterministic BuildKit observations, image layer DiffIDs, deployment phase markers, Git change history, and local task history. Use when Docker builds or deployments are slow or expensive, COPY/RUN ordering causes cache invalidation, readiness or transfer time needs separation, a container build needs review, or layer layout should adapt to how a project changes over time.
 ---
 
 # Optimize Docker Layers
@@ -39,6 +39,15 @@ The build command prefers BuildKit's structured `rawjson` progress, where cache 
 
 Treat `registry.unmatched_compressed_bytes` as bytes represented by current blobs absent from the previous observed manifest. Do not describe it as actual upload traffic or a cloud bill: a registry, mirror, or proxy can already contain those blobs.
 
+Profile an authorized deployment when build time alone does not explain the user-visible delay:
+
+```sh
+dlo deploy --root "$PROJECT_ROOT" --target device-or-environment -- DEPLOYMENT COMMAND
+dlo history --root "$PROJECT_ROOT"
+```
+
+The profiler auto-detects Wendy and Docker Compose. For other systems, use `--adapter generic` with one or more `--phase-marker 'PHASE=REGEX'` values. Treat marker-derived phase durations as output-stream attribution, not internal platform telemetry. Report classified and unclassified time, and never infer an unobserved phase.
+
 Never estimate missing timings, layer counts, or bytes. Report observer overhead separately from Docker build time. Do not claim that a Dockerfile instruction maps one-to-one to an image layer; BuildKit steps and resulting image layers are separate measurements.
 
 ## Change safely
@@ -53,7 +62,7 @@ Never estimate missing timings, layer counts, or bytes. Report observer overhead
 
 ## Learn from work
 
-Measured builds automatically snapshot the effective local context and record changed paths on the next successful or failed run. To record a relevant non-build task:
+Measured builds and deployments automatically snapshot the effective local context and record changed paths on the next run. To record a relevant non-build task:
 
 ```sh
 dlo record --root "$PROJECT_ROOT" --kind task --status success --from-git --tag dependencies
@@ -61,8 +70,8 @@ dlo record --root "$PROJECT_ROOT" --kind task --status success --from-git --tag 
 
 Use short coarse tags such as `source`, `dependencies`, `config`, `assets`, `tests`, `build`, or `runtime`. Never store prompts, problem descriptions, source contents, secrets, logs, environment values, or build-argument values.
 
-Observations are stored in the operating system's user cache, outside the repository, with `DLO_CACHE_DIR` available as an override. Re-run `analyze` after meaningful tasks or builds and say when local observations changed a recommendation.
+Observations are stored in the operating system's user cache, outside the repository, with `DLO_CACHE_DIR` available as an override. Deployment commands and output logs are not persisted. Re-run `analyze` after meaningful tasks, builds, or deployments and say when local observations changed a recommendation.
 
 ## Report
 
-Return the largest expected rebuild cost, evidence depth, measured cache and layer/blob counts when available, the exact proposed or applied change, validation results, and remaining uncertainty such as dynamic paths, generated files, remote caches, or unknown registry-side deduplication.
+Return the largest expected rebuild cost, evidence depth, measured cache and layer/blob counts, deployment phase medians when available, the exact proposed or applied change, validation results, and remaining uncertainty such as dynamic paths, generated files, output-marker accuracy, remote caches, or unknown registry-side deduplication.

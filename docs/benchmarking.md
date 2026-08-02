@@ -11,6 +11,15 @@ The default is five repetitions. Reported p95 is the nearest-rank percentile, wh
 
 The synthetic matrix answers whether a specific manifest-first restructuring improves cache reuse. It does not model the frequency of cold builds during normal development. For that, use a development-lifecycle profile with one explicitly labeled first build, repeated no-op and source edits on the persistent cache, dependency edits, and a separately labeled cache-loss recovery run. End-to-end deployment profiles must split build, export, transfer, device unpack, replacement, and readiness/warmup when the deployment system exposes those phases.
 
+Use the deployment profiler for each lifecycle repetition:
+
+```sh
+dlo deploy --root . --target test-device -- DEPLOYMENT COMMAND
+dlo history --root .
+```
+
+Wendy and Docker Compose markers are built in. Other systems require explicit `--phase-marker 'PHASE=REGEX'` values. Because these durations are attributed from received output lines, retain unclassified time and do not present marker timings as native platform traces.
+
 Run all cases:
 
 ```sh

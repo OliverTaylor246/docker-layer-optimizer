@@ -1,4 +1,4 @@
 interface:
   display_name: "Optimize Docker Layers"
-  short_description: "Learn change patterns and reduce rebuild cost"
-  default_prompt: "Use $optimize-docker-layers to analyze this project and improve its Docker layer cache."
+  short_description: "Profile deploys and reduce rebuild cost"
+  default_prompt: "Use $optimize-docker-layers to profile this project's deployment and improve its Docker layer cache."

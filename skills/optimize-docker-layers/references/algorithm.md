@@ -14,6 +14,14 @@ Before each build, the tool hashes regular files in its approximation of the eff
 
 The analyzer reads logical `FROM`, `COPY`, `ADD`, and `RUN` instructions, paths from `git ls-files` filtered through the applicable root or Dockerfile-specific ignore file, changed-path sets from recent commits, and optional local observations from the user's operating-system cache. Dockerfile and ignore-file paths are excluded from context-copy matching because Docker does not make them available to `COPY`.
 
+## Deployment observations
+
+`dlo deploy -- COMMAND` runs a deployment command without a shell, merges its stdout and stderr for display, and timestamps lines as they are received. Wendy and Docker Compose adapters map known output markers to build, export, transfer, unpack, replacement, and readiness phases. A generic adapter accepts explicit `PHASE=REGEX` markers.
+
+The interval after a marker is attributed to that phase until another known marker arrives. Time before the first marker is unclassified. Repeated phases are accumulated as separate segments, which supports multi-service builds and replacement flows. This model is deterministic and useful for bottleneck classification, but line buffering and platform logging behavior make it less precise than native tracing.
+
+The profiler persists phase totals, segment counts, classified and unclassified time, adapter, exit code, coarse signals, target name, and changed paths. It does not persist the command, its arguments, environment, or output. A zero-exit command with a recognized readiness timeout is recorded as partial rather than successful.
+
 ## Change likelihood
 
 Recent commits and observations receive exponentially decaying weights. For a context input, change likelihood is the weighted fraction of change sets in which any matching tracked path changed. With both sources available, Git history contributes 70% and local observations 30%.
@@ -42,5 +50,6 @@ State is keyed by a hash of the canonical project path and stored under the user
 - Cache behavior also depends on base-image changes, builder configuration, remote cache availability, secrets, mounts, platform, and exporters.
 - Loaded-image DiffID reuse measures uncompressed filesystem layer identity. Pushed-image blob reuse measures compressed manifest identity, not registry transfer bytes.
 - Reordering is safe only when instructions have no semantic dependency on one another or on intervening commands.
+- Deployment phases come from received output markers; silent work, buffered logs, overlapping work, and incomplete platform output can be unclassified or attributed imprecisely.
 
 Prefer repeated measured builds when they disagree with heuristic scores.

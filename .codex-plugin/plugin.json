@@ -1,7 +1,7 @@
 {
   "name": "docker-layer-optimizer",
-  "version": "0.3.0-beta.1",
-  "description": "Measure Docker cache invalidation and learn which project inputs change together.",
+  "version": "0.4.0-beta.1",
+  "description": "Measure Docker cache invalidation, deployment phases, and project change patterns.",
   "author": {
     "name": "Oliver Taylor",
     "email": "35031747+OliverTaylor246@users.noreply.github.com",
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Docker Layer Optimizer",
     "shortDescription": "Learn change patterns and reduce rebuild cost",
-    "longDescription": "Measures BuildKit cache hits and resulting image layers, then combines those observations with Git history to reduce repeated Docker build work.",
+    "longDescription": "Measures BuildKit cache hits, image layers, and deployment phases, then combines those observations with Git history to reduce repeated build and deployment work.",
     "developerName": "Oliver Taylor",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],

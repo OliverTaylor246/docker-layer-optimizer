@@ -21,6 +21,7 @@ assert SPEC and SPEC.loader
 sys.modules[SPEC.name] = optimizer
 SPEC.loader.exec_module(optimizer)
 import build_observer
+import deployment_observer
 
 
 def run(root: Path, *args: str) -> None:
@@ -338,6 +339,128 @@ class OptimizerTests(unittest.TestCase):
         serialized = json.dumps(optimizer.load_events(root))
         self.assertIn("local-image-inspection-failed", serialized)
         self.assertNotIn(private_error, serialized)
+
+    def test_wendy_deployment_phase_tracker_separates_lifecycle(self):
+        tracker = deployment_observer.DeploymentPhaseTracker("wendy")
+        tracker.start(0.0)
+        observations = [
+            ("Building service app...", 0.1),
+            ("#9 exporting to oci image format", 2.0),
+            ("[apple-container] pushing image: example", 3.0),
+            ("Pulling image on device...", 4.0),
+            ("Unpack plan: 8 layers", 5.0),
+            ("Creating container...", 6.0),
+            ("Waiting for device:8080 to be ready...", 7.0),
+            ("Ready.", 9.0),
+        ]
+        for line, timestamp in observations:
+            tracker.feed(line, timestamp)
+        result = tracker.finish(10.0)
+        self.assertEqual(result["dominant_phase"], "readiness")
+        self.assertEqual(result["phases"]["build"]["duration_seconds"], 1.9)
+        self.assertEqual(result["phases"]["export"]["duration_seconds"], 1.0)
+        self.assertEqual(result["phases"]["transfer"]["duration_seconds"], 2.0)
+        self.assertEqual(result["phases"]["unpack"]["duration_seconds"], 1.0)
+        self.assertEqual(result["phases"]["replacement"]["duration_seconds"], 1.0)
+        self.assertEqual(result["phases"]["readiness"]["duration_seconds"], 3.0)
+        self.assertEqual(result["unclassified_seconds"], 0.1)
+
+    def test_custom_deployment_markers_validate_and_classify(self):
+        markers = deployment_observer.parse_phase_markers(["build=^compile", "readiness=^healthy$"])
+        tracker = deployment_observer.DeploymentPhaseTracker("generic", markers)
+        tracker.start(0.0)
+        tracker.feed("compile application", 1.0)
+        tracker.feed("healthy", 4.0)
+        result = tracker.finish(5.0)
+        self.assertEqual(result["phases"]["build"]["duration_seconds"], 3.0)
+        self.assertEqual(result["phases"]["readiness"]["duration_seconds"], 1.0)
+        with self.assertRaises(ValueError):
+            deployment_observer.parse_phase_markers(["unknown=marker"])
+        with self.assertRaises(ValueError):
+            deployment_observer.parse_phase_markers(["build=[invalid"])
+
+    def test_deployment_adapter_detection_and_compose_markers(self):
+        self.assertEqual(deployment_observer.infer_adapter(["wendy", "run"]), "wendy")
+        self.assertEqual(deployment_observer.infer_adapter(["docker", "compose", "up"]), "compose")
+        self.assertEqual(deployment_observer.infer_adapter(["docker-compose", "up"]), "compose")
+        self.assertEqual(deployment_observer.infer_adapter(["custom-deploy"]), "generic")
+        tracker = deployment_observer.DeploymentPhaseTracker("compose")
+        tracker.start(0.0)
+        tracker.feed("[+] Building 2.0s", 0.1)
+        tracker.feed("#8 exporting to image", 2.0)
+        tracker.feed("Container app Recreated", 3.0)
+        tracker.feed("Container app Healthy", 4.0)
+        result = tracker.finish(5.0)
+        self.assertTrue(result["phases"]["build"]["observed"])
+        self.assertTrue(result["phases"]["export"]["observed"])
+        self.assertTrue(result["phases"]["replacement"]["observed"])
+        self.assertTrue(result["phases"]["readiness"]["observed"])
+
+    def test_deploy_command_records_phases_without_command_or_logs(self):
+        root = self.make_repo()
+        args = optimizer.parser().parse_args([
+            "deploy", "--root", str(root), "--adapter", "wendy", "--target", "test-device",
+            "--quiet", "--", "private-deploy-command", "--token", "PRIVATE_TOKEN",
+        ])
+
+        def fake_execute(command, command_root, tracker, quiet, json_output):
+            self.assertEqual(command[0], "private-deploy-command")
+            self.assertEqual(command_root, root.resolve())
+            for line in (
+                "Building service SECRET_BUILD_OUTPUT",
+                "Pulling image on device...",
+                "Unpack plan: 2 layers",
+                "Creating container...",
+                "Waiting for device:8080 to be ready...",
+                "Ready.",
+            ):
+                tracker.feed(line, deployment_observer.time.monotonic())
+            return 0
+
+        clock = iter([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
+        with mock.patch.object(deployment_observer, "_execute", fake_execute), \
+                mock.patch.object(deployment_observer.time, "monotonic", side_effect=lambda: next(clock)), \
+                mock.patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(deployment_observer.run_deploy(args, optimizer), 0)
+
+        event = optimizer.load_events(root)[-1]
+        serialized = json.dumps(event)
+        self.assertEqual(event["kind"], "deploy")
+        self.assertEqual(event["status"], "success")
+        self.assertEqual(event["deployment"]["adapter"], "wendy")
+        self.assertEqual(event["deployment"]["dominant_phase"], "readiness")
+        self.assertNotIn("PRIVATE_TOKEN", serialized)
+        self.assertNotIn("SECRET_BUILD_OUTPUT", serialized)
+        self.assertNotIn("private-deploy-command", serialized)
+
+        report = optimizer.analyze(root, root / "Dockerfile", 100)
+        self.assertEqual(report["evidence"]["measured_deployments"], 1)
+        self.assertEqual(report["evidence"]["dominant_deployment_phase"], "readiness")
+        self.assertIn("investigate-deploy-runtime", {item["kind"] for item in report["recommendations"]})
+
+    def test_readiness_timeout_marks_successful_command_partial(self):
+        tracker = deployment_observer.DeploymentPhaseTracker("wendy")
+        tracker.start(0.0)
+        tracker.feed("service error rate is zero", 0.5)
+        tracker.feed("Waiting for device to be ready...", 1.0)
+        tracker.feed("Warning: readiness probe timed out after 1m0s", 61.0)
+        result = tracker.finish(62.0)
+        self.assertIn("readiness-timeout", result["signals"])
+        self.assertNotIn("deployment-failed", result["signals"])
+
+    def test_deploy_command_propagates_failure_exit_code(self):
+        root = self.make_repo()
+        args = optimizer.parser().parse_args([
+            "deploy", "--root", str(root), "--adapter", "generic", "--target", "failure-test",
+            "--quiet", "--", "false-command",
+        ])
+        with mock.patch.object(deployment_observer, "_execute", return_value=7), \
+                mock.patch.object(deployment_observer.time, "monotonic", side_effect=[1.0, 2.0]), \
+                mock.patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(deployment_observer.run_deploy(args, optimizer), 7)
+        event = optimizer.load_events(root)[-1]
+        self.assertEqual(event["status"], "failure")
+        self.assertEqual(event["deployment"]["exit_code"], 7)
 
 
 if __name__ == "__main__":

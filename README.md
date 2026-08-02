@@ -9,7 +9,7 @@ Wrapping a build does not itself make Docker faster. The speedup comes from Dock
 Python 3.9+, Git, Docker, and Docker Buildx are required for measured builds. Static analysis works without Docker.
 
 ```sh
-python3 -m pip install docker-layer-optimizer==0.3.0b1
+python3 -m pip install docker-layer-optimizer==0.4.0b1
 ```
 
 Until the beta is available from PyPI, install the repository directly:
@@ -49,6 +49,28 @@ dlo build --root . --dockerfile docker/Dockerfile --tag my-app:dev \
   --platform linux/amd64 --target runtime --build-arg VERSION=dev
 ```
 
+## Profile a deployment
+
+Wrap the deployment command after `--` to measure the complete path rather than treating every delay as a Docker build problem:
+
+```sh
+dlo deploy --root . --target woof -- wendy --device woof.local run --detach --yes
+dlo deploy --root . --target staging -- docker compose up --build -d --wait
+```
+
+`dlo deploy` auto-detects Wendy and Docker Compose output and divides observed time into build, export, transfer, unpack, replacement, and readiness phases. It records changed project paths and target-scoped timing history, then `dlo analyze` reports median phases and recommends whether to work on Docker layers or container startup/readiness.
+
+For another deployment system, add output markers without writing an adapter:
+
+```sh
+dlo deploy --root . --adapter generic \
+  --phase-marker 'build=^Compiling' \
+  --phase-marker 'readiness=^Service ready$' \
+  -- ./deploy.sh
+```
+
+Phase timing is based on when output markers are received. It is deterministic for a given stream but is not internal telemetry from the deployment platform. The wrapped command and output logs are never persisted. Use `--quiet` to hide command output or `--json` for a machine-readable observation.
+
 ## Analyze and learn
 
 ```sh
@@ -67,7 +89,7 @@ The analyzer:
 
 It recommends changes but does not rewrite Dockerfiles automatically. Layer order is constrained by build semantics, so validate every restructuring with representative builds.
 
-Builds automatically snapshot effective local context paths and hashes. A relevant non-build task can be recorded without storing its description:
+Builds and profiled deployments automatically snapshot effective local context paths and hashes. A relevant non-build task can be recorded without storing its description:
 
 ```sh
 dlo record --root . --kind task --status success --from-git --tag dependencies
@@ -81,7 +103,7 @@ Observations live outside the repository in the operating system's user cache:
 - Linux: `${XDG_CACHE_HOME:-~/.cache}/docker-layer-optimizer/`
 - Windows: `%LOCALAPPDATA%/docker-layer-optimizer/`
 
-Set `DLO_CACHE_DIR` to override the base directory. The tool persists paths and their hashes, project and image identifiers, coarse tags, timestamps, durations, layer/blob digests, sizes, and counts. It does not persist build logs, Dockerfile instruction text, source contents, prompts, secret contents, environment values, or build-argument values. State writes and same-target builds are locked for concurrent use.
+Set `DLO_CACHE_DIR` to override the base directory. The tool persists paths and their hashes, project and image identifiers, coarse deployment target names and signals, phase timings, tags, timestamps, durations, layer/blob digests, sizes, and counts. It does not persist build or deployment commands, output logs, Dockerfile instruction text, source contents, prompts, secret contents, environment values, or build-argument values. State writes and same-target builds or deployments are locked for concurrent use.
 
 See [SECURITY.md](SECURITY.md) for the threat model and disclosure process and [the observation schema](docs/observation-schema-v3.json) for the machine-readable contract.
 
@@ -111,6 +133,7 @@ Ask the agent to use `optimize-docker-layers`. The CLI remains the deterministic
 | Structured step counts | Docker Buildx with `--progress=rawjson` | Plain-progress fallback is less robust. |
 | Local layer comparison | A successful `--load` exporter | Compares uncompressed DiffIDs. |
 | Registry comparison | A readable pushed OCI/Docker manifest | Compares compressed blob digests and declared sizes. |
+| Deployment profiling | A command with recognizable or custom output markers | Built-in Wendy and Docker Compose adapters; does not require Docker. |
 | Platforms | Linux, macOS, Windows | Unit-tested on all three; real-Docker CI runs on Linux. |
 | Builders | Docker and docker-container Buildx drivers | Remote behavior depends on exporter and registry access. |
 

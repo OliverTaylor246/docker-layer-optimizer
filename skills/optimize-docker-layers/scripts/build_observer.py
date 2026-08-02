@@ -584,6 +584,18 @@ def render_history(events: Iterable[dict]) -> str:
         registry = event.get("registry")
         if isinstance(registry, dict):
             details.append(f"blobs {registry.get('unmatched_blobs', '?')} unmatched/{registry.get('matching_blobs', '?')} matching")
+        deployment = event.get("deployment")
+        if isinstance(deployment, dict):
+            phases = deployment.get("phases")
+            if isinstance(phases, dict):
+                observed = [
+                    f"{phase} {value.get('duration_seconds', '?')}s"
+                    for phase, value in phases.items() if isinstance(value, dict) and value.get("observed")
+                ]
+                if observed:
+                    details.append("phases " + "/".join(observed))
+            if deployment.get("dominant_phase"):
+                details.append(f"dominant {deployment['dominant_phase']}")
         changed = event.get("changed_paths")
         if isinstance(changed, list):
             details.append(f"{len(changed)} changed paths")

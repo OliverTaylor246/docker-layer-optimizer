@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docker-layer-optimizer"
-version = "0.3.0b1"
+version = "0.4.0b1"
 description = "Measure and optimize Docker layer cache invalidation using BuildKit and project history"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -30,4 +30,4 @@ docker-layer-optimizer = "docker_layer_optimizer:main"
 
 [tool.setuptools]
 package-dir = {"" = "skills/optimize-docker-layers/scripts"}
-py-modules = ["docker_layer_optimizer", "build_observer", "registry_observer"]
+py-modules = ["docker_layer_optimizer", "build_observer", "deployment_observer", "registry_observer"]

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from contextlib import contextmanager
 import dataclasses
 import datetime as dt
@@ -43,7 +44,7 @@ BUILD_TERMS = (
     "cargo build", "go build", "swift build", "npm run build", "pnpm build", "yarn build",
     "gradle build", "mvn package", "make", "cmake --build", "dotnet publish",
 )
-VERSION = "0.3.0b1"
+VERSION = "0.4.0b1"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -370,6 +371,29 @@ def observed_metrics(events: Sequence[dict]) -> dict:
         float(event["overhead"]["non_build_seconds"]) for event in measured_builds
         if isinstance(event.get("overhead"), dict) and event["overhead"].get("non_build_seconds") is not None
     ]
+    deployments = [event for event in events if isinstance(event.get("deployment"), dict)]
+    deployment_durations = [
+        float(event["duration_seconds"]) for event in deployments if event.get("duration_seconds") is not None
+    ]
+    phase_values: dict[str, list[float]] = {}
+    dominant_counts: dict[str, int] = {}
+    for event in deployments:
+        deployment = event["deployment"]
+        dominant = deployment.get("dominant_phase")
+        if isinstance(dominant, str):
+            dominant_counts[dominant] = dominant_counts.get(dominant, 0) + 1
+        phases = deployment.get("phases")
+        if not isinstance(phases, dict):
+            continue
+        for phase, value in phases.items():
+            if isinstance(value, dict) and value.get("observed") and value.get("duration_seconds") is not None:
+                phase_values.setdefault(str(phase), []).append(float(value["duration_seconds"]))
+    median_deployment_phases = {
+        phase: round(statistics.median(values), 3) for phase, values in sorted(phase_values.items()) if values
+    }
+    dominant_deployment_phase = None
+    if dominant_counts:
+        dominant_deployment_phase = sorted(dominant_counts, key=lambda phase: (-dominant_counts[phase], phase))[0]
     return {
         "median_duration_seconds": round(statistics.median(durations), 3) if durations else None,
         "median_bytes_pushed": int(statistics.median(pushed)) if pushed else None,
@@ -379,6 +403,11 @@ def observed_metrics(events: Sequence[dict]) -> dict:
         "median_unmatched_diff_ids": round(statistics.median(unmatched_diff_ids), 1) if unmatched_diff_ids else None,
         "median_unmatched_compressed_bytes": int(statistics.median(unmatched_compressed_bytes)) if unmatched_compressed_bytes else None,
         "median_non_build_overhead_seconds": round(statistics.median(overhead_seconds), 6) if overhead_seconds else None,
+        "measured_deployments": len(deployments),
+        "median_deployment_seconds": round(statistics.median(deployment_durations), 3) if deployment_durations else None,
+        "median_deployment_phases": median_deployment_phases,
+        "dominant_deployment_phase": dominant_deployment_phase,
+        "deployment_status_counts": dict(sorted(Counter(str(event.get("status", "unknown")) for event in deployments).items())),
     }
 
 
@@ -389,6 +418,7 @@ def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
     commits = commit_history(root, commit_limit)
     events = load_events(root)
     event_sets = event_change_sets(events)
+    metrics = observed_metrics(events)
     manifests = manifest_files(files)
     layers: list[dict] = []
 
@@ -463,6 +493,38 @@ def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
                     ),
                 })
 
+    dominant_phase = metrics["dominant_deployment_phase"]
+    phase_median = metrics["median_deployment_phases"].get(dominant_phase) if dominant_phase else None
+    if dominant_phase in {"readiness", "replacement"}:
+        recommendations.append({
+            "priority": "medium", "line": None, "kind": "investigate-deploy-runtime",
+            "message": (
+                f"Observed deployments are dominated by {dominant_phase}"
+                f"{f' (median {phase_median}s)' if phase_median is not None else ''}. "
+                "Dockerfile layer ordering cannot remove this time; inspect container lifecycle, health checks, "
+                "startup, and service warmup."
+            ),
+        })
+    elif dominant_phase in {"transfer", "unpack"}:
+        recommendations.append({
+            "priority": "medium", "line": None, "kind": "reduce-deployment-layer-churn",
+            "message": (
+                f"Observed deployments are dominated by {dominant_phase}"
+                f"{f' (median {phase_median}s)' if phase_median is not None else ''}. "
+                "Prioritize reducing changed layer content, then verify matching DiffIDs or registry blobs with "
+                "representative source edits."
+            ),
+        })
+    elif dominant_phase in {"build", "export"}:
+        recommendations.append({
+            "priority": "info", "line": None, "kind": "measure-deploy-build-path",
+            "message": (
+                f"Observed deployments are dominated by {dominant_phase}"
+                f"{f' (median {phase_median}s)' if phase_median is not None else ''}. "
+                "Use measured cache steps and layer identity to validate the static Dockerfile recommendations."
+            ),
+        })
+
     if not recommendations:
         recommendations.append({
             "priority": "info", "line": None, "kind": "measure",
@@ -473,7 +535,7 @@ def analyze(root: Path, dockerfile: Path, commit_limit: int) -> dict:
         "schema_version": 3,
         "project_root": str(root),
         "dockerfile": str(dockerfile.relative_to(root) if dockerfile.is_relative_to(root) else dockerfile),
-        "evidence": {"commits": len(commits), "local_observations": len(events), **observed_metrics(events)},
+        "evidence": {"commits": len(commits), "local_observations": len(events), **metrics},
         "volatile_areas": area_stats(commits, files),
         "cochange_pairs": cochange_pairs(commits),
         "layers": sorted(layers, key=lambda item: -item["expected_rebuild_cost"]),
@@ -563,6 +625,16 @@ def render(report: dict) -> str:
         lines.append(f"Median DLO non-build overhead: {evidence['median_non_build_overhead_seconds']}s")
         if evidence["median_unmatched_compressed_bytes"] is not None:
             lines.append(f"Median unmatched compressed registry bytes: {evidence['median_unmatched_compressed_bytes']}")
+    if evidence["measured_deployments"]:
+        lines.append(
+            f"Measured deployments: {evidence['measured_deployments']}; median total: "
+            f"{evidence['median_deployment_seconds']}s; dominant phase: {evidence['dominant_deployment_phase']}"
+        )
+        phase_text = ", ".join(
+            f"{phase} {seconds}s" for phase, seconds in evidence["median_deployment_phases"].items()
+        )
+        if phase_text:
+            lines.append(f"Median observed phases: {phase_text}")
     lines.append("\nHighest-risk context layers:")
     if not report["layers"]:
         lines.append("  (no build-context COPY or ADD instructions found)")
@@ -579,7 +651,10 @@ def render(report: dict) -> str:
     for index, recommendation in enumerate(report["recommendations"], 1):
         lines.append(f"  {index}. [{recommendation['priority']}] {recommendation['message']}")
     if not evidence["local_observations"]:
-        lines.append("\nLearning profile is empty. Use `dlo build` for measured builds or `dlo record` after relevant tasks.")
+        lines.append(
+            "\nLearning profile is empty. Use `dlo build` for measured builds, `dlo deploy -- COMMAND` for "
+            "deployment phases, or `dlo record` after relevant tasks."
+        )
     return "\n".join(lines)
 
 
@@ -620,6 +695,22 @@ def parser() -> argparse.ArgumentParser:
     build_parser.add_argument("--quiet", action="store_true", help="hide Docker progress and print only the measurement summary")
     build_parser.add_argument("--json", action="store_true", help="hide Docker progress and print the observation as JSON")
 
+    deploy_parser = subparsers.add_parser(
+        "deploy", help="run a deployment command and profile build, transfer, unpack, replacement, and readiness"
+    )
+    deploy_parser.add_argument("--root", default=".")
+    deploy_parser.add_argument("--dockerfile")
+    deploy_parser.add_argument("--adapter", choices=("auto", "wendy", "compose", "generic"), default="auto")
+    deploy_parser.add_argument("--target", help="coarse deployment target name used to isolate change-history baselines")
+    deploy_parser.add_argument(
+        "--phase-marker", action="append", default=[], metavar="PHASE=REGEX",
+        help="add a custom output marker for build, export, transfer, unpack, replacement, or readiness",
+    )
+    deploy_parser.add_argument("--tag", action="append", default=[])
+    deploy_parser.add_argument("--quiet", action="store_true", help="hide deployment output and print only the phase summary")
+    deploy_parser.add_argument("--json", action="store_true", help="hide deployment output and print the observation as JSON")
+    deploy_parser.add_argument("deploy_command", nargs=argparse.REMAINDER, metavar="-- COMMAND")
+
     history_parser = subparsers.add_parser("history", help="show locally recorded observations")
     history_parser.add_argument("--root", default=".")
     history_parser.add_argument("--limit", type=int, default=20)
@@ -658,6 +749,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             else:
                 from build_observer import render_history
                 print(render_history(events))
+        elif args.command == "deploy":
+            import deployment_observer
+            return deployment_observer.run_deploy(args, sys.modules[__name__])
         else:
             import build_observer
             return build_observer.run_build(args, sys.modules[__name__])

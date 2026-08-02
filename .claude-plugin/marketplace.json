@@ -10,8 +10,8 @@
         "source": "github",
         "repo": "OliverTaylor246/docker-layer-optimizer"
       },
-      "description": "Measure Docker cache invalidation and learn which project inputs change together",
-      "version": "0.3.0-beta.1",
+      "description": "Measure Docker cache invalidation, deployment phases, and project change patterns",
+      "version": "0.4.0-beta.1",
       "category": "development",
       "tags": ["docker", "buildkit", "cache", "optimization"]
     }

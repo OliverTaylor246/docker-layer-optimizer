@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0b1 - 2026-08-02
+
+- Add `dlo deploy -- COMMAND` to profile build, export, transfer, unpack, replacement, and readiness phases.
+- Auto-detect Wendy and Docker Compose output, with custom `PHASE=REGEX` markers for other deployment systems.
+- Persist phase timings, changed paths, coarse failure signals, and target-scoped baselines without storing commands or logs.
+- Feed deployment medians and dominant phases into `dlo analyze` recommendations and `dlo history`.
+- Detect successful commands with readiness timeouts as partial deployments instead of successful builds.
+
 ## 0.3.0b1 - 2026-08-01
 
 - Prefer BuildKit `rawjson` progress and persist privacy-safe step fingerprints instead of instruction text.

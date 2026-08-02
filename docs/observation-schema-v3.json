@@ -11,6 +11,7 @@
     "status": {"enum": ["success", "failure", "partial"]},
     "project_root": {"type": "string"},
     "target_key": {"type": "string"},
+    "target_name": {"type": ["string", "null"]},
     "dockerfile": {
       "type": ["object", "null"],
       "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}},
@@ -45,6 +46,37 @@
     "registry": {"type": ["object", "null"], "additionalProperties": true},
     "metadata": {"type": "object", "additionalProperties": {"type": "string"}},
     "inspection_error": {"type": ["string", "null"]},
+    "deployment": {
+      "type": ["object", "null"],
+      "required": ["adapter", "phase_source", "phases", "dominant_phase", "classified_seconds", "unclassified_seconds", "signals", "exit_code"],
+      "properties": {
+        "adapter": {"enum": ["wendy", "compose", "generic"]},
+        "phase_source": {"const": "output-markers"},
+        "phases": {
+          "type": "object",
+          "properties": {
+            "build": {"$ref": "#/$defs/deploymentPhase"},
+            "export": {"$ref": "#/$defs/deploymentPhase"},
+            "transfer": {"$ref": "#/$defs/deploymentPhase"},
+            "unpack": {"$ref": "#/$defs/deploymentPhase"},
+            "replacement": {"$ref": "#/$defs/deploymentPhase"},
+            "readiness": {"$ref": "#/$defs/deploymentPhase"}
+          },
+          "required": ["build", "export", "transfer", "unpack", "replacement", "readiness"],
+          "additionalProperties": false
+        },
+        "dominant_phase": {"enum": ["build", "export", "transfer", "unpack", "replacement", "readiness", null]},
+        "classified_seconds": {"type": "number", "minimum": 0},
+        "unclassified_seconds": {"type": "number", "minimum": 0},
+        "signals": {
+          "type": "array",
+          "items": {"enum": ["readiness-timeout", "build-failed", "deployment-failed"]},
+          "uniqueItems": true
+        },
+        "exit_code": {"type": "integer"}
+      },
+      "additionalProperties": false
+    },
     "overhead": {
       "type": ["object", "null"],
       "properties": {
@@ -57,6 +89,16 @@
     }
   },
   "$defs": {
+    "deploymentPhase": {
+      "type": "object",
+      "required": ["duration_seconds", "segments", "observed"],
+      "properties": {
+        "duration_seconds": {"type": "number", "minimum": 0},
+        "segments": {"type": "integer", "minimum": 0},
+        "observed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
     "step": {
       "type": "object",
       "required": ["step", "opcode", "instruction_sha256", "status", "duration_seconds"],
