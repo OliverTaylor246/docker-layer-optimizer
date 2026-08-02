@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-02",
+  "device": {
+    "name": "Woof",
+    "os": "Ubuntu 22.04",
+    "architecture": "arm64",
+    "gpu": "NVIDIA sm_87",
+    "wendy_agent_version": "dev"
+  },
+  "builder": "Apple Container",
+  "deploy_command": "wendy --device woof.local run --prefix PROJECT --detach --yes",
+  "workload": {
+    "runtime": "python:3.11-slim",
+    "application": "FastAPI and Uvicorn readiness service",
+    "dependency_layer": "FastAPI 0.116.1 and Uvicorn 0.35.0",
+    "control_layout": "COPY . . before pip install",
+    "optimized_layout": "COPY requirements.txt, pip install, then COPY app.py"
+  },
+  "first_deploy_seconds": {
+    "control": 10.29,
+    "optimized": 9.58,
+    "comparative_claim": false
+  },
+  "no_op": {
+    "control_seconds": [3.03, 3.31, 3.29, 2.81, 3.30],
+    "optimized_seconds": [3.86, 2.95, 3.27, 2.84, 2.92],
+    "control_median_seconds": 3.29,
+    "optimized_median_seconds": 2.95,
+    "control_mean_seconds": 3.148,
+    "optimized_mean_seconds": 3.168,
+    "comparative_claim": false
+  },
+  "source_edit": {
+    "control_seconds": [10.53, 9.45, 11.08, 11.08, 11.47],
+    "optimized_seconds": [4.18, 4.45, 4.58, 7.39, 5.89],
+    "control_median_seconds": 11.08,
+    "optimized_median_seconds": 4.58,
+    "median_savings_seconds": 6.50,
+    "median_savings_percent": 58.66,
+    "control_build_median_seconds": 6.523,
+    "optimized_build_median_seconds": 2.114,
+    "build_median_savings_percent": 67.59,
+    "control_device_layers_reused": 5,
+    "control_device_layers_total": 7,
+    "control_applied_dependency_layer": "about 8.6 MiB",
+    "optimized_device_layers_reused": 7,
+    "optimized_device_layers_total": 8,
+    "optimized_applied_source_layer_bytes_range": [265, 268]
+  },
+  "dependency_edit_negative_control": {
+    "control_seconds": [12.93, 13.75, 13.78],
+    "optimized_seconds": [13.24, 11.74, 15.11],
+    "control_median_seconds": 13.75,
+    "optimized_median_seconds": 13.24,
+    "median_difference_percent": 3.71,
+    "result": "Both layouts rebuilt and applied the dependency layer; the timing difference was inconsistent with a meaningful optimization."
+  },
+  "excluded_setup_attempt": {
+    "reason": "The initial manifests omitted host-network entitlement, so a warm build completed but the Wendy readiness probe timed out. The manifests were corrected, both caches were rewarmed, and the measured matrix was restarted.",
+    "docker_build_seconds": 0.594,
+    "readiness_timeout_seconds": 60
+  },
+  "cleanup": {
+    "benchmark_apps_removed": ["dlo-woof-control", "dlo-woof-optimized"],
+    "container_images_cleanup_requested": true,
+    "existing_workloads_modified": false
+  }
+}
