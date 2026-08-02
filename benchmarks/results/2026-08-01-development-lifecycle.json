@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-01",
+  "principle": "A normal development baseline is warm-cache deployment, not a repeated cold build.",
+  "results": {
+    "g1_xbox_historical_wendy": {
+      "project": "g1-xbox-controller",
+      "platform": "linux/arm64",
+      "builder": "apple-container",
+      "output": "wendy deploy and readiness check",
+      "first_project_build_seconds": 63.6,
+      "warm_deploy_seconds": [
+        8.8502,
+        10.0378,
+        9.204,
+        8.9565,
+        8.3418,
+        7.4509,
+        8.8914,
+        9.4876
+      ],
+      "warm_median_seconds": 8.92395,
+      "warm_mean_seconds": 8.902525,
+      "warm_min_seconds": 7.4509,
+      "warm_max_seconds": 10.0378,
+      "device_layers_reused": 7,
+      "device_layers_total": 8,
+      "typical_changed_layer_kib": 67,
+      "dlo_dockerfile_change_applied": false
+    },
+    "g1_xbox_controlled_local_build": {
+      "project": "g1-xbox-controller",
+      "platform": "linux/arm64",
+      "builder": "wendy-mtls",
+      "output": "local image load",
+      "cold_cache_seconds": 263.287,
+      "source_edit_seconds": [3.792, 1.492, 1.221],
+      "source_edit_median_seconds": 1.492,
+      "dependency_edit_seconds": 33.729,
+      "source_cached_steps": 8,
+      "source_rebuilt_steps": 1,
+      "source_layers_reused": 7,
+      "source_layers_total": 8,
+      "dependency_cached_steps": 3,
+      "dependency_rebuilt_steps": 6,
+      "dependency_layers_reused": 5,
+      "dependency_layers_total": 8,
+      "dlo_dockerfile_change_applied": false
+    },
+    "woof_control_live_wendy": {
+      "project": "woof-console/control_agent",
+      "device": "woof",
+      "platform": "linux/arm64",
+      "builder": "wendy-mtls",
+      "output": "wendy deploy without start",
+      "first_deploy_seconds": 18.75,
+      "no_op_seconds": 7.02,
+      "source_edit_seconds": [7.19, 6.52, 6.04],
+      "source_edit_median_seconds": 6.52,
+      "source_edit_mean_seconds": 6.583333,
+      "source_cached_steps": 1,
+      "source_rebuilt_steps": 1,
+      "device_layers_reused": 5,
+      "device_layers_total": 6,
+      "dlo_dockerfile_change_applied": false
+    },
+    "collie_heavy_path": {
+      "project": "collie-demo",
+      "device": "woof",
+      "platform": "linux/arm64",
+      "observations": [
+        "A historical deployment first failed because two ignored model artifacts were absent from the local build context.",
+        "The recovered build spent about six minutes unpacking the Jetson/PyTorch base and uploading changed layers.",
+        "Later source/UI deployments took about 127 to 130 seconds despite cache reuse because export, transfer, restart, and inference warmup remained.",
+        "A 2026-08-01 cold Docker-builder attempt failed after 382.39 seconds when the 14.9 GiB BuildKit capacity was exhausted."
+      ],
+      "dlo_dockerfile_change_applied": false
+    }
+  },
+  "attribution": {
+    "wrapper_speedup_claim_percent": 0,
+    "reason": "No Dockerfile or context optimization was applied in these lifecycle measurements. Docker and Wendy supplied the observed cache reuse.",
+    "valid_dlo_claim": "DLO measures cache behavior, detects regressions, and verifies improvements after a concrete Dockerfile or context change."
+  }
+}

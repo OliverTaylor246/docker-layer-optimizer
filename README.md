@@ -123,7 +123,7 @@ python3 -m pip install -e .
 python3 benchmarks/run_benchmarks.py --iterations 5 --output benchmark.json
 ```
 
-The benchmark compares an intentionally broad `COPY . .` control with a manifest-first Dockerfile. Results report medians and p95 values; they are not universal performance claims. See [the methodology](docs/benchmarking.md) and the [five-run Colima ARM64 result](benchmarks/results/2026-08-01-colima-arm64.md).
+The synthetic benchmark compares an intentionally broad `COPY . .` control with a manifest-first Dockerfile. Results report medians and p95 values; they are not universal performance claims. The separate [G1 and Woof development-lifecycle baseline](benchmarks/results/2026-08-01-development-lifecycle.md) treats warm-cache deployment as the normal case and attributes no speedup to DLO unless a concrete optimization is applied. See [the methodology](docs/benchmarking.md) and the [five-run Colima ARM64 result](benchmarks/results/2026-08-01-colima-arm64.md).
 
 ```sh
 python3 -m unittest discover -s tests -v
