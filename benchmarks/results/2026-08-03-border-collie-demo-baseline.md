@@ -179,3 +179,28 @@ sizes, not packet-level upload telemetry, and a production registry may already
 contain shared blobs. Device transfer, unpack, replacement, and readiness have
 not yet been measured for this release. Both image layouts passed an import
 smoke check, and the source repository passed all 45 project tests.
+
+## Partial Woof deployment comparison
+
+DLO then wrapped real Wendy deployments to the ARM64 Woof device with the
+Docker builder and forced content-defined chunking. Hardware motion remained
+disabled. Alternating layouts produced a misleading near-tie because each run
+displaced the immediately preceding cache path, so those observations are
+retained but excluded from proof.
+
+A corrected warmed, consecutive control block completed three source edits in
+70.347, 69.641, and 68.682 seconds (69.641-second median). Median phases were
+42.697 seconds build, 18.892 export, 0.012 transfer marker, 5.852 unpack, 0.671
+replacement, and 1.165 readiness.
+
+One consecutive candidate source edit completed in 11.117 seconds: 8.879 build,
+0.164 export, 0.025 transfer marker, 0.045 unpack, 0.422 replacement, and 1.166
+readiness. That is 58.524 seconds (84.03%) below the control median, but the
+user stopped the matrix before the remaining candidate trials. It is therefore
+a preliminary observation, not a verified device-level speedup.
+
+The temporary source probe was removed, the verified candidate was restored,
+and the device passed TCP/API readiness. All 45 project tests also passed. The
+remaining uncertainty is the missing repeated candidate block; the completed
+control block need not be repeated if the same device and deployment path are
+still representative when testing resumes.
