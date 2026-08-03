@@ -5,7 +5,29 @@ description: Measure, analyze, and improve Dockerfile or Containerfile layer cac
 
 # Optimize Docker Layers
 
-Use `dlo` as the source of measured facts and the bundled script as a fallback. Use agent judgment only to interpret evidence, identify semantic constraints, and make safe edits.
+Use `dlo` as the source of measured facts and the bundled script as a fallback. The CLI owns candidate IDs, snapshots, benchmarks, correctness gates, payback, and safe application. Use agent judgment to interpret evidence, identify semantic constraints, and propose unusual candidates.
+
+## Optimize
+
+Start with a read-only plan:
+
+```sh
+dlo optimize --root "$PROJECT_ROOT" --plan --json
+```
+
+If DLO produces no built-in candidate, create a Docker-related unified diff and submit it without editing the project:
+
+```sh
+dlo optimize --root "$PROJECT_ROOT" --candidate /tmp/dlo-candidate.patch --plan --json
+```
+
+Explain protected changes and ensure the project has a reviewed `.dlo.yml` verification contract. Then run the same candidate without `--plan`. DLO will use disposable control and candidate snapshots and will mutate the real tree only when every proof gate passes:
+
+```sh
+dlo optimize --root "$PROJECT_ROOT" --candidate /tmp/dlo-candidate.patch --json
+```
+
+Do not claim success when the result is `rejected`, `skipped-payback`, stale, or missing a correctness contract. Do not bypass the payback precheck with `--force` unless the user has authorized the extra build cost. `--apply-approved CANDIDATE_ID` represents explicit approval of an unverified plan; never infer that approval.
 
 ## Analyze
 
@@ -24,7 +46,7 @@ python3 "$SKILL_DIR/scripts/docker_layer_optimizer.py" analyze --root "$PROJECT_
 
 Use `--dockerfile path/to/Dockerfile` for a non-default file and `--json` for structured output. Read [algorithm.md](references/algorithm.md) when interpreting scores, extending the tool, or explaining limitations.
 
-3. Present the highest-risk invalidation point and the smallest safe restructuring plan before editing. Prefer dependency manifests before dependency installation, volatile source after stable expensive work, unrelated volatile inputs in separate late copies, useful BuildKit cache mounts, and an effective `.dockerignore`.
+3. Present the highest-risk invalidation point and the smallest safe restructuring plan. Prefer dependency manifests before dependency installation, volatile source after stable expensive work, unrelated volatile inputs in separate late copies, useful BuildKit cache mounts, and an effective `.dockerignore`.
 
 ## Measure
 
@@ -57,7 +79,7 @@ Never estimate missing timings, layer counts, or bytes. Report observer overhead
 - Treat `COPY --from=...` as a stage dependency, not a build-context copy.
 - Check language-specific workspace behavior before splitting manifests. Rust, Node, Go, Python, and other monorepos can require several workspace files together.
 - Do not pin or replace base images unless asked.
-- Make one coherent Dockerfile change at a time and explain the expected cache effect.
+- Submit one coherent Docker-related candidate at a time and explain the expected cache effect.
 - Do not edit when the user requested analysis only.
 
 ## Learn from work

@@ -44,7 +44,7 @@ BUILD_TERMS = (
     "cargo build", "go build", "swift build", "npm run build", "pnpm build", "yarn build",
     "gradle build", "mvn package", "make", "cmake --build", "dotnet publish",
 )
-VERSION = "0.4.0b1"
+VERSION = "0.5.0b1"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -711,6 +711,32 @@ def parser() -> argparse.ArgumentParser:
     deploy_parser.add_argument("--json", action="store_true", help="hide deployment output and print the observation as JSON")
     deploy_parser.add_argument("deploy_command", nargs=argparse.REMAINDER, metavar="-- COMMAND")
 
+    optimize_parser = subparsers.add_parser(
+        "optimize", help="plan, verify, and safely apply a measured Docker build optimization"
+    )
+    optimize_parser.add_argument("--root", default=".")
+    optimize_parser.add_argument("--dockerfile")
+    optimize_parser.add_argument("--plan", action="store_true", help="generate a candidate without building or editing")
+    optimize_parser.add_argument("--candidate", help="agent-supplied unified diff to evaluate instead of a built-in candidate")
+    optimize_parser.add_argument(
+        "--apply-approved", metavar="CANDIDATE_ID",
+        help="apply an explicitly approved candidate ID without performance verification",
+    )
+    optimize_parser.add_argument("--trials", type=int, help="paired source-change trials; minimum 3")
+    optimize_parser.add_argument("--budget", type=float, help="maximum verification time in seconds")
+    optimize_parser.add_argument("--min-relative-improvement", type=float)
+    optimize_parser.add_argument("--min-absolute-improvement", type=float)
+    optimize_parser.add_argument("--payback-deploys", type=float)
+    optimize_parser.add_argument("--force", action="store_true", help="benchmark even when the estimated payback is poor")
+    optimize_parser.add_argument("--source-path", help="representative text source file to change during trials")
+    optimize_parser.add_argument("--test", action="append", default=[], help="correctness command required for auto-apply")
+    optimize_parser.add_argument("--smoke-test", action="append", default=[], help="runtime smoke command required for auto-apply")
+    optimize_parser.add_argument("--platform")
+    optimize_parser.add_argument("--target")
+    optimize_parser.add_argument("--builder")
+    optimize_parser.add_argument("--build-arg", action="append", default=[])
+    optimize_parser.add_argument("--json", action="store_true")
+
     history_parser = subparsers.add_parser("history", help="show locally recorded observations")
     history_parser.add_argument("--root", default=".")
     history_parser.add_argument("--limit", type=int, default=20)
@@ -752,6 +778,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "deploy":
             import deployment_observer
             return deployment_observer.run_deploy(args, sys.modules[__name__])
+        elif args.command == "optimize":
+            import optimization_engine
+            return_code, result = optimization_engine.run(args, sys.modules[__name__])
+            print(json.dumps(result, indent=2, sort_keys=True) if args.json else optimization_engine.render(result))
+            return return_code
         else:
             import build_observer
             return build_observer.run_build(args, sys.modules[__name__])

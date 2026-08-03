@@ -22,6 +22,7 @@ sys.modules[SPEC.name] = optimizer
 SPEC.loader.exec_module(optimizer)
 import build_observer
 import deployment_observer
+import optimization_engine
 
 
 def run(root: Path, *args: str) -> None:
@@ -461,6 +462,193 @@ class OptimizerTests(unittest.TestCase):
         event = optimizer.load_events(root)[-1]
         self.assertEqual(event["status"], "failure")
         self.assertEqual(event["deployment"]["exit_code"], 7)
+
+    def test_optimize_plan_generates_manifest_first_patch_without_mutation(self):
+        root = self.make_repo()
+        before = (root / "Dockerfile").read_text(encoding="utf-8")
+        result = optimization_engine.plan(root, root / "Dockerfile", optimizer)
+        self.assertEqual(result["kind"], "optimization_plan")
+        self.assertEqual(result["status"], "candidate")
+        candidate = result["candidate"]
+        self.assertEqual(candidate["kind"], "manifest-first")
+        self.assertEqual(candidate["protected_changes"], ())
+        self.assertIn('COPY ["requirements.txt", "/app/"]', candidate["patch"])
+        self.assertEqual((root / "Dockerfile").read_text(encoding="utf-8"), before)
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = Path(directory)
+            optimization_engine._copy_tree(root, snapshot)
+            optimization_engine._apply_patch(snapshot, candidate["patch"])
+            rewritten = (snapshot / "Dockerfile").read_text(encoding="utf-8")
+            self.assertLess(rewritten.index("COPY ["), rewritten.index("RUN pip install"))
+            self.assertLess(rewritten.index("RUN pip install"), rewritten.index("COPY . /app"))
+
+    def test_agent_candidate_detects_protected_and_out_of_scope_changes(self):
+        root = self.make_repo()
+        dockerfile = root / "Dockerfile"
+        before = dockerfile.read_text(encoding="utf-8")
+        after = before.replace("FROM python:3.12-slim", "FROM python:3.13-slim")
+        patch = optimization_engine._unified_diff(Path("Dockerfile"), before, after)
+        candidate = optimization_engine.candidate_from_patch(root, dockerfile, patch, optimizer)
+        self.assertIn("protected-dockerfile-semantics", candidate.protected_changes)
+
+        source_before = (root / "app.py").read_text(encoding="utf-8")
+        source_patch = optimization_engine._unified_diff(
+            Path("app.py"), source_before, source_before + "# faster\n",
+        )
+        source_candidate = optimization_engine.candidate_from_patch(root, dockerfile, source_patch, optimizer)
+        self.assertTrue(any(value.startswith("outside-docker-build-scope:") for value in source_candidate.protected_changes))
+
+    def test_benchmark_evaluation_requires_correctness_and_negative_controls(self):
+        passing = lambda seconds: optimization_engine.BuildResult(0, seconds, 2, 1, 0)
+        settings = optimization_engine.Settings(
+            trials=3, min_relative_improvement=0.10, min_absolute_seconds=0.5, payback_deploys=20,
+        )
+        benchmark, gates = optimization_engine._evaluate(
+            [passing(3.0), passing(3.1), passing(3.2)],
+            [passing(1.0), passing(1.1), passing(1.2)],
+            (passing(0.3), passing(0.4)),
+            (passing(4.0), passing(4.1)),
+            [True], settings, 5.0,
+        )
+        self.assertTrue(all(gates.values()))
+        self.assertEqual(benchmark["source_change"]["absolute_improvement_seconds"], 2.0)
+        _, missing_contract = optimization_engine._evaluate(
+            [passing(3.0)] * 3, [passing(1.0)] * 3,
+            (passing(0.3), passing(0.4)), (passing(4.0), passing(4.1)), [], settings, 5.0,
+        )
+        self.assertFalse(missing_contract["verification_contract_present"])
+        self.assertFalse(missing_contract["verification_commands_passed"])
+
+    def test_payback_precheck_skips_only_with_sufficient_history(self):
+        settings = optimization_engine.Settings(trials=3, payback_deploys=20)
+        shallow = {
+            "evidence": {"measured_builds": 2, "median_duration_seconds": 10.0},
+            "optimization_signal": {"max_change_likelihood": 0.5},
+        }
+        self.assertEqual(optimization_engine.payback_precheck(shallow, settings)["decision"], "insufficient-history")
+        expensive = {
+            "evidence": {"measured_builds": 3, "median_duration_seconds": 10.0},
+            "optimization_signal": {"max_change_likelihood": 0.5},
+        }
+        estimate = optimization_engine.payback_precheck(expensive, settings)
+        self.assertEqual(estimate["decision"], "skip")
+        self.assertEqual(estimate["estimated_break_even_deploys"], 24.0)
+
+    def test_verify_uses_snapshots_and_accepts_a_proven_candidate(self):
+        root = self.make_repo()
+        candidate = optimization_engine.generate_candidate(root, root / "Dockerfile", optimizer)
+        self.assertIsNotNone(candidate)
+        seen_roots = set()
+
+        def fake_build(build_root, dockerfile, tag, settings, deadline):
+            self.assertNotEqual(build_root, root)
+            self.assertTrue(dockerfile.is_relative_to(build_root))
+            seen_roots.add(build_root.name)
+            dependency_changed = "dlo benchmark dependency" in (build_root / "requirements.txt").read_text()
+            source_changed = "dlo benchmark source" in (build_root / "app.py").read_text()
+            if dependency_changed:
+                seconds = 4.0
+            elif source_changed:
+                seconds = 1.0 if build_root.name == "candidate" else 3.0
+            else:
+                seconds = 0.2
+            return optimization_engine.BuildResult(0, seconds, 3, 1, 0)
+
+        commands = []
+
+        def fake_command(command, command_root, environment, deadline):
+            commands.append(command)
+            self.assertEqual(environment["DLO_PROJECT_ROOT"], str(command_root))
+            return 0
+
+        settings = optimization_engine.Settings(
+            trials=3, budget_seconds=60, min_relative_improvement=0.10,
+            min_absolute_seconds=0.5, payback_deploys=20,
+            source_path="app.py", verification_commands=("python tests.py",),
+        )
+        verification = optimization_engine.verify(
+            root, root / "Dockerfile", candidate, settings, optimizer,
+            build_runner=fake_build, command_runner=fake_command,
+        )
+        self.assertTrue(verification["verified"])
+        self.assertEqual(seen_roots, {"control", "candidate"})
+        self.assertEqual(commands, ["python tests.py"])
+        self.assertNotIn("dlo benchmark", (root / "app.py").read_text())
+
+    def test_stale_preimage_blocks_application(self):
+        root = self.make_repo()
+        expected = optimization_engine._preimages(root, ["Dockerfile"])
+        (root / "Dockerfile").write_text("FROM scratch\n", encoding="utf-8")
+        with self.assertRaisesRegex(RuntimeError, "candidate is stale"):
+            optimization_engine._assert_preimages(root, expected)
+
+    def test_correctness_failure_stops_before_benchmark_trials(self):
+        root = self.make_repo()
+        candidate = optimization_engine.generate_candidate(root, root / "Dockerfile", optimizer)
+        builds = []
+
+        def fake_build(build_root, dockerfile, tag, settings, deadline):
+            builds.append(tag)
+            return optimization_engine.BuildResult(0, 0.1, 2, 0, 0)
+
+        settings = optimization_engine.Settings(
+            source_path="app.py", verification_commands=("PRIVATE_FAILING_CHECK",),
+        )
+        with self.assertRaisesRegex(optimization_engine.VerificationFailure, "correctness-command-failed"):
+            optimization_engine.verify(
+                root, root / "Dockerfile", candidate, settings, optimizer,
+                build_runner=fake_build,
+                command_runner=lambda command, command_root, environment, deadline: 1,
+            )
+        self.assertEqual(len(builds), 2)
+
+    def test_optimize_run_auto_applies_only_verified_candidate(self):
+        root = self.make_repo()
+        before = (root / "Dockerfile").read_text(encoding="utf-8")
+        args = optimizer.parser().parse_args([
+            "optimize", "--root", str(root), "--test", "PRIVATE_VERIFY_COMMAND", "--source-path", "app.py",
+        ])
+
+        def fake_verify(project_root, dockerfile, candidate, settings, module):
+            return {
+                "benchmark": {
+                    "source_change": {
+                        "control": {"median_seconds": 3.0}, "candidate": {"median_seconds": 1.0},
+                        "absolute_improvement_seconds": 2.0, "relative_improvement": 0.6667,
+                    },
+                    "verification_seconds": 5.0, "estimated_break_even_deploys": 2.5,
+                },
+                "gates": {"all_test_gates": True}, "verified": True,
+                "preimages": optimization_engine._preimages(root, candidate.affected_paths),
+            }
+
+        with mock.patch.object(optimization_engine, "verify", fake_verify):
+            return_code, result = optimization_engine.run(args, optimizer)
+        self.assertEqual(return_code, 0)
+        self.assertTrue(result["applied"])
+        after = (root / "Dockerfile").read_text(encoding="utf-8")
+        self.assertNotEqual(after, before)
+        self.assertLess(after.index("RUN pip install"), after.index("COPY . /app"))
+        proof = json.loads(Path(result["proof_file"]).read_text(encoding="utf-8"))
+        serialized = json.dumps(proof)
+        self.assertNotIn("COPY . /app", serialized)
+        self.assertNotIn("PRIVATE_VERIFY_COMMAND", serialized)
+        self.assertNotIn("patch", proof)
+
+    def test_proof_retention_prunes_expired_and_excess_records(self):
+        root = self.make_repo()
+        directory = optimization_engine._proof_directory(root, optimizer)
+        directory.mkdir(parents=True)
+        now = optimizer.dt.datetime.now(optimizer.dt.timezone.utc)
+        for index in range(23):
+            timestamp = now - optimizer.dt.timedelta(hours=index)
+            value = {"timestamp": timestamp.isoformat(), "verified": True}
+            (directory / f"recent-{index}.json").write_text(json.dumps(value), encoding="utf-8")
+        expired = {"timestamp": (now - optimizer.dt.timedelta(days=31)).isoformat(), "verified": True}
+        (directory / "expired.json").write_text(json.dumps(expired), encoding="utf-8")
+        result = optimization_engine._prune_proofs(root, optimizer, now)
+        self.assertEqual(result["retained"], 20)
+        self.assertEqual(len(list(directory.glob("*.json"))), 20)
 
 
 if __name__ == "__main__":
