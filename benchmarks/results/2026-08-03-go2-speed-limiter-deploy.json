@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-03",
+  "source_repository": "wendylabsinc/go2-local-web-remote",
+  "component": "native_motion_service",
+  "change_class": "runtime_speed_limit_configuration",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "965ee69083f0177303927e7c0d092eac5c21011a8e282fb026ab874d41a72533"
+  },
+  "context": {
+    "bytes": 44256
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 52.302,
+    "steps_total": 9,
+    "steps_cached": 0,
+    "steps_rebuilt": 8,
+    "steps_resolved": 1,
+    "steps_failed": 0
+  },
+  "image_and_layers": {
+    "image_bytes": 290066046,
+    "layers_total": 12,
+    "layers_reused": 0,
+    "layers_new": 12,
+    "matching_diff_ids": 0,
+    "unmatched_diff_ids": 12
+  },
+  "deployment": {
+    "status": "success",
+    "adapter": "wendy",
+    "duration_seconds": 122.346,
+    "build_seconds": 46.395,
+    "export_seconds": 16.099,
+    "transfer_seconds": 31.653,
+    "unpack_seconds": 22.751,
+    "replacement_seconds": 1.423,
+    "readiness_seconds": 3.577
+  },
+  "observer": {
+    "build_non_build_overhead_seconds": 0.028624,
+    "build_inspection_seconds": 0.02802,
+    "build_snapshot_seconds": 0.000604
+  },
+  "correctness": {
+    "bytecode_compile": "passed",
+    "device_api": "healthy",
+    "configured_console_limit_mps": 3.0,
+    "deployed_native_limit_mps": 4.0,
+    "full_console_range_available": true,
+    "motion_command_sent_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is a single build and deployment observation, not a paired optimization proof."
+  },
+  "remaining_uncertainty": [
+    "The build was a first baseline, so cache reuse and rebuild behavior need a representative follow-up source edit.",
+    "The deployment did not emit a measured byte count for the device transfer.",
+    "The software limit was verified through configuration, protocol, and API tests without commanding physical motion."
+  ]
+}
