@@ -68,6 +68,8 @@ benchmark:
   budget_seconds: 600
   min_relative_improvement: 0.10
   min_absolute_seconds: 0.5
+  max_relative_regression: 0.10
+  max_absolute_regression_seconds: 0.5
   payback_deploys: 20
   source_path: app.py
 ```

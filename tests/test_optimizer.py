@@ -1,3 +1,4 @@
+import dataclasses
 import importlib.util
 import io
 import json
@@ -518,6 +519,16 @@ class OptimizerTests(unittest.TestCase):
         )
         self.assertFalse(missing_contract["verification_contract_present"])
         self.assertFalse(missing_contract["verification_commands_passed"])
+
+        noise_settings = dataclasses.replace(
+            settings, min_absolute_seconds=0.25, max_absolute_regression_seconds=0.5,
+        )
+        _, noise_gates = optimization_engine._evaluate(
+            [passing(2.0)] * 3, [passing(1.0)] * 3,
+            (passing(0.2), passing(0.3)), (passing(1.5), passing(1.9)),
+            [True], noise_settings, 5.0,
+        )
+        self.assertTrue(noise_gates["dependency_change_not_regressed"])
 
     def test_payback_precheck_skips_only_with_sufficient_history(self):
         settings = optimization_engine.Settings(trials=3, payback_deploys=20)

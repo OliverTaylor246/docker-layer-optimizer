@@ -54,6 +54,8 @@ class Settings:
     budget_seconds: float = 600.0
     min_relative_improvement: float = 0.10
     min_absolute_seconds: float = 0.5
+    max_relative_regression: float = 0.10
+    max_absolute_regression_seconds: float = 0.5
     payback_deploys: float = 20.0
     source_path: str | None = None
     verification_commands: tuple[str, ...] = ()
@@ -348,6 +350,14 @@ def settings_from_args(root: Path, args) -> Settings:
             args.min_absolute_improvement if args.min_absolute_improvement is not None
             else float(benchmark.get("min_absolute_seconds", 0.5))
         ),
+        max_relative_regression=(
+            args.max_relative_regression if args.max_relative_regression is not None
+            else float(benchmark.get("max_relative_regression", 0.10))
+        ),
+        max_absolute_regression_seconds=(
+            args.max_absolute_regression if args.max_absolute_regression is not None
+            else float(benchmark.get("max_absolute_regression_seconds", 0.5))
+        ),
         payback_deploys=(
             args.payback_deploys if args.payback_deploys is not None
             else float(benchmark.get("payback_deploys", 20))
@@ -365,6 +375,10 @@ def settings_from_args(root: Path, args) -> Settings:
         raise ValueError("minimum relative improvement must be between 0 and 1")
     if settings.min_absolute_seconds < 0:
         raise ValueError("minimum absolute improvement cannot be negative")
+    if not 0 <= settings.max_relative_regression < 1:
+        raise ValueError("maximum relative regression must be between 0 and 1")
+    if settings.max_absolute_regression_seconds < 0:
+        raise ValueError("maximum absolute regression cannot be negative")
     if settings.payback_deploys <= 0:
         raise ValueError("payback deployment limit must be positive")
     return settings
@@ -516,7 +530,7 @@ def _run_docker_build(root: Path, dockerfile: Path, tag: str, settings: Settings
 
 
 def _regression_allowed(control: float, candidate: float, settings: Settings) -> bool:
-    tolerance = max(settings.min_absolute_seconds, control * settings.min_relative_improvement)
+    tolerance = max(settings.max_absolute_regression_seconds, control * settings.max_relative_regression)
     return candidate <= control + tolerance
 
 

@@ -44,6 +44,8 @@ benchmark:
   budget_seconds: 600
   min_relative_improvement: 0.10
   min_absolute_seconds: 0.5
+  max_relative_regression: 0.10
+  max_absolute_regression_seconds: 0.5
   payback_deploys: 20
 ```
 
@@ -61,7 +63,7 @@ Agents can propose any Docker-related unified diff through the same proof engine
 dlo optimize --root . --candidate /tmp/candidate.patch --json
 ```
 
-The default performance gate requires both a 10% and 0.5-second median improvement, no material p95 or negative-control regression, and break-even within 20 representative deployments. Base images, dependency versions, entrypoints, users, ports, health checks, privileges, architecture, and other protected behavior are never auto-applied. An explicitly approved plan can be applied by exact ID with `--apply-approved ID`; Git remains the review and rollback mechanism.
+The default performance gate requires both a 10% and 0.5-second median improvement, no p95 or negative-control regression beyond the larger of 10% or 0.5 seconds, and break-even within 20 representative deployments. Improvement and regression-noise thresholds are configured separately so a small benchmark target cannot accidentally make negative controls unrealistically strict. Base images, dependency versions, entrypoints, users, ports, health checks, privileges, architecture, and other protected behavior are never auto-applied. An explicitly approved plan can be applied by exact ID with `--apply-approved ID`; Git remains the review and rollback mechanism.
 
 `dlo optimize` is deliberately expensive compared with passive profiling. It has a ten-minute default budget and a cheap history-based payback precheck. `dlo deploy` continues to add only observer overhead to the normal deployment and never launches background builds.
 

@@ -726,6 +726,8 @@ def parser() -> argparse.ArgumentParser:
     optimize_parser.add_argument("--budget", type=float, help="maximum verification time in seconds")
     optimize_parser.add_argument("--min-relative-improvement", type=float)
     optimize_parser.add_argument("--min-absolute-improvement", type=float)
+    optimize_parser.add_argument("--max-relative-regression", type=float)
+    optimize_parser.add_argument("--max-absolute-regression", type=float)
     optimize_parser.add_argument("--payback-deploys", type=float)
     optimize_parser.add_argument("--force", action="store_true", help="benchmark even when the estimated payback is poor")
     optimize_parser.add_argument("--source-path", help="representative text source file to change during trials")

@@ -6,6 +6,7 @@
 - Verify candidates in disposable control/candidate snapshots with paired source edits, no-op and dependency negative controls, project commands, median/p95 thresholds, a time budget, and payback gates.
 - Auto-apply only fully proven candidates after protected-property and preimage-hash checks; support explicit exact-ID application for approved unverified plans.
 - Persist privacy-safe proof records without patches, commands, output, or source contents, with 30-day/20-record verified retention and seven-day failed retention.
+- Configure required improvement separately from allowed p95/no-op/dependency-control noise.
 - Document the product contract, implementation tickets, primary-source competitive research, agent JSON workflow, and `.dlo.yml` configuration.
 
 ## 0.4.0b1 - 2026-08-02
