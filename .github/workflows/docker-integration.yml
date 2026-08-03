@@ -23,6 +23,8 @@ jobs:
         env:
           DLO_TEST_REGISTRY: 127.0.0.1:5000
         run: python tests/docker_integration.py
+      - name: Test candidate planning, proof gates, and automatic application
+        run: python tests/optimization_integration.py
       - name: Stop disposable OCI registry
         if: always()
         run: docker container rm --force dlo-ci-registry

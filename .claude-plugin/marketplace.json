@@ -10,8 +10,8 @@
         "source": "github",
         "repo": "OliverTaylor246/docker-layer-optimizer"
       },
-      "description": "Measure Docker cache invalidation, deployment phases, and project change patterns",
-      "version": "0.4.0-beta.1",
+      "description": "Profile deployment regressions and verify agent-proposed Docker optimizations",
+      "version": "0.5.0-beta.1",
       "category": "development",
       "tags": ["docker", "buildkit", "cache", "optimization"]
     }

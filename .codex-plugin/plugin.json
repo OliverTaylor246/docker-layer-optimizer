@@ -1,7 +1,7 @@
 {
   "name": "docker-layer-optimizer",
-  "version": "0.4.0-beta.1",
-  "description": "Measure Docker cache invalidation, deployment phases, and project change patterns.",
+  "version": "0.5.0-beta.1",
+  "description": "Profile deployment regressions and verify agent-proposed Docker optimizations.",
   "author": {
     "name": "Oliver Taylor",
     "email": "35031747+OliverTaylor246@users.noreply.github.com",
@@ -14,15 +14,15 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Docker Layer Optimizer",
-    "shortDescription": "Learn change patterns and reduce rebuild cost",
-    "longDescription": "Measures BuildKit cache hits, image layers, and deployment phases, then combines those observations with Git history to reduce repeated build and deployment work.",
+    "shortDescription": "Prove faster iterative Docker deploys",
+    "longDescription": "Learns repository change patterns, profiles complete Docker deployments, and safely benchmarks agent-proposed build changes before automatic application.",
     "developerName": "Oliver Taylor",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://github.com/OliverTaylor246/docker-layer-optimizer",
     "defaultPrompt": [
-      "Analyze this project's Docker layers and suggest the highest-impact cache improvement.",
-      "Use recent project changes to reorganize this Dockerfile for faster rebuilds."
+      "Plan and verify the highest-impact Docker optimization for this project's normal development changes.",
+      "Explain which deployment phase regressed and propose a measured Docker-related fix."
     ],
     "brandColor": "#2496ED"
   }

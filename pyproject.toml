@@ -4,12 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docker-layer-optimizer"
-version = "0.4.0b1"
-description = "Measure and optimize Docker layer cache invalidation using BuildKit and project history"
+version = "0.5.0b1"
+description = "Profile Docker deployment regressions and verify agent-proposed build optimizations"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [{name = "Oliver Taylor", email = "35031747+OliverTaylor246@users.noreply.github.com"}]
+dependencies = ["PyYAML>=6.0"]
 keywords = ["docker", "buildkit", "cache", "layers", "optimization"]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -30,4 +31,4 @@ docker-layer-optimizer = "docker_layer_optimizer:main"
 
 [tool.setuptools]
 package-dir = {"" = "skills/optimize-docker-layers/scripts"}
-py-modules = ["docker_layer_optimizer", "build_observer", "deployment_observer", "registry_observer"]
+py-modules = ["docker_layer_optimizer", "build_observer", "deployment_observer", "optimization_engine", "registry_observer"]

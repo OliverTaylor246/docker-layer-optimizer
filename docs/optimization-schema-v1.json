@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OliverTaylor246/docker-layer-optimizer/blob/main/docs/optimization-schema-v1.json",
+  "title": "Docker Layer Optimizer plan or result v1",
+  "type": "object",
+  "required": ["schema_version", "tool_version", "kind", "status", "project_root", "dockerfile", "candidate"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "tool_version": {"type": "string"},
+    "kind": {"enum": ["optimization_plan", "optimization_result"]},
+    "status": {"enum": ["candidate", "no-candidate", "verified-applied", "approved-applied", "rejected", "skipped-payback"]},
+    "project_root": {"type": "string"},
+    "dockerfile": {"type": "string"},
+    "candidate": {
+      "type": ["object", "null"],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{20}$"},
+        "origin": {"enum": ["builtin", "agent"]},
+        "kind": {"type": "string"},
+        "patch": {"type": "string"},
+        "affected_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "protected_changes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "rationale": {"type": "string"}
+      },
+      "required": ["candidate_id", "origin", "kind", "affected_paths", "protected_changes", "rationale"],
+      "additionalProperties": false
+    },
+    "evidence": {"type": "object"},
+    "optimization_signal": {"type": "object"},
+    "payback_precheck": {"type": "object"},
+    "verification": {
+      "type": "object",
+      "properties": {
+        "operation_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+        "benchmark": {"type": "object"},
+        "gates": {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "verified": {"type": "boolean"},
+        "failure_kind": {"type": "string"}
+      },
+      "required": ["benchmark", "gates", "verified"],
+      "additionalProperties": false
+    },
+    "applied": {"type": "boolean"},
+    "proof_file": {"type": "string"},
+    "next_action": {"type": "string"}
+  },
+  "additionalProperties": false
+}
