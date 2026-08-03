@@ -115,3 +115,35 @@ cost. An agent candidate to remove README was not applied because version
 0.5.0b1 rejects Markdown as a representative paired-edit source. Supporting a
 safe Markdown mutation target is therefore a concrete optimizer gap exposed by
 production use; the repository retained its last fully proved Dockerfile.
+
+A second production-style source-and-documentation build confirmed the finding:
+22.009 seconds, 4 cached and 6 rebuilt steps, 6 of 10 image layers reused, a
+227,627,267-byte image, and 0.025463 seconds of non-build observer overhead.
+Repeated evidence now shows this is a representative workflow cost rather than
+a one-off cold-cache result.
+
+## README invalidation proof
+
+Version 0.5.0b2 added a semantics-safe Markdown mutation and moved disposable
+verification snapshots from macOS temporary storage into DLO's user cache. The
+snapshot change is necessary with Colima because containerized correctness
+commands cannot bind-mount `/private/tmp`; snapshots remain ephemeral and are
+deleted when verification ends.
+
+The agent candidate removed README from the dependency input while retaining
+`pyproject.toml`. DLO verified and automatically applied candidate
+`f53c57a25746d2fb56a2`:
+
+| Scenario | Control | Candidate | Change |
+| --- | ---: | ---: | ---: |
+| README-edit median (3 paired trials) | 19.721 s | 0.391 s | 19.330 s / 98.02% faster |
+| README-edit p95 | 20.248 s | 0.431 s | improved |
+| Median rebuilt steps | 6 | 0 | -6 |
+| No-op | 0.396 s | 0.400 s | within tolerance |
+| Dependency-manifest edit | 19.726 s | 20.376 s | within tolerance |
+
+The proof took 109.366 seconds and estimated break-even at 5.7 representative
+README-edit deployments. All project correctness, runtime, performance,
+negative-control, payback, budget, and protected-change gates passed. This
+result applies specifically to this project's real documentation-plus-source
+workflow; it is not a universal Docker speedup claim.
