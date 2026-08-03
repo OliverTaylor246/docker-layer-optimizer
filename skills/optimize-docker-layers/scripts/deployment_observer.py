@@ -6,6 +6,7 @@ from collections import Counter
 import datetime as dt
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -20,6 +21,7 @@ WENDY_PATTERNS = {
     "build": (
         r"^Building service\b",
         r"^Building and pushing image\b",
+        r"^Building image \(OCI layout\)\b",
         r"^\[apple-container\] starting build:",
     ),
     "export": (
@@ -31,6 +33,8 @@ WENDY_PATTERNS = {
         r"^\[apple-container\] pushing image:",
         r"^Pushing image\b",
         r"^Pulling image on device",
+        r"^Diffing \d+ layer\(s\) against device",
+        r"^Reusing \d+ layer\(s\) already on device",
     ),
     "unpack": (
         r"^Unpack plan:",
@@ -41,6 +45,7 @@ WENDY_PATTERNS = {
         r"^Creating container\.\.\.",
         r"^Service .+ container created\.",
         r"^App group .+ (?:running|created)",
+        r"^Application .+ running in detached mode\.",
     ),
     "readiness": (
         r"^Waiting for .+ to be ready",
@@ -49,6 +54,11 @@ WENDY_PATTERNS = {
         r"^App reachable at ",
     ),
 }
+
+WENDY_TIMING_RE = re.compile(
+    r"^\[timing\]\s+(?P<label>.+?)\s+(?P<value>\d+(?:\.\d+)?)(?P<unit>ms|us|µs|s)$",
+    re.IGNORECASE,
+)
 
 COMPOSE_PATTERNS = {
     "build": (
@@ -103,6 +113,21 @@ def infer_adapter(command: Sequence[str]) -> str:
     return "generic"
 
 
+def prepare_deploy_command(command: Sequence[str], adapter: str) -> list[str]:
+    """Require Wendy's no-fallback layer-diff path unless the user chose a mode."""
+    prepared = list(command)
+    if adapter != "wendy":
+        return prepared
+    try:
+        run_index = next(index for index, part in enumerate(prepared[1:], start=1) if part.lower() == "run")
+    except StopIteration:
+        return prepared
+    if any(part == "--chunking" or part.startswith("--chunking=") for part in prepared[1:]):
+        return prepared
+    prepared[run_index + 1:run_index + 1] = ["--chunking", "force"]
+    return prepared
+
+
 def parse_phase_markers(values: Iterable[str]) -> dict[str, list[str]]:
     result: dict[str, list[str]] = {}
     for value in values:
@@ -139,6 +164,7 @@ class DeploymentPhaseTracker:
         self.durations = {phase: 0.0 for phase in PHASES}
         self.segments = Counter()
         self.signals: set[str] = set()
+        self.reported_timings: dict[str, float] = {}
 
     def start(self, now: float) -> None:
         self.started_at = now
@@ -150,6 +176,22 @@ class DeploymentPhaseTracker:
         return None
 
     def feed(self, line: str, now: float) -> str | None:
+        if self.adapter == "wendy":
+            match = WENDY_TIMING_RE.search(line)
+            if match:
+                value = float(match.group("value"))
+                unit = match.group("unit").lower()
+                if unit == "ms":
+                    value /= 1_000
+                elif unit in {"us", "µs"}:
+                    value /= 1_000_000
+                label = match.group("label").strip().lower()
+                if label == "build (oci export)":
+                    self.reported_timings["build"] = value
+                elif label == "chunk+query+write":
+                    self.reported_timings["transfer"] = value
+                elif label.startswith("runcontainer (assemble+create+start"):
+                    self.reported_timings["runcontainer"] = value
         lowered = line.lower()
         for code, pattern in SIGNAL_PATTERNS.items():
             if re.search(pattern, lowered):
@@ -177,12 +219,27 @@ class DeploymentPhaseTracker:
             }
             for phase in PHASES
         }
+        phase_source = "output-markers"
+        if self.reported_timings:
+            phase_source = "wendy-timing+output-markers"
+            for phase in ("build", "transfer"):
+                if phase in self.reported_timings:
+                    phases[phase]["duration_seconds"] = round(self.reported_timings[phase], 3)
+                    phases[phase]["segments"] = max(1, phases[phase]["segments"])
+                    phases[phase]["observed"] = True
+            if "runcontainer" in self.reported_timings:
+                readiness = phases["readiness"]["duration_seconds"] if phases["readiness"]["observed"] else 0.0
+                phases["replacement"]["duration_seconds"] = round(
+                    max(0.0, self.reported_timings["runcontainer"] - readiness), 3
+                )
+                phases["replacement"]["segments"] = max(1, phases["replacement"]["segments"])
+                phases["replacement"]["observed"] = True
         classified = sum(item["duration_seconds"] for item in phases.values())
         observed = {phase: item["duration_seconds"] for phase, item in phases.items() if item["observed"]}
         dominant = max(observed, key=observed.get) if observed else None
         return {
             "adapter": self.adapter,
-            "phase_source": "output-markers",
+            "phase_source": phase_source,
             "phases": phases,
             "dominant_phase": dominant,
             "classified_seconds": round(min(total, classified), 3),
@@ -197,10 +254,14 @@ def _target_key(root: Path, adapter: str, target: str | None) -> str:
 
 
 def _execute(command: Sequence[str], root: Path, tracker: DeploymentPhaseTracker, quiet: bool, json_output: bool):
+    environment = None
+    if tracker.adapter == "wendy":
+        environment = dict(os.environ)
+        environment.setdefault("WENDY_TIMING", "1")
     try:
         process = subprocess.Popen(
             list(command), cwd=root, text=True, stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT, bufsize=1, errors="replace",
+            stderr=subprocess.STDOUT, bufsize=1, errors="replace", env=environment,
         )
     except FileNotFoundError as exc:
         raise RuntimeError(f"deployment executable was not found: {command[0]}") from exc
@@ -248,6 +309,7 @@ def run_deploy(args, optimizer) -> int:
     if not command:
         raise ValueError("pass a deployment command after `--`")
     adapter = infer_adapter(command) if args.adapter == "auto" else args.adapter
+    command = prepare_deploy_command(command, adapter)
     custom_markers = parse_phase_markers(args.phase_marker or [])
     tracker = DeploymentPhaseTracker(adapter, custom_markers)
     from build_observer import changed_paths, snapshot_context, _load_snapshot, _write_snapshot

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0b3 - 2026-08-03
+
+- Force Wendy deployments onto `--chunking force` unless the caller explicitly selects a chunking mode, preventing silent registry-push fallback from masking a verified Dockerfile improvement.
+- Enable Wendy's internal timing telemetry and recognize its OCI build, layer-diff, container replacement, and readiness markers.
+- Use reported build/export, chunk transfer, and run-container timings to avoid attributing device assembly time to network transfer.
+- Prove the Wendy-aware path on Woof: a warm Border Collie source edit completed in 8.959 seconds with 8/10 layers reused and 0.147 seconds of transfer; the clean follow-up completed in 6.848 seconds.
+
 ## 0.5.0b2 - 2026-08-03
 
 - Support Markdown as an explicit representative benchmark target using a semantics-safe HTML comment mutation.

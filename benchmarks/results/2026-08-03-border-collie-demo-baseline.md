@@ -204,3 +204,30 @@ and the device passed TCP/API readiness. All 45 project tests also passed. The
 remaining uncertainty is the missing repeated candidate block; the completed
 control block need not be repeated if the same device and deployment path are
 still representative when testing resumes.
+
+## Wendy layer-diff release gate
+
+Version 0.5.0b3 made Wendy profiling fail closed on the layer-aware path. Unless
+the caller explicitly selects another mode, `dlo deploy` adds
+`--chunking force`, enables Wendy's internal timing output, and combines those
+reported durations with OCI build, layer-diff, replacement, and readiness
+markers.
+
+The release gate used the current verified Dockerfile, a disposable Python
+source file, the same ARM64 Woof target, and the same motion-disabled runtime
+configuration. DLO was not given a chunking flag; it selected the layer-diff
+path itself.
+
+| Phase | Source-file addition | Clean-tree follow-up |
+| --- | ---: | ---: |
+| End to end | 8.959 s | 6.848 s |
+| Build and OCI export | 3.514 s | 1.322 s |
+| Layer chunk/query/write | 0.147 s | 0.122 s |
+| Replacement | 0.426 s | 0.420 s |
+| Readiness | 1.185 s | 1.177 s |
+| Reused image layers | 8/10 | 8/10 |
+
+Both deployments reached TCP readiness as `border-collie-demo_app`. A live
+container environment check confirmed hardware, autonomy, lab motion, and
+perception remained disabled. The disposable probe was removed immediately;
+the second observation redeployed the normal production tree.

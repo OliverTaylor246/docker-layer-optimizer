@@ -44,7 +44,7 @@ BUILD_TERMS = (
     "cargo build", "go build", "swift build", "npm run build", "pnpm build", "yarn build",
     "gradle build", "mvn package", "make", "cmake --build", "dotnet publish",
 )
-VERSION = "0.5.0b2"
+VERSION = "0.5.0b3"
 
 
 @dataclasses.dataclass(frozen=True)

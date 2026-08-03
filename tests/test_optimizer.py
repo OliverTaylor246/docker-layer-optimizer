@@ -398,6 +398,62 @@ class OptimizerTests(unittest.TestCase):
         self.assertTrue(result["phases"]["replacement"]["observed"])
         self.assertTrue(result["phases"]["readiness"]["observed"])
 
+    def test_wendy_deploy_forces_layer_diff_without_overriding_explicit_mode(self):
+        implicit = ["wendy", "--device", "woof", "run", "--detach", "--yes"]
+        explicit = ["wendy", "run", "--chunking", "off", "--detach"]
+
+        self.assertEqual(
+            deployment_observer.prepare_deploy_command(implicit, "wendy"),
+            ["wendy", "--device", "woof", "run", "--chunking", "force", "--detach", "--yes"],
+        )
+        self.assertEqual(deployment_observer.prepare_deploy_command(explicit, "wendy"), explicit)
+        self.assertEqual(deployment_observer.prepare_deploy_command(["custom-deploy"], "generic"), ["custom-deploy"])
+
+    def test_wendy_layer_diff_markers_use_reported_phase_timings(self):
+        tracker = deployment_observer.DeploymentPhaseTracker("wendy")
+        tracker.start(0.0)
+        observations = [
+            ("Building image (OCI layout) for linux/arm64...", 0.1),
+            ("[timing] build (oci export) 44.566s", 44.666),
+            ("Diffing 10 layer(s) against device...", 44.667),
+            ("[timing] chunk+query+write 18.63s", 63.297),
+            ("Application border-collie-demo_app running in detached mode.", 82.0),
+            ("Waiting for 192.168.0.107:8110 to be ready...", 82.1),
+            ("Ready.", 83.2),
+            ("[timing] runcontainer (assemble+create+start[+readiness]) 19.593s", 83.21),
+        ]
+        for line, timestamp in observations:
+            tracker.feed(line, timestamp)
+        result = tracker.finish(83.3)
+
+        self.assertEqual(result["phase_source"], "wendy-timing+output-markers")
+        self.assertEqual(result["phases"]["build"]["duration_seconds"], 44.566)
+        self.assertEqual(result["phases"]["transfer"]["duration_seconds"], 18.63)
+        self.assertGreater(result["phases"]["replacement"]["duration_seconds"], 18.0)
+        self.assertGreater(result["phases"]["readiness"]["duration_seconds"], 1.0)
+
+    def test_wendy_execute_enables_internal_timing_without_overriding_user_value(self):
+        captured = []
+
+        class FakeProcess:
+            stdout = iter(())
+
+            def __init__(self, command, **kwargs):
+                captured.append(kwargs.get("env"))
+
+            def wait(self):
+                return 0
+
+        tracker = deployment_observer.DeploymentPhaseTracker("wendy")
+        with mock.patch.object(deployment_observer.subprocess, "Popen", FakeProcess):
+            self.assertEqual(deployment_observer._execute(["wendy", "run"], Path.cwd(), tracker, True, False), 0)
+        with mock.patch.dict(deployment_observer.os.environ, {"WENDY_TIMING": "custom"}), \
+                mock.patch.object(deployment_observer.subprocess, "Popen", FakeProcess):
+            self.assertEqual(deployment_observer._execute(["wendy", "run"], Path.cwd(), tracker, True, False), 0)
+
+        self.assertEqual(captured[0]["WENDY_TIMING"], "1")
+        self.assertEqual(captured[1]["WENDY_TIMING"], "custom")
+
     def test_deploy_command_records_phases_without_command_or_logs(self):
         root = self.make_repo()
         args = optimizer.parser().parse_args([

@@ -11,7 +11,7 @@ Wrapping a build does not itself make Docker faster. The speedup comes from Dock
 Python 3.9+, Git, Docker, and Docker Buildx are required for measured builds. Static analysis works without Docker.
 
 ```sh
-python3 -m pip install docker-layer-optimizer==0.5.0b2
+python3 -m pip install docker-layer-optimizer==0.5.0b3
 ```
 
 Until the beta is available from PyPI, install the repository directly:
@@ -105,7 +105,7 @@ dlo deploy --root . --target woof -- wendy --device woof.local run --detach --ye
 dlo deploy --root . --target staging -- docker compose up --build -d --wait
 ```
 
-`dlo deploy` auto-detects Wendy and Docker Compose output and divides observed time into build, export, transfer, unpack, replacement, and readiness phases. It records changed project paths and target-scoped timing history, then `dlo analyze` reports median phases and recommends whether to work on Docker layers or container startup/readiness.
+`dlo deploy` auto-detects Wendy and Docker Compose output and divides observed time into build, export, transfer, unpack, replacement, and readiness phases. For `wendy run`, DLO inserts `--chunking force` unless the command already selects a chunking mode, so a failed layer-diff deploy is surfaced instead of silently falling back to a registry push. It also enables Wendy's internal timing output and combines those exact timings with lifecycle markers. DLO records changed project paths and target-scoped timing history, then `dlo analyze` reports median phases and recommends whether to work on Docker layers or container startup/readiness.
 
 For another deployment system, add output markers without writing an adapter:
 
@@ -116,7 +116,7 @@ dlo deploy --root . --adapter generic \
   -- ./deploy.sh
 ```
 
-Phase timing is based on when output markers are received. It is deterministic for a given stream but is not internal telemetry from the deployment platform. The wrapped command and output logs are never persisted. Use `--quiet` to hide command output or `--json` for a machine-readable observation.
+Generic and Compose phase timing is based on when output markers are received. Wendy measurements prefer its reported internal build/export, chunk-transfer, and run-container durations and use output markers for the remaining lifecycle split. The wrapped command and output logs are never persisted. Use `--quiet` to hide command output or `--json` for a machine-readable observation.
 
 ## Analyze and learn
 
@@ -163,7 +163,7 @@ Codex is the agent layer; DLO is the deterministic measurement engine. The plugi
 Install the CLI first, then add the marketplace:
 
 ```sh
-python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.2/docker_layer_optimizer-0.5.0b2-py3-none-any.whl"
+python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.3/docker_layer_optimizer-0.5.0b3-py3-none-any.whl"
 codex plugin marketplace add OliverTaylor246/docker-layer-optimizer --ref main
 codex
 ```
