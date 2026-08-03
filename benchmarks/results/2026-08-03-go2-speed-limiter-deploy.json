@@ -43,6 +43,28 @@
     "replacement_seconds": 1.423,
     "readiness_seconds": 3.577
   },
+  "recovery_build": {
+    "status": "success",
+    "duration_seconds": 0.956,
+    "context_bytes": 10349,
+    "steps_total": 9,
+    "steps_cached": 6,
+    "steps_rebuilt": 2,
+    "steps_resolved": 1,
+    "image_bytes": 290066140,
+    "layers_total": 12,
+    "observer_overhead_seconds": 0.023782
+  },
+  "recovery_deployment": {
+    "status": "success",
+    "duration_seconds": 8.487,
+    "build_seconds": 0.52,
+    "export_seconds": 4.507,
+    "transfer_seconds": 0.404,
+    "unpack_seconds": 0.104,
+    "replacement_seconds": 0.323,
+    "readiness_seconds": 2.197
+  },
   "observer": {
     "build_non_build_overhead_seconds": 0.028624,
     "build_inspection_seconds": 0.02802,
@@ -54,6 +76,8 @@
     "configured_console_limit_mps": 3.0,
     "deployed_native_limit_mps": 4.0,
     "full_console_range_available": true,
+    "udp_to_native_takeover_contract": "passed",
+    "new_native_errors_in_zero_velocity_end_to_end_test": 0,
     "motion_command_sent_during_verification": false
   },
   "result": {
@@ -62,7 +86,7 @@
     "reason": "This is a single build and deployment observation, not a paired optimization proof."
   },
   "remaining_uncertainty": [
-    "The build was a first baseline, so cache reuse and rebuild behavior need a representative follow-up source edit.",
+    "The recovery build is one representative source edit; additional edits are needed before generalizing its cache behavior.",
     "The deployment did not emit a measured byte count for the device transfer.",
     "The software limit was verified through configuration, protocol, and API tests without commanding physical motion."
   ]
