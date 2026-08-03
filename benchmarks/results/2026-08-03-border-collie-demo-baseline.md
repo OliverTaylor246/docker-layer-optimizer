@@ -147,3 +147,35 @@ README-edit deployments. All project correctness, runtime, performance,
 negative-control, payback, budget, and protected-change gates passed. This
 result applies specifically to this project's real documentation-plus-source
 workflow; it is not a universal Docker speedup claim.
+
+## Local registry would-push gate
+
+Before publishing the larger application change, DLO 0.5.0b1 (schema 3) pushed
+the pre-DLO control and current verified layout to separate tags in a disposable
+localhost registry. No image reached an external registry or device. A second
+push added the same deterministic one-file source probe to both layouts, giving
+a compressed-blob comparison against each preceding manifest.
+
+| Measurement | Pre-DLO control | Verified DLO layout |
+| --- | ---: | ---: |
+| Dockerfile SHA-256 | `82768b6182a40481c634507a4c901551e99e3aee2e471b61726675e703cfb023` | `a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70` |
+| First-push effective context | 28,902 B | 1,433 B |
+| First-push build duration | 7.210 s | 0.935 s |
+| First-push steps | 6 cached / 5 rebuilt / 1 resolved | 8 cached / 2 rebuilt / 1 resolved |
+| Full compressed layers | 227,665,785 B across 9 | 227,618,821 B across 10 |
+| Source-edit effective context | 8,544 B | 1,497 B |
+| Source-edit build duration | 7.070 s | 0.446 s |
+| Source-edit matching/unmatched layers | 6 / 3 | 8 / 2 |
+| Source-edit unmatched compressed bytes | 99,567,096 B | 21,657 B |
+| Source-edit observer overhead | 0.107408 s | 0.109579 s |
+
+The verified layout reduced the source-edit upper-bound transfer by 99,545,439
+bytes (99.978%) and the local build/push duration by 6.624 seconds (93.69%). The
+control embedded source in its roughly 99.6 MB compressed environment layer;
+the candidate kept that layer stable and changed only its small runtime tail.
+
+Uncertainty remains: unmatched manifest bytes are deterministic declared blob
+sizes, not packet-level upload telemetry, and a production registry may already
+contain shared blobs. Device transfer, unpack, replacement, and readiness have
+not yet been measured for this release. Both image layouts passed an import
+smoke check, and the source repository passed all 45 project tests.
