@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-03",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b3",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "candidate_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "control_sha256": "d974352589f6a2bef15c744f9dd7fa0da0497082d3a8eeb8e0da974c3436db6f"
+  },
+  "context": {
+    "median_recorded_bytes": 7795
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "transfer_mode": "forced_content_defined_chunking",
+    "control_source_edit_seconds": [9.687, 10.277, 10.643],
+    "candidate_source_edit_seconds": [9.403, 9.276, 9.321],
+    "control_median_seconds": 10.277,
+    "candidate_median_seconds": 9.321,
+    "median_saving_seconds": 0.956,
+    "median_saving_percent": 9.30,
+    "control_nearest_rank_p95_seconds": 10.643,
+    "candidate_nearest_rank_p95_seconds": 9.403,
+    "candidate_noop_seconds": 8.992,
+    "final_candidate_seconds": 9.233
+  },
+  "nearest_comparable_local_source_edit": {
+    "candidate_build_seconds": 0.446,
+    "candidate_cached_steps": 8,
+    "candidate_rebuilt_steps": 2,
+    "candidate_image_bytes": 227618821,
+    "candidate_image_layers": 10,
+    "candidate_matching_layers": 8,
+    "candidate_unmatched_compressed_bytes": 21657
+  },
+  "observer": {
+    "previously_measured_median_overhead_seconds": 0.021603
+  },
+  "correctness": {
+    "project_tests_passed": 70,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "device_api": "healthy",
+    "device_mission": "idle",
+    "motion_activated": false
+  },
+  "acceptance": {
+    "absolute_gate_passed": true,
+    "relative_gate_passed": false,
+    "tail_regression": false,
+    "strict_proof_passed": false,
+    "result": "promising_below_strict_relative_threshold"
+  },
+  "remaining_uncertainty": [
+    "Three device trials make the nearest-rank p95 equal to the maximum and do not characterize a stable long-tail distribution.",
+    "Wendy's fixed build and replacement work dominates this small application, so the measured device improvement was 9.30%, below the 10% relative proof gate.",
+    "The Jetson GPU media sidecar was not compared or deployed because this Wendy release rejects its advertised buildkit builder and the local Docker content store lacks capacity for the base image.",
+    "Layer counts and bytes come from the nearest comparable local registry source edit because Wendy deployment markers do not expose those aggregates."
+  ]
+}
