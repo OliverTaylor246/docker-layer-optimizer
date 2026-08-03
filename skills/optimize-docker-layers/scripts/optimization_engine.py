@@ -26,8 +26,8 @@ PROTECTED_DOCKERFILE_COMMANDS = {
 TEXT_COMMENT_PREFIXES = {
     ".c": "//", ".cc": "//", ".cpp": "//", ".css": "/*", ".go": "//", ".h": "//",
     ".hpp": "//", ".java": "//", ".js": "//", ".jsx": "//", ".kt": "//", ".mjs": "//",
-    ".php": "//", ".py": "#", ".rb": "#", ".rs": "//", ".sh": "#", ".swift": "//",
-    ".ts": "//", ".tsx": "//",
+    ".md": "<!--", ".markdown": "<!--", ".php": "//", ".py": "#", ".rb": "#",
+    ".rs": "//", ".sh": "#", ".swift": "//", ".ts": "//", ".tsx": "//",
 }
 MANIFEST_COMMENT_PREFIXES = {
     ".toml": "#", ".txt": "#", ".yaml": "#", ".yml": "#",
@@ -448,6 +448,8 @@ def _mutate(path: Path, marker: str, manifest: bool = False) -> None:
         addition = f"\n{prefix} dlo benchmark {marker}"
         if prefix == "/*":
             addition += " */"
+        elif prefix == "<!--":
+            addition += " -->"
         addition += "\n"
     with path.open("a", encoding="utf-8") as handle:
         handle.write(addition)
@@ -635,8 +637,10 @@ def verify(
     slug = re.sub(r"[^a-z0-9_.-]+", "-", root.name.lower()).strip("-._") or "project"
     tag_base = f"dlo-verify/{slug}-{candidate.candidate_id}"
     tags = [f"{tag_base}:control", f"{tag_base}:candidate"]
+    snapshot_parent = optimizer.state_path(root) / "snapshots"
+    snapshot_parent.mkdir(parents=True, mode=0o700, exist_ok=True)
     try:
-        with tempfile.TemporaryDirectory(prefix="dlo-optimize-") as directory:
+        with tempfile.TemporaryDirectory(prefix="dlo-optimize-", dir=snapshot_parent) as directory:
             temporary = Path(directory)
             control_root, candidate_root = temporary / "control", temporary / "candidate"
             _copy_tree(root, control_root)

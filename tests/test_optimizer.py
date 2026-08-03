@@ -554,6 +554,7 @@ class OptimizerTests(unittest.TestCase):
         def fake_build(build_root, dockerfile, tag, settings, deadline):
             self.assertNotEqual(build_root, root)
             self.assertTrue(dockerfile.is_relative_to(build_root))
+            self.assertTrue(build_root.is_relative_to(optimizer.state_path(root) / "snapshots"))
             seen_roots.add(build_root.name)
             dependency_changed = "dlo benchmark dependency" in (build_root / "requirements.txt").read_text()
             source_changed = "dlo benchmark source" in (build_root / "app.py").read_text()
@@ -585,6 +586,28 @@ class OptimizerTests(unittest.TestCase):
         self.assertEqual(seen_roots, {"control", "candidate"})
         self.assertEqual(commands, ["python tests.py"])
         self.assertNotIn("dlo benchmark", (root / "app.py").read_text())
+        self.assertEqual(list((optimizer.state_path(root) / "snapshots").iterdir()), [])
+
+    def test_markdown_is_a_safe_explicit_benchmark_target(self):
+        root = self.make_repo()
+        readme = root / "README.md"
+        original = "# Demo\n\nProject documentation.\n"
+        readme.write_text(original, encoding="utf-8")
+
+        selected = optimization_engine._safe_source_path(root, "README.md", optimizer)
+        optimization_engine._mutate(readme, "source")
+
+        self.assertEqual(selected, "README.md")
+        self.assertEqual(
+            readme.read_text(encoding="utf-8"),
+            original + "\n<!-- dlo benchmark source -->\n",
+        )
+
+    def test_markdown_is_not_preferred_over_application_source(self):
+        root = self.make_repo()
+        (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+
+        self.assertEqual(optimization_engine._safe_source_path(root, None, optimizer), "app.py")
 
     def test_stale_preimage_blocks_application(self):
         root = self.make_repo()

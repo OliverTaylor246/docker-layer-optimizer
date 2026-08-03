@@ -11,7 +11,7 @@ Wrapping a build does not itself make Docker faster. The speedup comes from Dock
 Python 3.9+, Git, Docker, and Docker Buildx are required for measured builds. Static analysis works without Docker.
 
 ```sh
-python3 -m pip install docker-layer-optimizer==0.5.0b1
+python3 -m pip install docker-layer-optimizer==0.5.0b2
 ```
 
 Until the beta is available from PyPI, install the repository directly:
@@ -55,7 +55,7 @@ Then let DLO benchmark the built-in candidate:
 dlo optimize --root . --json
 ```
 
-DLO creates disposable control and candidate snapshots of the exact working state, warms both builds, performs three paired source edits, checks no-op and dependency-edit regressions, runs the configured verification commands, and estimates payback. It applies the patch only when every gate passes and affected files remain unchanged during verification.
+DLO creates disposable control and candidate snapshots of the exact working state in its user cache, warms both builds, performs three paired source edits, checks no-op and dependency-edit regressions, runs the configured verification commands, and estimates payback. Markdown can be selected explicitly as the representative edit target and is mutated with an invisible HTML comment. It applies the patch only when every gate passes and affected files remain unchanged during verification; snapshots are deleted when the proof ends.
 
 Agents can propose any Docker-related unified diff through the same proof engine:
 
@@ -163,7 +163,7 @@ Codex is the agent layer; DLO is the deterministic measurement engine. The plugi
 Install the CLI first, then add the marketplace:
 
 ```sh
-python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.1/docker_layer_optimizer-0.5.0b1-py3-none-any.whl"
+python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.2/docker_layer_optimizer-0.5.0b2-py3-none-any.whl"
 codex plugin marketplace add OliverTaylor246/docker-layer-optimizer --ref main
 codex
 ```

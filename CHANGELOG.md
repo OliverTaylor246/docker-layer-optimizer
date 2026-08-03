@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0b2 - 2026-08-03
+
+- Support Markdown as an explicit representative benchmark target using a semantics-safe HTML comment mutation.
+- Create disposable verification snapshots under DLO's user cache so containerized correctness commands can bind-mount them with Colima on macOS; snapshots are deleted when verification ends.
+- Prove and auto-apply a production Border Collie Dockerfile change that reduced README-edit builds from 19.721 to 0.391 seconds median without no-op, dependency, test, or runtime regressions.
+
 ## 0.5.0b1 - 2026-08-03
 
 - Add agent-first `dlo optimize` planning for built-in manifest-first and agent-supplied patch candidates.
