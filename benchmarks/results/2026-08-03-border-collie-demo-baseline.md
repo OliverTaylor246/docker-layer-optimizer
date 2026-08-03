@@ -64,3 +64,39 @@ After two measured builds, `dlo analyze` reported a 15.641-second median build,
 non-build observer overhead. It still found no obvious safe static layer split.
 Representative no-op and further source/dependency observations remain necessary
 before proposing or proving a Dockerfile change.
+
+## Controlled candidate proof
+
+A later agent-authored candidate moved runtime source out of the dependency
+installation layer and into its own final-image copy. DLO warmed both layouts,
+ran three paired source-only trials, a no-op control, a dependency-manifest
+negative control, and the repository's correctness contract before applying the
+candidate.
+
+| Measurement | Control | Candidate | Result |
+| --- | ---: | ---: | ---: |
+| Source-edit median, 3 trials | 8.743 s | 0.598 s | 8.145 s / 93.16% faster |
+| Source-edit p95 | 8.967 s | 0.604 s | no regression |
+| Median cached steps | 6 | 8 | +2 |
+| Median rebuilt steps | 5 | 2 | -3 |
+| Warm no-op | 0.502 s | 0.497 s | no regression |
+| Dependency edit | 22.169 s | 8.141 s | no regression |
+
+Verification took 91.301 seconds and produced an estimated 11.2-deployment
+break-even. All configured gates passed, including correctness, protected-path
+safety, median and absolute improvement, p95, no-op, dependency control, budget,
+and payback. DLO then applied the candidate. The applied Dockerfile digest is
+`bfe0300a506aef952bea9a6e3c4006fb8bd8d20ff008716793db0604d1ac2aa2`.
+
+Three subsequent unchanged builds measured the observer separately. Median
+Docker duration was 0.547 seconds, median wrapper duration was 0.569921 seconds,
+and median non-build observer overhead was 0.021603 seconds. The observer cost
+was about 3.95% of the short no-op build and 0.27% of the verified per-source
+edit saving.
+
+The applied local image was 227,625,311 bytes with 10 layers. Unchanged builds
+reused all 10 layers and rebuilt zero steps. The controlled proof reports
+changed layer identities/counts and rebuilt steps, but local `--load` output did
+not provide changed layer byte totals per paired trial. A registry-backed run is
+still needed to compare unmatched compressed bytes and to split a real Woof
+deployment into build, transfer, replacement, and readiness phases.
