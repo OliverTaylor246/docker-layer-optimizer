@@ -158,12 +158,21 @@ See [SECURITY.md](SECURITY.md) for the threat model and disclosure process and [
 
 ## Agent skill
 
-Codex:
+Codex is the agent layer; DLO is the deterministic measurement engine. The plugin teaches Codex when to profile a deployment, how to interpret cache and phase evidence, and how to propose project-specific Docker changes. DLO owns the disposable benchmarks, correctness and protected-change gates, payback calculation, and safe application decision.
+
+Install the CLI first, then add the marketplace:
 
 ```sh
-codex plugin marketplace add OliverTaylor246/docker-layer-optimizer
-codex plugin add docker-layer-optimizer@docker-optimization-tools
+python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.1/docker_layer_optimizer-0.5.0b1-py3-none-any.whl"
+codex plugin marketplace add OliverTaylor246/docker-layer-optimizer --ref main
+codex
 ```
+
+Inside Codex CLI, enter `/plugins`, find **Docker Layer Optimizer**, install and enable it, then start a new Codex session. The Codex desktop app also exposes installed plugins from its Plugins Directory.
+
+Try:
+
+> Use optimize-docker-layers to observe this project's normal Docker workflow. Record several representative builds or deployments, explain the dominant bottleneck, and plan an optimization. Do not apply an unverified patch.
 
 Claude Code:
 
@@ -172,7 +181,7 @@ claude plugin marketplace add OliverTaylor246/docker-layer-optimizer
 claude plugin install docker-layer-optimizer@docker-optimization-tools
 ```
 
-Ask the agent to use `optimize-docker-layers`. The CLI remains the deterministic measurement engine; the skill adds project-aware interpretation and safe edits.
+The plugin is optional: the same `dlo` commands work with another agent or directly in a terminal.
 
 ## Compatibility
 
