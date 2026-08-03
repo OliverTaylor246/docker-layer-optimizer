@@ -100,3 +100,18 @@ changed layer identities/counts and rebuilt steps, but local `--load` output did
 not provide changed layer byte totals per paired trial. A registry-backed run is
 still needed to compare unmatched compressed bytes and to split a real Woof
 deployment into build, transfer, replacement, and readiness phases.
+
+## First normal post-proof observation
+
+The next production-style build combined a Python Home capture implementation
+with a README update. It took 23.949 seconds, with 4 cached, 6 rebuilt, and 1
+resolved BuildKit step. DLO's non-build observer overhead was 0.023543 seconds.
+The 227,626,218-byte image had 10 layers, reusing 6 and introducing 4.
+
+The README was still copied beside the dependency manifest in the builder, so
+the documentation edit invalidated dependency installation despite the verified
+source split. Analysis ranked that instruction at the highest expected rebuild
+cost. An agent candidate to remove README was not applied because version
+0.5.0b1 rejects Markdown as a representative paired-edit source. Supporting a
+safe Markdown mutation target is therefore a concrete optimizer gap exposed by
+production use; the repository retained its last fully proved Dockerfile.
