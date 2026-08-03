@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-03",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "media",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b3",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "candidate_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "bytes": 48529651
+  },
+  "image": {
+    "layers": 52,
+    "bytes": null,
+    "device_base_layers_reused_on_initial_deploy": 46,
+    "device_tail_layers_applied_on_initial_deploy": 6
+  },
+  "successful_deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "chunking": "off_registry_path",
+    "duration_seconds": 160.313,
+    "build_seconds": 143.770,
+    "transfer_marker_seconds": 0.011,
+    "unpack_seconds": 15.685,
+    "replacement_seconds": 0.301,
+    "reported_cached_steps": 0,
+    "reported_rebuilt_steps": 0
+  },
+  "excluded_chunk_diff_attempts": {
+    "duration_seconds": [25.508, 26.227, 25.272, 24.621],
+    "representative_build_seconds": 21.914,
+    "representative_transfer_seconds": 1.114,
+    "failure": "gRPC receive message exceeded the 4 MiB client maximum",
+    "comparison_eligible": false
+  },
+  "observer": {
+    "media_history_median_non_build_overhead_seconds": 0.018724
+  },
+  "correctness": {
+    "project_tests_passed": 71,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "camera_frames_advancing": true,
+    "tensorrt_model_loaded": true,
+    "webrtc_connected": true,
+    "bark_ready": true,
+    "device_mission": "idle",
+    "motion_activated": false,
+    "verified_before_disconnect": true,
+    "final_connectivity": "device_unreachable_after_initial_verification"
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A successful candidate deployment exists, but no paired control deployment completed."
+  },
+  "remaining_uncertainty": [
+    "The forced chunk-diff path remains blocked by Wendy's 4 MiB gRPC receive limit for accumulated container output.",
+    "The 24-26 second chunk-diff observations are failures and cannot be compared with the successful 160.313-second registry deployment as equivalent trials.",
+    "Wendy's OCI deployment summary reported zero cached and rebuilt steps even though device snapshot reuse was observable; step counts are retained as reported, not interpreted.",
+    "Exact aggregate image bytes were not emitted by the successful Wendy deployment.",
+    "Woof became unreachable after the initial successful runtime verification, so final service health could not be re-verified.",
+    "A paired warmed control/candidate matrix is still required before claiming the media Dockerfile layout is faster."
+  ]
+}

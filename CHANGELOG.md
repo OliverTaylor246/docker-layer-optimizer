@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0-beta.1 - 2026-08-03
+
+- Rewrite the runtime and agent-facing CLI in Go with no Python dependency.
+- Parse Dockerfiles with Moby BuildKit's canonical parser and typed instruction decoder instead of a custom grammar.
+- Preserve the v3 observation schema and the `analyze`, `build`, `deploy`, `record`, `history`, and `optimize` command contract.
+- Ship static Linux, macOS, and Windows binaries for AMD64 and ARM64.
+- Move package, plugin, marketplace, and repository ownership to Wendy Labs.
+
 ## 0.5.0b3 - 2026-08-03
 
 - Force Wendy deployments onto `--chunking force` unless the caller explicitly selects a chunking mode, preventing silent registry-push fallback from masking a verified Dockerfile improvement.

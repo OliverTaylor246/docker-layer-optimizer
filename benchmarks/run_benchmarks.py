@@ -132,7 +132,7 @@ def edit_input(root: Path, case: dict, kind: str, index: int) -> None:
 def dlo_command() -> list[str]:
     executable = shutil.which("dlo")
     if not executable:
-        raise RuntimeError("dlo is not installed; run `python -m pip install .` first")
+        raise RuntimeError("dlo is not installed; run `go install ./cmd/dlo` first")
     return [executable]
 
 

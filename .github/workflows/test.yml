@@ -13,28 +13,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            python-version: "3.9"
-          - os: ubuntu-latest
-            python-version: "3.12"
-          - os: macos-latest
-            python-version: "3.12"
-          - os: windows-latest
-            python-version: "3.12"
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-go@v6
         with:
-          python-version: ${{ matrix.python-version }}
-      - run: python -m unittest discover -s tests -v
-      - run: python -m py_compile skills/optimize-docker-layers/scripts/docker_layer_optimizer.py skills/optimize-docker-layers/scripts/build_observer.py skills/optimize-docker-layers/scripts/deployment_observer.py skills/optimize-docker-layers/scripts/optimization_engine.py skills/optimize-docker-layers/scripts/registry_observer.py benchmarks/run_benchmarks.py tests/deployment_integration.py tests/docker_integration.py tests/optimization_integration.py
-      - run: python -m pip install .
-      - run: dlo --help
-      - run: python tests/deployment_integration.py
-      - run: python -m json.tool .codex-plugin/plugin.json
-      - run: python -m json.tool .claude-plugin/plugin.json
-      - run: python -m json.tool .claude-plugin/marketplace.json
-      - run: python -m json.tool .agents/plugins/marketplace.json
-      - run: python -m json.tool docs/observation-schema-v3.json
-      - run: python -m json.tool docs/optimization-schema-v1.json
+          go-version: "1.26.x"
+          cache: true
+      - run: go test ./...
+      - run: go vet ./...
+      - run: go build -o dlo${{ runner.os == 'Windows' && '.exe' || '' }} ./cmd/dlo
+      - run: go run ./cmd/dlo --help
+      - name: Validate JSON contracts and plugin manifests
+        shell: bash
+        run: go test ./internal/cli -run TestJSONDocuments -count=1
+
+  cross-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26.x"
+          cache: true
+      - name: Build supported targets
+        shell: bash
+        run: |
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+            GOOS=${target%/*} GOARCH=${target#*/} CGO_ENABLED=0 go build -o /tmp/dlo ./cmd/dlo
+          done

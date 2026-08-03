@@ -8,7 +8,7 @@
       "name": "docker-layer-optimizer",
       "source": {
         "source": "url",
-        "url": "https://github.com/OliverTaylor246/docker-layer-optimizer.git",
+        "url": "https://github.com/wendylabsinc/docker-layer-optimizer.git",
         "ref": "main"
       },
       "policy": {

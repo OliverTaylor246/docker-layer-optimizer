@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/OliverTaylor246/docker-layer-optimizer/blob/main/docs/observation-schema-v3.json",
+  "$id": "https://github.com/wendylabsinc/docker-layer-optimizer/blob/main/docs/observation-schema-v3.json",
   "title": "Docker Layer Optimizer observation v3",
   "type": "object",
   "required": ["schema_version", "timestamp", "kind", "status", "project_root", "changed_paths"],
