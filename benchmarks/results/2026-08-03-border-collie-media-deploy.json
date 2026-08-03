@@ -51,7 +51,9 @@
     "webrtc_connected": true,
     "bark_ready": true,
     "device_mission": "idle",
-    "motion_activated": false
+    "motion_activated": false,
+    "verified_before_disconnect": true,
+    "final_connectivity": "device_unreachable_after_initial_verification"
   },
   "result": {
     "deployed": true,
@@ -63,6 +65,7 @@
     "The 24-26 second chunk-diff observations are failures and cannot be compared with the successful 160.313-second registry deployment as equivalent trials.",
     "Wendy's OCI deployment summary reported zero cached and rebuilt steps even though device snapshot reuse was observable; step counts are retained as reported, not interpreted.",
     "Exact aggregate image bytes were not emitted by the successful Wendy deployment.",
+    "Woof became unreachable after the initial successful runtime verification, so final service health could not be re-verified.",
     "A paired warmed control/candidate matrix is still required before claiming the media Dockerfile layout is faster."
   ]
 }
