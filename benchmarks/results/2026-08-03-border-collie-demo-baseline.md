@@ -115,3 +115,9 @@ cost. An agent candidate to remove README was not applied because version
 0.5.0b1 rejects Markdown as a representative paired-edit source. Supporting a
 safe Markdown mutation target is therefore a concrete optimizer gap exposed by
 production use; the repository retained its last fully proved Dockerfile.
+
+A second production-style source-and-documentation build confirmed the finding:
+22.009 seconds, 4 cached and 6 rebuilt steps, 6 of 10 image layers reused, a
+227,627,267-byte image, and 0.025463 seconds of non-build observer overhead.
+Repeated evidence now shows this is a representative workflow cost rather than
+a one-off cold-cache result.
