@@ -53,6 +53,7 @@ benchmark:
   budget_seconds: 180
   min_relative_improvement: 0.10
   min_absolute_seconds: 0.25
+  max_absolute_regression_seconds: 0.75
   payback_deploys: 20
 """,
             encoding="utf-8",
