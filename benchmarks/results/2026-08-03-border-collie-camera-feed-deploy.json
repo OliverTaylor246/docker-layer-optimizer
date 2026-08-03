@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-03",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "change_class": "annotated_camera_feed_and_recognition_guided_turn",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.6.0-beta.1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "current_deploy_bytes": null,
+    "app_historical_median_bytes": 8544,
+    "media_historical_median_bytes": 24264912
+  },
+  "successful_deployments": {
+    "media": {
+      "adapter": "wendy",
+      "transfer_mode": "registry",
+      "duration_seconds": 91.535,
+      "build_seconds": 89.430,
+      "export_seconds": 0.455,
+      "transfer_seconds": 0.015,
+      "unpack_seconds": 0.072,
+      "replacement_seconds": 1.045
+    },
+    "app": {
+      "adapter": "wendy",
+      "transfer_mode": "forced_content_defined_chunking",
+      "duration_seconds": 35.365,
+      "build_seconds": 34.023,
+      "export_seconds": 0.323,
+      "transfer_seconds": 0.021,
+      "unpack_seconds": 0.072,
+      "replacement_seconds": 0.485
+    }
+  },
+  "excluded_deployments": {
+    "media_layer_diff_failures_seconds": [27.255, 24.345],
+    "standalone_target_seconds": 95.793,
+    "reason": "The layer-diff path exceeded Wendy's 4 MiB container-output receive limit, and the standalone target did not own the production media port."
+  },
+  "cache_and_rebuild": {
+    "current_app_cached_steps": null,
+    "current_app_rebuilt_steps": null,
+    "current_media_cached_steps": null,
+    "current_media_rebuilt_steps": null,
+    "app_historical_median_rebuilt_steps": 2,
+    "media_historical_median_rebuilt_steps": 0
+  },
+  "image_and_layers": {
+    "current_image_bytes": null,
+    "current_layer_counts": null,
+    "nearest_comparable_app_image_bytes": 227618821,
+    "nearest_comparable_app_layers": 10,
+    "nearest_comparable_media_layers": 52
+  },
+  "observer": {
+    "current_deploy_overhead_seconds": null,
+    "app_historical_median_non_build_overhead_seconds": 0.025463,
+    "media_historical_median_non_build_overhead_seconds": 0.018724
+  },
+  "correctness": {
+    "project_tests_passed": 74,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "camera_preview_http": "healthy",
+    "camera_preview_dimensions": "1280x720",
+    "camera_frames_advancing": true,
+    "model_overlay_visible": true,
+    "device_api": "healthy",
+    "activation_ready": true,
+    "device_mission": "idle",
+    "motion_armed": false,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "These are production deployment observations for two changed services, not paired control/candidate trials."
+  },
+  "remaining_uncertainty": [
+    "The new recognition-guided turn has deterministic adapter coverage but still requires one supervised hardware Demo Run.",
+    "The deployment adapter did not emit current context size, cache/rebuild counts, image bytes, layer counts, or isolated observer overhead; historical and nearest-comparable values are labeled separately.",
+    "Wendy's forced layer-diff path remains blocked for the media service by accumulated container output larger than the 4 MiB client receive limit.",
+    "The successful media deployment did not emit a readiness phase, so camera, model, bark, and preview readiness were verified separately through live HTTP and visual checks.",
+    "No performance improvement claim can be made without paired representative control and candidate deployments."
+  ]
+}
