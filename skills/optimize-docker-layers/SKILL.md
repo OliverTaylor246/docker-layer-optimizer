@@ -5,7 +5,7 @@ description: Measure, analyze, and improve Dockerfile or Containerfile layer cac
 
 # Optimize Docker Layers
 
-Use `dlo` as the source of measured facts and the bundled script as a fallback. The CLI owns candidate IDs, snapshots, benchmarks, correctness gates, payback, and safe application. Use agent judgment to interpret evidence, identify semantic constraints, and propose unusual candidates.
+Use `dlo` as the source of measured facts. The native Go CLI owns Dockerfile parsing, candidate IDs, snapshots, benchmarks, correctness gates, payback, and safe application. Use agent judgment to interpret evidence, identify semantic constraints, and propose unusual candidates.
 
 ## Optimize
 
@@ -32,16 +32,10 @@ Do not claim success when the result is `rejected`, `skipped-payback`, stale, or
 ## Analyze
 
 1. Resolve the project root, Dockerfile or Containerfile, dependency manifests, `.dockerignore`, build command, and target architecture.
-2. Run the installed CLI if available:
+2. Run the installed CLI:
 
 ```sh
 dlo analyze --root "$PROJECT_ROOT"
-```
-
-Otherwise resolve this skill directory as `SKILL_DIR` and run:
-
-```sh
-python3 "$SKILL_DIR/scripts/docker_layer_optimizer.py" analyze --root "$PROJECT_ROOT"
 ```
 
 Use `--dockerfile path/to/Dockerfile` for a non-default file and `--json` for structured output. Read [algorithm.md](references/algorithm.md) when interpreting scores, extending the tool, or explaining limitations.

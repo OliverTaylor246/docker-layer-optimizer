@@ -2,14 +2,13 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "docker-layer-optimizer",
   "description": "Profile deployment regressions and verify agent-proposed Docker optimizations.",
-  "version": "0.5.0-beta.3",
+  "version": "0.6.0-beta.1",
   "author": {
-    "name": "Oliver Taylor",
-    "email": "35031747+OliverTaylor246@users.noreply.github.com",
-    "url": "https://github.com/OliverTaylor246"
+    "name": "Wendy Labs",
+    "url": "https://wendy.dev"
   },
-  "homepage": "https://github.com/OliverTaylor246/docker-layer-optimizer",
-  "repository": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "homepage": "https://github.com/wendylabsinc/docker-layer-optimizer",
+  "repository": "https://github.com/wendylabsinc/docker-layer-optimizer",
   "license": "MIT",
   "keywords": ["docker", "buildkit", "cache", "optimization", "deployment", "agent-skill"],
   "skills": "./skills/"

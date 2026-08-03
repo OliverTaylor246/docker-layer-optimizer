@@ -1,17 +1,17 @@
 {
   "name": "docker-optimization-tools",
   "owner": {
-    "name": "Oliver Taylor"
+    "name": "Wendy Labs"
   },
   "plugins": [
     {
       "name": "docker-layer-optimizer",
       "source": {
         "source": "github",
-        "repo": "OliverTaylor246/docker-layer-optimizer"
+        "repo": "wendylabsinc/docker-layer-optimizer"
       },
       "description": "Profile deployment regressions and verify agent-proposed Docker optimizations",
-      "version": "0.5.0-beta.3",
+      "version": "0.6.0-beta.1",
       "category": "development",
       "tags": ["docker", "buildkit", "cache", "optimization"]
     }

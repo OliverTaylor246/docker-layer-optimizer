@@ -4,5 +4,8 @@ __pycache__/
 .pytest_cache/
 .docker-layer-optimizer/
 *.egg-info/
-build/
-dist/
+/build/
+/dist/
+/dlo
+/dlo.exe
+*.test

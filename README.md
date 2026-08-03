@@ -1,45 +1,40 @@
 # Docker Layer Optimizer
 
-`dlo` is a deterministic deployment regression profiler for agents. It learns how a repository changes, identifies why iterative Docker deployments are slow, generates Docker build candidates, and can automatically apply a candidate after paired benchmarks and project-specific correctness checks prove it better.
+`dlo` is a deterministic Docker deployment optimizer built for agents and long-lived projects. It learns how a repository changes, identifies expensive cache-invalidating Dockerfile layers, generates safer layouts, and automatically applies a candidate only after paired benchmarks and project-specific correctness checks prove it better.
 
-It observes which BuildKit steps were cached or rebuilt, compares image layers between successful builds, and separates build, transfer, replacement, and readiness time. The bundled Codex and Claude skill interprets those facts; Wendy is not required.
+The engine is a native Go binary. It parses Dockerfiles with the canonical [Moby BuildKit Dockerfile parser](https://github.com/moby/buildkit/tree/master/frontend/dockerfile/parser) and typed instruction decoder, rather than maintaining a second Dockerfile grammar. Wendy is supported but not required.
 
-Wrapping a build does not itself make Docker faster. The speedup comes from Dockerfile and context changes that `dlo` identifies and measures.
+Wrapping a build does not itself make Docker faster. The speedup comes from a concrete Dockerfile or context change that DLO identifies, proves, and applies.
 
 ## Install
 
-Python 3.9+, Git, Docker, and Docker Buildx are required for measured builds. Static analysis works without Docker.
+Download a static binary from [GitHub Releases](https://github.com/wendylabsinc/docker-layer-optimizer/releases), or install from source with Go 1.26.3+:
 
 ```sh
-python3 -m pip install docker-layer-optimizer==0.5.0b3
+go install github.com/wendylabsinc/docker-layer-optimizer/cmd/dlo@latest
+dlo --version
 ```
 
-Until the beta is available from PyPI, install the repository directly:
-
-```sh
-python3 -m pip install git+https://github.com/OliverTaylor246/docker-layer-optimizer.git
-```
-
-Maintainers: the release workflow publishes tags to GitHub. PyPI publishing remains gated by the `PYPI_TRUSTED_PUBLISHING=true` repository variable (or a deliberate manual run) so a missing first-project Trusted Publisher cannot make an otherwise valid GitHub release fail.
+Static analysis requires Git. Measured builds and optimization proofs also require Docker with Buildx.
 
 ## Optimize with an agent
 
-Planning is read-only and returns a stable candidate ID, evidence, risks, and a unified diff:
+Planning is read-only and returns evidence, a stable candidate ID, risks, and a unified diff:
 
 ```sh
 dlo optimize --root . --plan --json
 ```
 
-Configure the correctness contract and representative source file once:
+Configure the representative edit and correctness contract once:
 
 ```yaml
 # .dlo.yml
 version: 1
 verification:
   commands:
-    - python -m unittest discover -s tests
+    - go test ./...
 benchmark:
-  source_path: app.py
+  source_path: internal/app.go
   trials: 3
   budget_seconds: 600
   min_relative_improvement: 0.10
@@ -49,23 +44,22 @@ benchmark:
   payback_deploys: 20
 ```
 
-Then let DLO benchmark the built-in candidate:
+Then benchmark and, if every proof gate passes, apply the built-in candidate:
 
 ```sh
 dlo optimize --root . --json
 ```
 
-DLO creates disposable control and candidate snapshots of the exact working state in its user cache, warms both builds, performs three paired source edits, checks no-op and dependency-edit regressions, runs the configured verification commands, and estimates payback. Markdown can be selected explicitly as the representative edit target and is mutated with an invisible HTML comment. It applies the patch only when every gate passes and affected files remain unchanged during verification; snapshots are deleted when the proof ends.
+DLO creates disposable control and candidate snapshots, warms both builds, performs paired source edits, checks no-op and dependency-edit regressions, runs the configured commands, and estimates payback. The real working tree is changed only when every gate passes and the affected files still match their pre-verification hashes.
 
-Agents can propose any Docker-related unified diff through the same proof engine:
+Agents can submit any Docker-related unified diff through the same proof engine:
 
 ```sh
+dlo optimize --root . --candidate /tmp/candidate.patch --plan --json
 dlo optimize --root . --candidate /tmp/candidate.patch --json
 ```
 
-The default performance gate requires both a 10% and 0.5-second median improvement, no p95 or negative-control regression beyond the larger of 10% or 0.5 seconds, and break-even within 20 representative deployments. Improvement and regression-noise thresholds are configured separately so a small benchmark target cannot accidentally make negative controls unrealistically strict. Base images, dependency versions, entrypoints, users, ports, health checks, privileges, architecture, and other protected behavior are never auto-applied. An explicitly approved plan can be applied by exact ID with `--apply-approved ID`; Git remains the review and rollback mechanism.
-
-`dlo optimize` is deliberately expensive compared with passive profiling. It has a ten-minute default budget and a cheap history-based payback precheck. `dlo deploy` continues to add only observer overhead to the normal deployment and never launches background builds.
+Base images, dependency versions, entrypoints, users, ports, health checks, privileges, architecture, and other protected behavior are never auto-applied. An explicitly reviewed plan can be applied without a performance proof only by its exact ID using `--apply-approved ID`.
 
 ## Measure a build
 
@@ -73,23 +67,17 @@ The default performance gate requires both a 10% and 0.5-second median improveme
 dlo build --root /path/to/project --tag my-app:dev
 ```
 
-For the default `--load` build, the result includes:
+The result separates cached and rebuilt BuildKit steps, context transfer, image layer DiffID changes, build duration, and DLO observer overhead. BuildKit `rawjson` is preferred because it carries an explicit cache flag; plain progress is available as a fallback.
 
-- cached, rebuilt, resolved, failed, and incomplete Dockerfile steps from BuildKit's structured progress stream;
-- matching and unmatched uncompressed layer DiffIDs, changed ordered-chain positions, and common-prefix length;
-- build duration, transferred context size, paths changed since the prior attempt, and observer overhead.
-
-For a pushed image, compare compressed OCI registry blobs instead:
+For a pushed image, compare compressed OCI registry blobs:
 
 ```sh
 dlo build --root . --tag registry.example.com/team/app:dev --push
 ```
 
-`unmatched_compressed_bytes` is the size of current compressed blobs absent from the previous observed manifest. It is a deterministic upper-bound-style comparison, not a measurement of network bytes uploaded; the registry or proxy may already contain blobs.
+`unmatched_compressed_bytes` is the size of current blobs absent from the previous observed manifest, not a claim about actual network bytes or registry billing.
 
-BuildKit `rawjson` is preferred because it supplies an explicit cache flag. `dlo` falls back to plain progress only when the installed Buildx rejects `rawjson`; choose explicitly with `--progress-format rawjson|plain`.
-
-Pass common build settings directly:
+Common Buildx settings pass through directly:
 
 ```sh
 dlo build --root . --dockerfile docker/Dockerfile --tag my-app:dev \
@@ -98,16 +86,14 @@ dlo build --root . --dockerfile docker/Dockerfile --tag my-app:dev \
 
 ## Profile a deployment
 
-Wrap the deployment command after `--` to measure the complete path rather than treating every delay as a Docker build problem:
+Wrap the actual deployment command so build, transfer, replacement, and readiness are measured separately:
 
 ```sh
 dlo deploy --root . --target woof -- wendy --device woof.local run --detach --yes
 dlo deploy --root . --target staging -- docker compose up --build -d --wait
 ```
 
-`dlo deploy` auto-detects Wendy and Docker Compose output and divides observed time into build, export, transfer, unpack, replacement, and readiness phases. For `wendy run`, DLO inserts `--chunking force` unless the command already selects a chunking mode, so a failed layer-diff deploy is surfaced instead of silently falling back to a registry push. It also enables Wendy's internal timing output and combines those exact timings with lifecycle markers. DLO records changed project paths and target-scoped timing history, then `dlo analyze` reports median phases and recommends whether to work on Docker layers or container startup/readiness.
-
-For another deployment system, add output markers without writing an adapter:
+For `wendy run`, DLO enables Wendy timing output and inserts `--chunking force` unless a chunking mode was already chosen. This keeps an expensive registry fallback from silently hiding a verified layer-diff advantage. Wendy and Compose are auto-detected; other systems can define output markers:
 
 ```sh
 dlo deploy --root . --adapter generic \
@@ -116,27 +102,17 @@ dlo deploy --root . --adapter generic \
   -- ./deploy.sh
 ```
 
-Generic and Compose phase timing is based on when output markers are received. Wendy measurements prefer its reported internal build/export, chunk-transfer, and run-container durations and use output markers for the remaining lifecycle split. The wrapped command and output logs are never persisted. Use `--quiet` to hide command output or `--json` for a machine-readable observation.
+Commands and output logs are never persisted.
 
 ## Analyze and learn
 
 ```sh
 dlo analyze --root /path/to/project
 dlo analyze --root /path/to/project --json
-dlo history --root /path/to/project
+dlo history --root /path/to/project --json
 ```
 
-The analyzer:
-
-- maps `COPY` and `ADD` inputs to tracked context files;
-- estimates change likelihood from recency-weighted Git and local observations;
-- ranks invalidation points by change likelihood × downstream comparative cost;
-- finds broad copies before dependency installation and missing `.dockerignore` files;
-- reports measured step, DiffID, registry-blob, context, and overhead evidence separately.
-
-It recommends changes and supplies the evidence used by `dlo optimize`. Layer order is constrained by build semantics, so unverified plans remain proposals.
-
-Builds and profiled deployments automatically snapshot effective local context paths and hashes. A relevant non-build task can be recorded without storing its description:
+The analyzer maps `COPY` and `ADD` through BuildKit's parsed instruction model, respects Docker ignore rules, combines recency-weighted Git history with local observations, and ranks invalidation points by change likelihood × downstream comparative cost. A relevant non-build task can be recorded without storing its description:
 
 ```sh
 dlo record --root . --kind task --status success --from-git --tag dependencies
@@ -144,73 +120,70 @@ dlo record --root . --kind task --status success --from-git --tag dependencies
 
 ## Privacy and state
 
-Observations and short-lived proof records live outside the repository in the operating system's user cache:
+Observations and short-lived proof records live outside the repository in the operating system user cache:
 
 - macOS: `~/Library/Caches/docker-layer-optimizer/`
 - Linux: `${XDG_CACHE_HOME:-~/.cache}/docker-layer-optimizer/`
 - Windows: `%LOCALAPPDATA%/docker-layer-optimizer/`
 
-Set `DLO_CACHE_DIR` to override the base directory. Detailed successful proofs are retained for at most 30 days and the latest 20 runs; failed proofs expire after seven days. Proofs contain candidate IDs, affected paths, hashes, gates, and aggregate measurements—not patches or command text.
+Set `DLO_CACHE_DIR` to override the base directory. Successful proofs are retained for at most 30 days and 20 runs; failed proofs expire after seven days. DLO stores aggregate measurements, paths and hashes, IDs, coarse tags, and phase timings. It does not persist patches, commands, logs, source contents, prompts, secrets, environment values, or build-argument values.
 
-The tool persists paths and their hashes, project and image identifiers, coarse deployment target names and signals, phase timings, tags, timestamps, durations, layer/blob digests, sizes, and counts. It does not persist build, deployment, test, or smoke commands; output logs; patch contents; Dockerfile instruction text; source contents; prompts; secret contents; environment values; or build-argument values. State writes and same-target builds or deployments are locked for concurrent use.
+See [SECURITY.md](SECURITY.md) and the [observation schema](docs/observation-schema-v3.json).
 
-See [SECURITY.md](SECURITY.md) for the threat model and disclosure process and [the observation schema](docs/observation-schema-v3.json) for the machine-readable contract.
+## Agent plugin
 
-## Agent skill
-
-Codex is the agent layer; DLO is the deterministic measurement engine. The plugin teaches Codex when to profile a deployment, how to interpret cache and phase evidence, and how to propose project-specific Docker changes. DLO owns the disposable benchmarks, correctness and protected-change gates, payback calculation, and safe application decision.
-
-Install the CLI first, then add the marketplace:
+Codex or Claude supplies project judgment; DLO supplies deterministic measurement and application gates.
 
 ```sh
-python3 -m pip install "https://github.com/OliverTaylor246/docker-layer-optimizer/releases/download/v0.5.0-beta.3/docker_layer_optimizer-0.5.0b3-py3-none-any.whl"
-codex plugin marketplace add OliverTaylor246/docker-layer-optimizer --ref main
-codex
+codex plugin marketplace add wendylabsinc/docker-layer-optimizer --ref main
 ```
 
-Inside Codex CLI, enter `/plugins`, find **Docker Layer Optimizer**, install and enable it, then start a new Codex session. The Codex desktop app also exposes installed plugins from its Plugins Directory.
+Inside Codex, open `/plugins`, install **Docker Layer Optimizer**, and begin a new session. A useful first request is:
 
-Try:
-
-> Use optimize-docker-layers to observe this project's normal Docker workflow. Record several representative builds or deployments, explain the dominant bottleneck, and plan an optimization. Do not apply an unverified patch.
+> Use optimize-docker-layers to observe this project's normal Docker workflow, explain the dominant bottleneck, and plan a measured optimization. Do not apply an unverified patch.
 
 Claude Code:
 
 ```sh
-claude plugin marketplace add OliverTaylor246/docker-layer-optimizer
+claude plugin marketplace add wendylabsinc/docker-layer-optimizer
 claude plugin install docker-layer-optimizer@docker-optimization-tools
 ```
 
-The plugin is optional: the same `dlo` commands work with another agent or directly in a terminal.
+The plugin is optional; agents can call the JSON CLI directly.
 
 ## Compatibility
 
 | Capability | Requirement | Notes |
 |---|---|---|
-| Static analysis | Python 3.9+, Git | Docker is optional. |
-| Structured step counts | Docker Buildx with `--progress=rawjson` | Plain-progress fallback is less robust. |
-| Local layer comparison | A successful `--load` exporter | Compares uncompressed DiffIDs. |
-| Registry comparison | A readable pushed OCI/Docker manifest | Compares compressed blob digests and declared sizes. |
-| Deployment profiling | A command with recognizable or custom output markers | Built-in Wendy and Docker Compose adapters; does not require Docker. |
-| Platforms | Linux, macOS, Windows | Unit-tested on all three; real-Docker CI runs on Linux. |
-| Builders | Docker and docker-container Buildx drivers | Remote behavior depends on exporter and registry access. |
+| Static analysis | Native `dlo`, Git | Docker is optional. |
+| Dockerfile parsing | Moby BuildKit parser | Supports stages, flags, JSON form, continuations, heredocs, and `COPY --from`. |
+| Structured step counts | Docker Buildx with `--progress=rawjson` | Plain fallback is less robust. |
+| Local layer comparison | Successful `--load` exporter | Compares uncompressed DiffIDs. |
+| Registry comparison | Readable pushed OCI/Docker manifest | Compares compressed blob digests and declared sizes. |
+| Deployment profiling | Recognizable or custom output markers | Wendy and Compose adapters included. |
+| Platforms | Linux, macOS, Windows; AMD64 and ARM64 | Static release binaries; CI cross-compiles all six targets. |
 
 ## Benchmarks and development
 
-Run the reproducible Python, Node, Go, and monorepo matrix with five source edits, five dependency edits, and five no-op overhead measurements per layout:
+```sh
+go test ./...
+go vet ./...
+go build ./cmd/dlo
+```
+
+Real-Docker lifecycle tests are opt-in:
 
 ```sh
-python3 -m pip install -e .
+DLO_DOCKER_INTEGRATION=1 go test ./internal/integration -v -count=1 -timeout=20m
+```
+
+The historical benchmark harness uses Python only as test orchestration; the DLO runtime is entirely Go:
+
+```sh
 python3 benchmarks/run_benchmarks.py --iterations 5 --output benchmark.json
 ```
 
-The synthetic benchmark compares an intentionally broad `COPY . .` control with a manifest-first Dockerfile. Results report medians and p95 values; they are not universal performance claims. The separate [G1 and Woof development-lifecycle baseline](benchmarks/results/2026-08-01-development-lifecycle.md) treats warm-cache deployment as the normal case and attributes no speedup to DLO unless a concrete optimization is applied. A later [five-run end-to-end Woof benchmark](benchmarks/results/2026-08-02-woof-end-to-end.md) measured a concrete layout change through build, transfer, device unpack, replacement, and readiness. The [agent-first integration](benchmarks/results/2026-08-03-agent-first-optimize.md) exercises plan, paired proof, correctness gates, payback, and automatic application against real Docker. See [the methodology](docs/benchmarking.md) and the [five-run Colima ARM64 result](benchmarks/results/2026-08-01-colima-arm64.md).
-
-```sh
-python3 -m unittest discover -s tests -v
-python3 tests/docker_integration.py --registry 127.0.0.1:5000
-dlo --help
-```
+Results are synthetic or project-specific, not universal performance claims. See the [methodology](docs/benchmarking.md), [Colima ARM64 result](benchmarks/results/2026-08-01-colima-arm64.md), [Woof end-to-end benchmark](benchmarks/results/2026-08-02-woof-end-to-end.md), and [agent-first proof](benchmarks/results/2026-08-03-agent-first-optimize.md).
 
 ## License
 

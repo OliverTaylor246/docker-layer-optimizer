@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/OliverTaylor246/docker-layer-optimizer/blob/main/docs/optimization-schema-v1.json",
+  "$id": "https://github.com/wendylabsinc/docker-layer-optimizer/blob/main/docs/optimization-schema-v1.json",
   "title": "Docker Layer Optimizer plan or result v1",
   "type": "object",
   "required": ["schema_version", "tool_version", "kind", "status", "project_root", "dockerfile", "candidate"],

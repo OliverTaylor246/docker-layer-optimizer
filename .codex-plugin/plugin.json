@@ -1,14 +1,13 @@
 {
   "name": "docker-layer-optimizer",
-  "version": "0.5.0-beta.3",
+  "version": "0.6.0-beta.1",
   "description": "Profile deployment regressions and verify agent-proposed Docker optimizations.",
   "author": {
-    "name": "Oliver Taylor",
-    "email": "35031747+OliverTaylor246@users.noreply.github.com",
-    "url": "https://github.com/OliverTaylor246"
+    "name": "Wendy Labs",
+    "url": "https://wendy.dev"
   },
-  "homepage": "https://github.com/OliverTaylor246/docker-layer-optimizer",
-  "repository": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+  "homepage": "https://github.com/wendylabsinc/docker-layer-optimizer",
+  "repository": "https://github.com/wendylabsinc/docker-layer-optimizer",
   "license": "MIT",
   "keywords": ["docker", "buildkit", "cache", "optimization", "deployment", "agent-skill"],
   "skills": "./skills/",
@@ -16,10 +15,10 @@
     "displayName": "Docker Layer Optimizer",
     "shortDescription": "Prove faster iterative Docker deploys",
     "longDescription": "Learns repository change patterns, profiles complete Docker deployments, and safely benchmarks agent-proposed build changes before automatic application.",
-    "developerName": "Oliver Taylor",
+    "developerName": "Wendy Labs",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
-    "websiteURL": "https://github.com/OliverTaylor246/docker-layer-optimizer",
+    "websiteURL": "https://github.com/wendylabsinc/docker-layer-optimizer",
     "defaultPrompt": [
       "Plan and verify the highest-impact Docker optimization for this project's normal development changes.",
       "Explain which deployment phase regressed and propose a measured Docker-related fix."
