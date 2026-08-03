@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-03",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app",
+  "change_class": "camera_only_activation_gate",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.6.0-beta.1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "current_deploy_bytes": null,
+    "historical_median_bytes": 8544
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "transfer_mode": "forced_content_defined_chunking",
+    "duration_seconds": 11.092,
+    "build_seconds": 8.619,
+    "export_seconds": 0.303,
+    "transfer_seconds": 0.0,
+    "unpack_seconds": 0.083,
+    "replacement_seconds": 0.643,
+    "readiness_observed": false,
+    "status": "success"
+  },
+  "cache_and_rebuild": {
+    "current_deploy_cached_steps": null,
+    "current_deploy_rebuilt_steps": null,
+    "historical_median_rebuilt_steps": 2
+  },
+  "image_and_layers": {
+    "current_image_bytes": null,
+    "current_image_layers": null,
+    "nearest_comparable_image_bytes": 227618821,
+    "nearest_comparable_image_layers": 10,
+    "nearest_comparable_matching_layers": 8,
+    "nearest_comparable_unmatched_compressed_bytes": 21657
+  },
+  "observer": {
+    "current_deploy_overhead_seconds": null,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 72,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "device_api": "healthy",
+    "camera_frames_advancing": true,
+    "qualifying_pear_visible": false,
+    "activation_ready": true,
+    "activation_blockers": 0,
+    "device_mission": "idle",
+    "motion_armed": false,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one production deployment observation, not a paired control/candidate proof."
+  },
+  "remaining_uncertainty": [
+    "The deployment adapter did not emit current context bytes, cached or rebuilt step counts, image bytes, layer counts, or isolated observer overhead; historical and nearest-comparable aggregates are labeled separately.",
+    "The DLO 0.6 Go rewrite was used because the required legacy Python branch is no longer available from the source repository.",
+    "Readiness was verified through a separate device API check because this deployment event did not observe a readiness phase.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
