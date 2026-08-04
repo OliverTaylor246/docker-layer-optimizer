@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 91835
+    "final_bytes": 100643
   },
   "build": {
     "platform": "linux/arm64",
@@ -79,23 +79,30 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.037,
+        "context_bytes": 100643,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.441,
+    "median_duration_seconds": 1.44,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102543,
+    "final_bytes": 57102755,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.103851,
-    "latest_inspection_seconds": 0.021189,
-    "latest_snapshot_seconds": 0.081648,
+    "median_non_build_overhead_seconds": 0.104256,
+    "latest_inspection_seconds": 0.022413,
+    "latest_snapshot_seconds": 0.082248,
     "median_deployment_unclassified_seconds": 0.441
   },
   "deployment": {
@@ -189,9 +196,20 @@
           "replacement": 0.188,
           "readiness": 2.281
         }
+      },
+      {
+        "duration_seconds": 6.062,
+        "phase_seconds": {
+          "build": 1.246,
+          "export": 1.502,
+          "transfer": 0.375,
+          "unpack": 0.037,
+          "replacement": 0.191,
+          "readiness": 2.2
+        }
       }
     ],
-    "median_duration_seconds": 6.021,
+    "median_duration_seconds": 6.062,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
@@ -203,20 +221,20 @@
       "fsm": "801/0",
       "last_arm_sdk_command": null,
       "full_upper_body_compliance_deployed": true,
-      "teach_gain_scale": 0.5,
-      "teach_joint_kp_range": [2.5, 8.0],
-      "teach_joint_kd_range": [0.2, 0.75],
-      "teach_deadband_rad": 0.03,
-      "teach_follow_step_rad": 0.025,
-      "shoulder_fall_limit_rad": 1.2,
-      "physical_shoulder_guard_verified": false,
+      "teach_gain_scale": 0.25,
+      "teach_joint_kp_range": [1.25, 4.0],
+      "teach_joint_kd_range": [0.1, 0.375],
+      "teach_deadband_rad": 0.01,
+      "teach_follow_step_rad": 0.04,
+      "teach_ratchet_enabled": false,
+      "physical_free_follow_verified": false,
       "physical_full_upper_body_capture_verified": true,
       "previous_full_upper_body_capture": {
-        "frames": 520,
-        "duration_seconds": 10.818582,
-        "maximum_joint_speed_rad_s": 8.859422,
+        "frames": 691,
+        "duration_seconds": 14.575407,
+        "maximum_joint_speed_rad_s": 7.34724,
         "replay_safe": false,
-        "operator_result": "closer, but shoulder locked at the prior 0.4-rad guard"
+        "operator_result": "same shoulder resistance after both shoulder targets hit the 1.2-rad guard"
       },
       "previous_arm_only_capture": {
         "frames": 349,
@@ -236,9 +254,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and seven warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only eight Wendy deployments were measured and they exercised different cache states.",
-    "The 1.2-rad shoulder guard is deployed and idle, but its physical feel has not yet been verified; replay remains untested.",
+    "Two cold builds and eight warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only nine Wendy deployments were measured and they exercised different cache states.",
+    "The no-ratchet free-follow Teach profile is deployed and idle, but its physical feel has not yet been verified; replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
