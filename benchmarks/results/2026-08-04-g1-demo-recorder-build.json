@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 25945
+    "final_bytes": 73609
   },
   "build": {
     "platform": "linux/arm64",
@@ -44,23 +44,37 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.062,
+        "context_bytes": 8641,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
+      },
+      {
+        "duration_seconds": 2.6,
+        "context_bytes": 73609,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 20.4735,
-    "median_cached_steps": 4.5,
-    "median_rebuilt_steps": 5
+    "median_duration_seconds": 2.0195,
+    "median_cached_steps": 8,
+    "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57097399,
+    "final_bytes": 57097954,
     "final_reused_layers": 7,
     "final_new_layers": 1
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.110561,
+    "median_non_build_overhead_seconds": 0.106654,
     "median_inspection_seconds": 0.028035,
     "median_snapshot_seconds": 0.082527,
-    "median_deployment_unclassified_seconds": 0.472
+    "median_deployment_unclassified_seconds": 0.441
   },
   "deployment": {
     "target": "unitree-g1-nx-local",
@@ -98,19 +112,45 @@
           "replacement": 0.224,
           "readiness": 2.162
         }
+      },
+      {
+        "duration_seconds": 5.675,
+        "phase_seconds": {
+          "build": 1.223,
+          "export": 1.397,
+          "transfer": 0.216,
+          "unpack": 0.001,
+          "replacement": 0.226,
+          "readiness": 2.214
+        }
+      },
+      {
+        "duration_seconds": 5.914,
+        "phase_seconds": {
+          "build": 1.224,
+          "export": 1.401,
+          "transfer": 0.444,
+          "unpack": 0.021,
+          "replacement": 0.177,
+          "readiness": 2.206
+        }
       }
     ],
-    "median_duration_seconds": 6.136,
+    "median_duration_seconds": 5.914,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
       "teach_enabled": true,
       "replay_enabled": false,
       "live_joint_count": 17,
-      "lowstate_age_seconds": 0.0013,
+      "lowstate_age_seconds": 0.0008,
       "remote_neutral": true,
-      "last_arm_sdk_command": null,
-      "empty_name_validation_is_plain_text": true
+      "fsm": "801/0",
+      "last_arm_sdk_weight": 0.0,
+      "teach_recording_frames": 417,
+      "teach_recording_duration_seconds": 8.500306,
+      "teach_recording_maximum_joint_speed_rad_s": 0.065138,
+      "teach_recording_saved": true
     }
   },
   "result": {
@@ -120,9 +160,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and two warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only three Wendy deployments were measured and they exercised different cache states.",
-    "Live G1 verification covered the independent gates and empty-name validation; the operator had not yet successfully started the physical teach release when this result was recorded.",
+    "Two cold builds and four warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only five Wendy deployments were measured and they exercised different cache states.",
+    "Live G1 verification covered one stationary teach capture on a crane; a human-guided multi-joint trajectory and replay remain untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
