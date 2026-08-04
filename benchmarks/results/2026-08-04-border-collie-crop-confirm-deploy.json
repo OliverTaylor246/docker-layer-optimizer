@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_and_media",
+  "change_class": "conditional_crop_confirm_and_candidate_search_slowdown",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "app_latest_builder_reported_kilobytes": 172.91,
+    "media_latest_builder_reported_megabytes": 48.53,
+    "current_deploy_exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "transfer_mode": "registry",
+    "aggregate_duration_seconds": 77.718,
+    "media": {
+      "duration_seconds": 71.444,
+      "build_seconds": 0.612,
+      "export_seconds": 68.949,
+      "transfer_seconds": 0.568,
+      "unpack_seconds": 0.080,
+      "replacement_seconds": 0.909,
+      "readiness_observed": false,
+      "unclassified_seconds": 0.326,
+      "status": "success"
+    },
+    "app": {
+      "duration_seconds": 6.274,
+      "build_seconds": 1.480,
+      "export_seconds": 3.443,
+      "transfer_seconds": 0.355,
+      "unpack_seconds": 0.082,
+      "replacement_seconds": 0.456,
+      "readiness_observed": false,
+      "unclassified_seconds": 0.458,
+      "status": "success"
+    }
+  },
+  "cache_and_rebuild": {
+    "current_deploy_cached_steps": null,
+    "current_deploy_rebuilt_steps": null,
+    "historical_device_layers_reused": 51,
+    "historical_media_layers_applied": 1,
+    "remaining_uncertainty": "The current Wendy output did not emit cache-step, rebuilt-step, or device-layer reuse counts."
+  },
+  "image_and_layers": {
+    "aggregate_image_bytes": null,
+    "aggregate_device_layers": 62,
+    "app_device_layers": 10,
+    "media_device_layers": 52
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "media_unclassified_seconds": 0.326,
+    "app_unclassified_seconds": 0.458,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 93,
+    "bytecode_compile": "passed",
+    "device_api": "healthy",
+    "camera_frames_advancing": true,
+    "model_loaded": true,
+    "webrtc_connected": true,
+    "bark_ready": true,
+    "crop_confirm_enabled": true,
+    "live_inference_passes": 2,
+    "live_combined_inference_seconds": 0.118562,
+    "live_full_frame_confidence": 0.631595,
+    "live_crop_confidence": 0.313209,
+    "live_crop_agreement_iou": 0.9425,
+    "live_crop_promoted": false,
+    "inference_deadline_seconds": 0.200,
+    "activation_ready": true,
+    "activation_blockers": 0,
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "motion_armed": false,
+    "last_motion_forward_mps": 0.0,
+    "last_motion_yaw_rps": 0.0,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "These are two DLO-observed production deployments, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "The live read-only check proves bounded two-pass inference below the safety deadline and correct rejection of a weaker crop, but not crop promotion on a stronger distant-pear frame.",
+    "The 50 percent duty-cycled candidate rotation passed automated motion tests but requires a supervised physical Demo Run.",
+    "The deployment wrapper did not emit current cache-step, rebuilt-step, image-byte, device-layer reuse, readiness, or isolated observer-overhead measurements; unavailable values remain null and historical values are labeled separately.",
+    "The context sizes are the latest builder-reported rounded values because the current JSON deployment output did not repeat exact context bytes.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
