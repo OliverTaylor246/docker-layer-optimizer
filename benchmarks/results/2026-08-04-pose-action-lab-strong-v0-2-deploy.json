@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "pose-action-lab",
+  "component": "standalone_app",
+  "change_class": "stronger_operator_gated_pose_envelope_v0_2",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f524ea3d643eec2c44965d54c130b221654814a01de555938c73cb2e8909db14"
+  },
+  "context": {
+    "bytes": 79490
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 18.772,
+    "cached_steps": 4,
+    "rebuilt_steps": 6,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 62.986,
+    "phase_seconds": {
+      "build": 45.576,
+      "export": 9.178,
+      "transfer": 0.047,
+      "unpack": 4.336,
+      "replacement": 0.577,
+      "readiness": 2.641
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "new_layers": 10,
+    "reused_layers": 0,
+    "image_size_bytes": 97298076,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 18.796298,
+    "build_inspection_seconds": 0.022629,
+    "build_snapshot_seconds": 0.001228,
+    "deployment_unclassified_seconds": 0.631
+  },
+  "correctness": {
+    "project_tests_passed": 20,
+    "container_import": "passed",
+    "runtime_connected": true,
+    "runtime_state_age_seconds": 0.002,
+    "runtime_pose_mode": false,
+    "runtime_active_pose": null,
+    "runtime_pose_envelope": {
+      "roll_degrees": 12.0,
+      "pitch_degrees": 20.0,
+      "yaw_degrees": 15.0,
+      "hold_seconds": 2.0
+    },
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The feature build and deployment succeeded, but the uniquely tagged image had no layer baseline and no Dockerfile candidate was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment of this revision were measured, so timing and cache counts are not replicated.",
+    "The observation did not report compressed transfer bytes.",
+    "The uniquely tagged image had no comparable layer baseline, so its layer reuse count is not an optimization comparison.",
+    "Runtime verification covered connectivity and the idle control state only; the stronger physical poses still require supervised qualification."
+  ]
+}
