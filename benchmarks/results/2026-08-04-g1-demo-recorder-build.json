@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 124826
+    "final_bytes": 98780
   },
   "build": {
     "platform": "linux/arm64",
@@ -65,23 +65,30 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.207,
+        "context_bytes": 98780,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.547,
+    "median_duration_seconds": 1.493,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102208,
+    "final_bytes": 57102157,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.105445,
-    "latest_inspection_seconds": 0.02241,
-    "latest_snapshot_seconds": 0.081441,
+    "median_non_build_overhead_seconds": 0.104648,
+    "latest_inspection_seconds": 0.022341,
+    "latest_snapshot_seconds": 0.081193,
     "median_deployment_unclassified_seconds": 0.441
   },
   "deployment": {
@@ -153,9 +160,20 @@
           "replacement": 0.277,
           "readiness": 2.194
         }
+      },
+      {
+        "duration_seconds": 6.117,
+        "phase_seconds": {
+          "build": 1.22,
+          "export": 1.463,
+          "transfer": 0.568,
+          "unpack": 0.001,
+          "replacement": 0.169,
+          "readiness": 2.215
+        }
       }
     ],
-    "median_duration_seconds": 5.919,
+    "median_duration_seconds": 5.924,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
@@ -166,19 +184,22 @@
       "remote_neutral": true,
       "fsm": "801/0",
       "last_arm_sdk_command": null,
-      "compliant_teach_deployed": true,
-      "teach_gain_scale": 1.0,
-      "teach_arm_kp_range": [5.0, 15.0],
-      "teach_arm_kd_range": [0.4, 1.0],
-      "physical_teach_capture_verified": true,
-      "teach_recording_frames": 349,
-      "teach_recording_duration_seconds": 7.341923,
-      "teach_recording_maximum_joint_speed_rad_s": 1.723963,
-      "largest_joint_range_rad": 0.7838,
-      "exact_teach_command_frames": 349,
-      "teach_weight_range": [0.02, 1.0],
-      "teach_release_final_weight": 0.0,
-      "subjective_compliance_confirmed": false
+      "full_upper_body_compliance_deployed": true,
+      "teach_gain_scale": 0.5,
+      "teach_joint_kp_range": [2.5, 8.0],
+      "teach_joint_kd_range": [0.2, 0.75],
+      "teach_deadband_rad": 0.03,
+      "teach_follow_step_rad": 0.025,
+      "physical_full_upper_body_capture_verified": false,
+      "previous_arm_only_capture": {
+        "frames": 349,
+        "duration_seconds": 7.341923,
+        "maximum_joint_speed_rad_s": 1.723963,
+        "largest_joint_range_rad": 0.7838,
+        "exact_teach_command_frames": 349,
+        "teach_weight_range": [0.02, 1.0],
+        "teach_release_final_weight": 0.0
+      }
     }
   },
   "result": {
@@ -188,9 +209,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and five warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only six Wendy deployments were measured and they exercised different cache states.",
-    "One human-guided compliant Teach recording completed on the crane, but the operator has not yet confirmed that the physical stiffness is comfortable; replay remains untested.",
+    "Two cold builds and six warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only seven Wendy deployments were measured and they exercised different cache states.",
+    "The all-17-joint low-impedance Teach profile is deployed and idle, but its physical feel has not yet been verified; replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
