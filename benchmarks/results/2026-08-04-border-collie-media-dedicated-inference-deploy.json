@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "media",
+  "change_class": "dedicated_inference_worker",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "current_builder_reported_megabytes": 48.53,
+    "historical_exact_bytes": 48529651
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "transfer_mode": "registry",
+    "duration_seconds": 95.756,
+    "build_seconds": 93.695,
+    "export_seconds": 0.342,
+    "transfer_seconds": 0.017,
+    "unpack_seconds": 0.083,
+    "replacement_seconds": 0.992,
+    "readiness_observed": false,
+    "status": "success"
+  },
+  "cache_and_rebuild": {
+    "current_deploy_cached_steps": null,
+    "current_deploy_rebuilt_steps": null,
+    "device_layers_reused": 51,
+    "device_layers_applied": 1,
+    "historical_median_rebuilt_steps": 0
+  },
+  "image_and_layers": {
+    "current_image_bytes": null,
+    "current_image_layers": 52
+  },
+  "observer": {
+    "current_deploy_overhead_seconds": null,
+    "historical_median_non_build_overhead_seconds": 0.018724
+  },
+  "correctness": {
+    "project_tests_passed": 79,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "camera_frames_advancing": true,
+    "model_loaded": true,
+    "webrtc_connected": true,
+    "bark_ready": true,
+    "inference_seconds_at_verification": 0.057311,
+    "status_probe": {
+      "duration_seconds": 20,
+      "requests": 200,
+      "failures": 0,
+      "median_milliseconds": 19.07,
+      "p95_milliseconds": 34.89,
+      "maximum_milliseconds": 75.94
+    },
+    "concurrent_preview_probe": {
+      "requests": 100,
+      "failures": 0,
+      "median_milliseconds": 43.41,
+      "p95_milliseconds": 66.46,
+      "maximum_milliseconds": 106.21
+    },
+    "activation_ready": true,
+    "motion_armed": false,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one DLO-observed production deployment, not a paired control/candidate proof."
+  },
+  "remaining_uncertainty": [
+    "The dedicated inference worker passed a deterministic event-loop starvation regression and a no-motion device latency probe, but requires a supervised full Demo Run.",
+    "The deployment event did not observe readiness; runtime readiness was verified separately after TensorRT and WebRTC warm-up.",
+    "The builder emitted only a rounded current context size and did not emit current cache-step, rebuilt-step, aggregate image-byte, or observer-overhead measurements.",
+    "The 95.756-second deployment was dominated by rebuilding and exporting the large Jetson image and is not optimization proof.",
+    "The planned Modular MAX and Mojo model adapter is documented but not implemented in this deployment."
+  ]
+}
