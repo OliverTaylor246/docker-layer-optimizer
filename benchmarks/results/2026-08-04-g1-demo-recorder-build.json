@@ -12,34 +12,48 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "bytes": 144875
+    "final_bytes": 151412
   },
   "build": {
     "platform": "linux/arm64",
-    "duration_seconds": 39.508,
-    "cached_steps": 1,
-    "rebuilt_steps": 9,
-    "failed_steps": 0
+    "observations": [
+      {
+        "duration_seconds": 39.508,
+        "context_bytes": 144875,
+        "cached_steps": 1,
+        "rebuilt_steps": 9,
+        "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.242,
+        "context_bytes": 151412,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
+      }
+    ],
+    "median_duration_seconds": 20.375,
+    "median_cached_steps": 4.5,
+    "median_rebuilt_steps": 5
   },
   "image": {
     "layers": 8,
-    "bytes": 57092906,
-    "reused_layers": 0,
-    "new_layers": 8
+    "final_bytes": 57096307,
+    "final_reused_layers": 7,
+    "final_new_layers": 1
   },
   "observer": {
-    "non_build_overhead_seconds": 0.113259,
-    "inspection_seconds": 0.029902,
-    "snapshot_seconds": 0.083357
+    "median_non_build_overhead_seconds": 0.110561,
+    "median_inspection_seconds": 0.028035,
+    "median_snapshot_seconds": 0.082527
   },
   "result": {
     "build_succeeded": true,
     "optimization_claim": false,
-    "reason": "This is the first measured build and has no paired warmed baseline."
+    "reason": "A cold build and one warmed source-only rebuild succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "No second build exists yet, so cache behavior and rebuild counts have not been replicated.",
-    "No source-only rebuild has been measured.",
+    "Only one cold build and one warmed source-only rebuild exist, so timing and cache counts have not been replicated.",
     "No Wendy device deployment has been measured.",
     "The image was smoke-tested locally without live G1 DDS traffic."
   ]
