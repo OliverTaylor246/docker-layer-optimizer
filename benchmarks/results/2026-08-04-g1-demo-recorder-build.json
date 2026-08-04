@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 83514
+    "final_bytes": 49561
   },
   "build": {
     "platform": "linux/arm64",
@@ -114,23 +114,30 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.311,
+        "context_bytes": 49561,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.378,
+    "median_duration_seconds": 1.342,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102938,
+    "final_bytes": 57104903,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
     "median_non_build_overhead_seconds": 0.103693,
-    "latest_inspection_seconds": 0.025291,
-    "latest_snapshot_seconds": 0.080312,
+    "latest_inspection_seconds": 0.022731,
+    "latest_snapshot_seconds": 0.161801,
     "median_deployment_unclassified_seconds": 0.481
   },
   "deployment": {
@@ -279,6 +286,17 @@
           "replacement": 0.189,
           "readiness": 1.978
         }
+      },
+      {
+        "duration_seconds": 5.776,
+        "phase_seconds": {
+          "build": 1.318,
+          "export": 1.438,
+          "transfer": 0.264,
+          "unpack": 0.025,
+          "replacement": 0.19,
+          "readiness": 2.199
+        }
       }
     ],
     "median_duration_seconds": 5.964,
@@ -306,9 +324,18 @@
       "replay_active_state_retry_timeout_seconds": 0.1,
       "live_container_state_retry_verified": true,
       "live_container_active_state_retry_verified": true,
-      "regression_tests_passed": 27,
-      "replay_buttons_enabled": 6,
+      "regression_tests_passed": 30,
+      "replay_buttons_enabled": 8,
       "blocked_recordings": 0,
+      "trim_start_api_deployed": true,
+      "trimmed_recording_created": {
+        "source_name": "Handing a letter",
+        "cut_seconds": 6.802294,
+        "frames": 415,
+        "duration_seconds": 8.710509,
+        "motion_preroll_seconds": 0.2036,
+        "source_preserved": true
+      },
       "browser_replay_controls_verified": true,
       "browser_replay_started": false,
       "physical_replay_verified": true,
@@ -345,8 +372,8 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and twelve warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only thirteen Wendy deployments were measured and they exercised different cache states.",
+    "Two cold builds and thirteen warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only fourteen Wendy deployments were measured and they exercised different cache states.",
     "One complete physical replay is recorded, but the newly deployed active-feed recovery behavior has not yet been physically replay-tested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
