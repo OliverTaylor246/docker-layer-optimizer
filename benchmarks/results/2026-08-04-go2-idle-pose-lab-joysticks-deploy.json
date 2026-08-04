@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "go2-idle-pose-lab",
+  "component": "standalone_app",
+  "change_class": "custom_pose_joysticks_and_persistent_library",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "ace96bc1e0c63bb174321371724cb667a9a9d610bab50245ce510d535f847bb4"
+  },
+  "context": {
+    "bytes": 89223
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 0.792,
+    "cached_steps": 8,
+    "rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 11.695,
+    "phase_seconds": {
+      "build": 7.279,
+      "export": 0.506,
+      "transfer": 0.017,
+      "unpack": 0.202,
+      "replacement": 0.437,
+      "readiness": 2.691
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "new_layers": 2,
+    "reused_layers": 8,
+    "image_size_bytes": 97298127,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 0.818525,
+    "build_inspection_seconds": 0.02258,
+    "build_snapshot_seconds": 0.001715,
+    "deployment_unclassified_seconds": 0.563
+  },
+  "correctness": {
+    "project_tests_passed": 19,
+    "container_import": "passed",
+    "local_browser_interactions": "passed",
+    "local_mobile_overflow_check": "passed",
+    "runtime_connected": true,
+    "runtime_state_age_seconds": 0.019,
+    "runtime_pose_mode": false,
+    "runtime_active_pose": null,
+    "runtime_custom_pose_endpoint": "passed",
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A cached feature build and one deployment succeeded; the initial build was a different change class, so it is not a controlled comparison."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment of this change class were measured, so timing and cache counts are not replicated.",
+    "The observation did not report compressed transfer bytes.",
+    "The comparison with the initial application build is confounded by warm caches and a different change scope.",
+    "Runtime verification covered connectivity and an idle state only; no physical pose was triggered."
+  ]
+}
