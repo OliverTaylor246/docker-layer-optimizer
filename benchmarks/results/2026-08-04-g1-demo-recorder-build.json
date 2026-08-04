@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 98780
+    "final_bytes": 91835
   },
   "build": {
     "platform": "linux/arm64",
@@ -72,23 +72,30 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.441,
+        "context_bytes": 91835,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.493,
+    "median_duration_seconds": 1.441,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102157,
+    "final_bytes": 57102543,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.104648,
-    "latest_inspection_seconds": 0.022341,
-    "latest_snapshot_seconds": 0.081193,
+    "median_non_build_overhead_seconds": 0.103851,
+    "latest_inspection_seconds": 0.021189,
+    "latest_snapshot_seconds": 0.081648,
     "median_deployment_unclassified_seconds": 0.441
   },
   "deployment": {
@@ -171,9 +178,20 @@
           "replacement": 0.169,
           "readiness": 2.215
         }
+      },
+      {
+        "duration_seconds": 6.21,
+        "phase_seconds": {
+          "build": 1.244,
+          "export": 1.391,
+          "transfer": 0.422,
+          "unpack": 0.021,
+          "replacement": 0.188,
+          "readiness": 2.281
+        }
       }
     ],
-    "median_duration_seconds": 5.924,
+    "median_duration_seconds": 6.021,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
@@ -190,7 +208,16 @@
       "teach_joint_kd_range": [0.2, 0.75],
       "teach_deadband_rad": 0.03,
       "teach_follow_step_rad": 0.025,
-      "physical_full_upper_body_capture_verified": false,
+      "shoulder_fall_limit_rad": 1.2,
+      "physical_shoulder_guard_verified": false,
+      "physical_full_upper_body_capture_verified": true,
+      "previous_full_upper_body_capture": {
+        "frames": 520,
+        "duration_seconds": 10.818582,
+        "maximum_joint_speed_rad_s": 8.859422,
+        "replay_safe": false,
+        "operator_result": "closer, but shoulder locked at the prior 0.4-rad guard"
+      },
       "previous_arm_only_capture": {
         "frames": 349,
         "duration_seconds": 7.341923,
@@ -209,9 +236,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and six warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only seven Wendy deployments were measured and they exercised different cache states.",
-    "The all-17-joint low-impedance Teach profile is deployed and idle, but its physical feel has not yet been verified; replay remains untested.",
+    "Two cold builds and seven warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only eight Wendy deployments were measured and they exercised different cache states.",
+    "The 1.2-rad shoulder guard is deployed and idle, but its physical feel has not yet been verified; replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
