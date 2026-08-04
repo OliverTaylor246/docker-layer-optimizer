@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_and_media",
+  "change_class": "phase_gated_forward_motion_and_close_apple_tracking",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.6.0-beta.1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 199.53,
+    "media_builder_reported_megabytes": 48.54,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "apple-container",
+    "target": "woof",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 79.402,
+    "dlo_build_phase_seconds": 0.487,
+    "app_service_reported_build_seconds": 7.31,
+    "media_service_reported_build_seconds": 74.075,
+    "export_seconds": 50.61,
+    "transfer_seconds": 23.108,
+    "unpack_seconds": 0.253,
+    "replacement_seconds": 1.79,
+    "readiness_seconds": 2.694,
+    "unclassified_seconds": 0.46,
+    "dominant_dlo_phase": "export"
+  },
+  "cache_and_rebuild": {
+    "app_cached_steps": 8,
+    "app_rebuilt_steps": 2,
+    "media_cached_steps": 5,
+    "media_rebuilt_steps": 1,
+    "device_layers_reused": 59,
+    "device_layers_applied": 3
+  },
+  "image_and_layers": {
+    "image_count": 2,
+    "aggregate_layer_count": 62,
+    "app_builder_reported_blob_megabytes": 217.1,
+    "media_builder_reported_blob_gigabytes": 5.87,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "current_unclassified_seconds": 0.46
+  },
+  "correctness": {
+    "project_tests_passed": 108,
+    "changed_code_lint": "passed",
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "device_mission": "idle",
+    "active_run_id": null,
+    "hardware_connected": true,
+    "motion_armed": false,
+    "last_forward_mps": 0.0,
+    "last_yaw_rps": 0.0,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one DLO-observed two-service deployment, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "The builder reported rounded context and blob totals rather than exact transferred bytes.",
+    "Current isolated DLO observer overhead was not emitted; unclassified time is retained separately.",
+    "Parallel app and media output makes DLO phase attribution differ from each service's reported build duration.",
+    "Registry blob totals are logical image totals and do not prove network bytes transferred or registry cache reuse.",
+    "The phase-gated motion and close-range red-apple behavior still require a supervised end-to-end Demo Run.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
