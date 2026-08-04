@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "g1-demo-recorder",
+  "component": "standalone-app",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "bytes": 144875
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "duration_seconds": 39.508,
+    "cached_steps": 1,
+    "rebuilt_steps": 9,
+    "failed_steps": 0
+  },
+  "image": {
+    "layers": 8,
+    "bytes": 57092906,
+    "reused_layers": 0,
+    "new_layers": 8
+  },
+  "observer": {
+    "non_build_overhead_seconds": 0.113259,
+    "inspection_seconds": 0.029902,
+    "snapshot_seconds": 0.083357
+  },
+  "result": {
+    "build_succeeded": true,
+    "optimization_claim": false,
+    "reason": "This is the first measured build and has no paired warmed baseline."
+  },
+  "remaining_uncertainty": [
+    "No second build exists yet, so cache behavior and rebuild counts have not been replicated.",
+    "No source-only rebuild has been measured.",
+    "No Wendy device deployment has been measured.",
+    "The image was smoke-tested locally without live G1 DDS traffic."
+  ]
+}
