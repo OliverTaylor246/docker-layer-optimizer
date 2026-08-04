@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 49561
+    "final_bytes": 163059
   },
   "build": {
     "platform": "linux/arm64",
@@ -121,6 +121,13 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.191,
+        "context_bytes": 163059,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
     "median_duration_seconds": 1.342,
@@ -129,15 +136,15 @@
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57104903,
+    "final_bytes": 57107566,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
     "median_non_build_overhead_seconds": 0.103693,
-    "latest_inspection_seconds": 0.022731,
-    "latest_snapshot_seconds": 0.161801,
+    "latest_inspection_seconds": 0.022662,
+    "latest_snapshot_seconds": 0.080735,
     "median_deployment_unclassified_seconds": 0.481
   },
   "deployment": {
@@ -297,6 +304,17 @@
           "replacement": 0.19,
           "readiness": 2.199
         }
+      },
+      {
+        "duration_seconds": 6.143,
+        "phase_seconds": {
+          "build": 1.254,
+          "export": 1.415,
+          "transfer": 0.406,
+          "unpack": 0.0,
+          "replacement": 0.283,
+          "readiness": 2.196
+        }
       }
     ],
     "median_duration_seconds": 5.964,
@@ -305,6 +323,7 @@
       "motion_enabled": true,
       "teach_enabled": true,
       "replay_enabled": true,
+      "walking_replay_enabled": true,
       "live_joint_count": 17,
       "lowstate_age_seconds": 0.0001,
       "remote_neutral": true,
@@ -324,9 +343,14 @@
       "replay_active_state_retry_timeout_seconds": 0.1,
       "live_container_state_retry_verified": true,
       "live_container_active_state_retry_verified": true,
-      "regression_tests_passed": 30,
-      "replay_buttons_enabled": 8,
+      "regression_tests_passed": 34,
+      "replay_buttons_enabled": 16,
       "blocked_recordings": 0,
+      "walking_replay_scope": "arms_only",
+      "walking_replay_allows_r3_axes": true,
+      "walking_replay_aborts_on_r3_buttons": true,
+      "walking_replay_calls_stop_move": false,
+      "walking_replay_physical_tested": false,
       "trim_start_api_deployed": true,
       "trimmed_recording_created": {
         "source_name": "Handing a letter",
@@ -372,9 +396,10 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and thirteen warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only fourteen Wendy deployments were measured and they exercised different cache states.",
+    "Two cold builds and fourteen warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only fifteen Wendy deployments were measured and they exercised different cache states.",
     "One complete physical replay is recorded, but the newly deployed active-feed recovery behavior has not yet been physically replay-tested.",
+    "The walking replay path is deployed and unit-tested but has not yet been physically commissioned while the G1 is walking.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
