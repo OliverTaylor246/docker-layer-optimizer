@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "pose-action-lab",
+  "component": "standalone_app",
+  "change_class": "native_play_stretch_v0_4",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f524ea3d643eec2c44965d54c130b221654814a01de555938c73cb2e8909db14"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "observations": [
+      {
+        "duration_seconds": 21.058,
+        "context_bytes": 114218,
+        "cached_steps": 4,
+        "rebuilt_steps": 6,
+        "failed_steps": 0
+      },
+      {
+        "duration_seconds": 0.631,
+        "context_bytes": 1785,
+        "cached_steps": 10,
+        "rebuilt_steps": 0,
+        "failed_steps": 0
+      },
+      {
+        "duration_seconds": 0.591,
+        "context_bytes": 1353,
+        "cached_steps": 8,
+        "rebuilt_steps": 2,
+        "failed_steps": 0
+      }
+    ],
+    "aggregate_cached_steps": 22,
+    "aggregate_rebuilt_steps": 8,
+    "aggregate_failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 65.992,
+    "phase_seconds": {
+      "build": 49.438,
+      "export": 7.62,
+      "transfer": 0.037,
+      "unpack": 5.119,
+      "replacement": 0.497,
+      "readiness": 2.51
+    }
+  },
+  "image_and_layers": {
+    "images_observed": 3,
+    "aggregate_layer_count": 30,
+    "aggregate_new_layers": 12,
+    "aggregate_reused_layers": 18,
+    "latest_layer_count": 10,
+    "latest_image_size_bytes": 97302558,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "aggregate_wrapper_seconds": 22.356027,
+    "aggregate_non_build_seconds": 0.073425,
+    "aggregate_inspection_seconds": 0.069114,
+    "aggregate_snapshot_seconds": 0.004311,
+    "deployment_unclassified_seconds": 0.771
+  },
+  "correctness": {
+    "project_tests_passed": 25,
+    "container_package_version": "0.4.0",
+    "container_native_action_catalog": "passed",
+    "runtime_connected": true,
+    "runtime_ready": true,
+    "runtime_state_age_seconds": 0.008,
+    "runtime_pose_mode": false,
+    "runtime_active_pose": null,
+    "runtime_native_play_action_available": true,
+    "runtime_last_result": null,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The feature build and deployment succeeded, and generated egg-info was excluded for correct runtime metadata; no Dockerfile optimization candidate was measured."
+  },
+  "remaining_uncertainty": [
+    "The three local build observations represent successive correctness edits, not replicated measurements of one unchanged context.",
+    "The deployment observation did not report compressed transfer bytes.",
+    "Runtime verification covered connectivity, catalog availability, and idle control state only.",
+    "The firmware-defined native Stretch trajectory was not activated and still requires a supervised physical trial."
+  ]
+}
