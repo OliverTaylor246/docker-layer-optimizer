@@ -79,6 +79,14 @@
     "live_crop_confidence": 0.313209,
     "live_crop_agreement_iou": 0.9425,
     "live_crop_promoted": false,
+    "live_crop_probe": {
+      "requests": 20,
+      "unique_frames": 20,
+      "two_pass_samples": 20,
+      "minimum_inference_seconds": 0.115243,
+      "maximum_inference_seconds": 0.137250,
+      "crop_promotions": 0
+    },
     "inference_deadline_seconds": 0.200,
     "activation_ready": true,
     "activation_blockers": 0,
