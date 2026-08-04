@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/collie-demo",
+  "component": "thermal_monitor",
+  "change_class": "audible_alarm_playback_hold",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "9a27b4125803b8ea4f22e2896e94f35ef36c7c5b638faccb527f609bf368c7c1"
+  },
+  "context": {
+    "bytes": 40530
+  },
+  "build": {
+    "duration_seconds": 56.726,
+    "cached_steps": 1,
+    "rebuilt_steps": 8,
+    "status": "success"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "duration_seconds": 103.752,
+    "readiness_seconds": 2.716,
+    "unclassified_seconds": 101.036,
+    "status": "success"
+  },
+  "image_and_layers": {
+    "image_bytes": 216810941,
+    "image_layers": 10,
+    "matching_layer_diff_ids": 0,
+    "unmatched_layer_diff_ids": 10
+  },
+  "observer": {
+    "non_build_overhead_seconds": 0.028856,
+    "inspection_seconds": 0.027636,
+    "snapshot_seconds": 0.00122
+  },
+  "correctness": {
+    "thermal_monitor_tests_passed": 16,
+    "device_api": "healthy",
+    "audiohub_request": "accepted",
+    "playback_connection_hold_seconds": 1.66,
+    "human_audible_confirmation": true
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is a single measured baseline and deployment, not a paired optimization experiment."
+  },
+  "remaining_uncertainty": [
+    "The deployment adapter classified readiness but left most deployment time unclassified.",
+    "The local image comparison had no prior baseline, so all ten image-layer DiffIDs were unmatched.",
+    "The configured agent-first installation ref was unavailable; the already installed verified tool version was used.",
+    "The measurement included other existing uncommitted thermal-monitor changes, so it does not isolate the alarm hold change.",
+    "No paired control build or deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
