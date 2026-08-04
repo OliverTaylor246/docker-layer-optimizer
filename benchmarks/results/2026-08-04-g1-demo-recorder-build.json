@@ -45,16 +45,42 @@
   "observer": {
     "median_non_build_overhead_seconds": 0.110561,
     "median_inspection_seconds": 0.028035,
-    "median_snapshot_seconds": 0.082527
+    "median_snapshot_seconds": 0.082527,
+    "deployment_unclassified_seconds": 1.285
+  },
+  "deployment": {
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 45.232,
+    "phase_seconds": {
+      "build": 36.635,
+      "export": 2.709,
+      "transfer": 0.982,
+      "unpack": 0.992,
+      "replacement": 0.171,
+      "readiness": 2.458
+    },
+    "runtime_verification": {
+      "motion_enabled": false,
+      "teach_enabled": false,
+      "live_joint_count": 17,
+      "lowstate_age_seconds": 0.0017,
+      "remote_neutral": true,
+      "last_arm_sdk_command": null,
+      "observation_recording_frames": 18,
+      "observation_recording_deleted_after_verification": true
+    }
   },
   "result": {
     "build_succeeded": true,
+    "deployed": true,
     "optimization_claim": false,
     "reason": "A cold build and one warmed source-only rebuild succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
     "Only one cold build and one warmed source-only rebuild exist, so timing and cache counts have not been replicated.",
-    "No Wendy device deployment has been measured.",
-    "The image was smoke-tested locally without live G1 DDS traffic."
+    "Only one Wendy deployment was measured.",
+    "Live G1 verification covered read-only recording; replay and teach release remained disabled and did not publish rt/arm_sdk commands.",
+    "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
