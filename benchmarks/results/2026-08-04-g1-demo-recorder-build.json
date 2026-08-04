@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 98887
+    "final_bytes": 81795
   },
   "build": {
     "platform": "linux/arm64",
@@ -100,24 +100,31 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.331,
+        "context_bytes": 81795,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.391,
+    "median_duration_seconds": 1.342,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102174,
+    "final_bytes": 57102523,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.103693,
-    "latest_inspection_seconds": 0.01913,
-    "latest_snapshot_seconds": 0.079314,
-    "median_deployment_unclassified_seconds": 0.511
+    "median_non_build_overhead_seconds": 0.103535,
+    "latest_inspection_seconds": 0.020746,
+    "latest_snapshot_seconds": 0.08088,
+    "median_deployment_unclassified_seconds": 0.496
   },
   "deployment": {
     "target": "unitree-g1-nx-local",
@@ -243,16 +250,27 @@
           "replacement": 0.296,
           "readiness": 2.262
         }
+      },
+      {
+        "duration_seconds": 5.81,
+        "phase_seconds": {
+          "build": 1.251,
+          "export": 1.434,
+          "transfer": 0.377,
+          "unpack": 0.025,
+          "replacement": 0.173,
+          "readiness": 2.173
+        }
       }
     ],
-    "median_duration_seconds": 6.062,
+    "median_duration_seconds": 6.013,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
       "teach_enabled": true,
       "replay_enabled": true,
       "live_joint_count": 17,
-      "lowstate_age_seconds": 0.0,
+      "lowstate_age_seconds": 0.0009,
       "remote_neutral": true,
       "fsm": "801/0",
       "last_arm_sdk_command": null,
@@ -265,6 +283,9 @@
       "teach_ratchet_enabled": false,
       "replay_recording_speed_gate": false,
       "replay_first_pose_limit_rad": 0.75,
+      "replay_preflight_state_retry_timeout_seconds": 1.0,
+      "live_container_state_retry_verified": true,
+      "regression_tests_passed": 23,
       "replay_buttons_enabled": 6,
       "blocked_recordings": 0,
       "browser_replay_controls_verified": true,
@@ -297,9 +318,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and ten warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only eleven Wendy deployments were measured and they exercised different cache states.",
-    "The unrestricted recording selection UI is deployed and browser-verified without publishing a robot command, but physical replay remains untested.",
+    "Two cold builds and eleven warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only twelve Wendy deployments were measured and they exercised different cache states.",
+    "The transient lowstate recovery path is deployed and verified in the live container, but physical replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
