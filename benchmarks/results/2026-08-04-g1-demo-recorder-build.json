@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 92474
+    "final_bytes": 98887
   },
   "build": {
     "platform": "linux/arm64",
@@ -93,24 +93,31 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.324,
+        "context_bytes": 98887,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.439,
+    "median_duration_seconds": 1.391,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57103529,
+    "final_bytes": 57102174,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.103851,
-    "latest_inspection_seconds": 0.020746,
-    "latest_snapshot_seconds": 0.078882,
-    "median_deployment_unclassified_seconds": 0.496
+    "median_non_build_overhead_seconds": 0.103693,
+    "latest_inspection_seconds": 0.01913,
+    "latest_snapshot_seconds": 0.079314,
+    "median_deployment_unclassified_seconds": 0.511
   },
   "deployment": {
     "target": "unitree-g1-nx-local",
@@ -225,16 +232,27 @@
           "replacement": 0.27,
           "readiness": 2.008
         }
+      },
+      {
+        "duration_seconds": 6.792,
+        "phase_seconds": {
+          "build": 1.212,
+          "export": 1.448,
+          "transfer": 0.801,
+          "unpack": 0.078,
+          "replacement": 0.296,
+          "readiness": 2.262
+        }
       }
     ],
-    "median_duration_seconds": 6.013,
+    "median_duration_seconds": 6.062,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
       "teach_enabled": true,
       "replay_enabled": true,
       "live_joint_count": 17,
-      "lowstate_age_seconds": 0.0014,
+      "lowstate_age_seconds": 0.0,
       "remote_neutral": true,
       "fsm": "801/0",
       "last_arm_sdk_command": null,
@@ -245,12 +263,12 @@
       "teach_deadband_rad": 0.01,
       "teach_follow_step_rad": 0.04,
       "teach_ratchet_enabled": false,
-      "replay_speed_limit_rad_s": 2.0,
+      "replay_recording_speed_gate": false,
       "replay_first_pose_limit_rad": 0.75,
-      "safe_recordings": 4,
-      "blocked_recordings": 2,
+      "replay_buttons_enabled": 6,
+      "blocked_recordings": 0,
       "browser_replay_controls_verified": true,
-      "browser_confirmation_path_rejected_before_publish": true,
+      "browser_replay_started": false,
       "physical_replay_verified": false,
       "physical_free_follow_verified": false,
       "physical_full_upper_body_capture_verified": true,
@@ -258,7 +276,7 @@
         "frames": 691,
         "duration_seconds": 14.575407,
         "maximum_joint_speed_rad_s": 7.34724,
-        "replay_safe": false,
+        "replay_available": true,
         "operator_result": "same shoulder resistance after both shoulder targets hit the 1.2-rad guard"
       },
       "previous_arm_only_capture": {
@@ -279,9 +297,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and nine warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only ten Wendy deployments were measured and they exercised different cache states.",
-    "The guarded replay UI is deployed and browser-verified without publishing a robot command, but physical replay remains untested.",
+    "Two cold builds and ten warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only eleven Wendy deployments were measured and they exercised different cache states.",
+    "The unrestricted recording selection UI is deployed and browser-verified without publishing a robot command, but physical replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
