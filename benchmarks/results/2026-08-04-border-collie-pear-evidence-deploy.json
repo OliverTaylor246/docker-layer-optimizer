@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_and_media",
+  "change_class": "failed_pear_search_evidence_and_fieldmark_export",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 172.91,
+    "media_builder_reported_megabytes": 48.53,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "transfer_mode": "registry",
+    "duration_seconds": 202.806,
+    "build_seconds": 41.316,
+    "export_seconds": 79.007,
+    "transfer_seconds": 54.649,
+    "unpack_seconds": 24.530,
+    "replacement_seconds": 2.739,
+    "readiness_seconds": 0.164,
+    "unclassified_seconds": 0.401,
+    "dominant_phase": "export",
+    "status": "success"
+  },
+  "cache_and_rebuild": {
+    "current_deploy_cached_steps": null,
+    "current_deploy_rebuilt_steps": null,
+    "device_layers_reused": 51,
+    "device_layers_applied": 11
+  },
+  "image_and_layers": {
+    "aggregate_image_bytes": null,
+    "aggregate_device_layers": 62,
+    "app_device_layers": 10,
+    "media_device_layers": 52
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "current_unclassified_seconds": 0.401,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 85,
+    "production_lint": "passed",
+    "bytecode_compile": "passed",
+    "device_api": "healthy",
+    "camera_frames_advancing": true,
+    "model_loaded": true,
+    "webrtc_connected": true,
+    "bark_ready": true,
+    "raw_fieldmark_jpeg_status": 200,
+    "raw_fieldmark_jpeg_dimensions": "1280x720",
+    "evidence_archive_status": 200,
+    "evidence_archive_bytes": 3856832,
+    "evidence_archive_raw_frames": 35,
+    "activation_ready": true,
+    "activation_blockers": 0,
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "motion_armed": false,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one DLO-observed production deployment, not a paired control/candidate proof."
+  },
+  "remaining_uncertainty": [
+    "The new evidence archive and Fieldmark source passed read-only live checks but require a failed physical search run to validate terminal Run Result persistence end to end.",
+    "The deployment wrapper did not emit current cache-step, rebuilt-step, aggregate image-byte, or isolated observer-overhead measurements; unavailable values remain null and the historical overhead is labeled separately.",
+    "The builder reported rounded context sizes rather than exact byte counts.",
+    "The requested agent-first installation branch was no longer present on the source remote, so the already installed and verified DLO 0.5.0b1 executable recorded this deployment.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
