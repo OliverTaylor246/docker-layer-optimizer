@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "go2-idle-pose-lab",
+  "component": "standalone_app",
+  "change_class": "initial_operator_gated_go2_pose_lab",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "ace96bc1e0c63bb174321371724cb667a9a9d610bab50245ce510d535f847bb4"
+  },
+  "context": {
+    "bytes": 99400
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 24.867,
+    "cached_steps": 3,
+    "rebuilt_steps": 8,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 68.142,
+    "phase_seconds": {
+      "build": 48.418,
+      "export": 9.739,
+      "transfer": 0.009,
+      "unpack": 6.313,
+      "replacement": 0.455,
+      "readiness": 2.621
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "new_layers": 10,
+    "reused_layers": 0,
+    "image_size_bytes": 97283759,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 0.394752,
+    "build_inspection_seconds": 0.067039,
+    "build_snapshot_seconds": 0.327713,
+    "deployment_unclassified_seconds": 0.587
+  },
+  "correctness": {
+    "project_tests_passed": 12,
+    "container_import": "passed",
+    "runtime_connected": true,
+    "runtime_state_age_seconds": 0.002,
+    "runtime_pose_mode": false,
+    "runtime_active_pose": null,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "One initial build and one deployment succeeded; no control/candidate comparison was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment were measured, so timing and cache counts are not replicated.",
+    "The observation did not report compressed transfer bytes.",
+    "No alternative Dockerfile candidate was measured, so no optimization claim is supported.",
+    "Runtime verification covered connectivity and an idle state only; no physical pose was triggered."
+  ]
+}
