@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_and_media",
+  "change_class": "camera_proxy_race_fix_and_green_apple_search_crop",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 191.89,
+    "media_builder_reported_megabytes": 48.54,
+    "aggregate_reported_bytes_approximate": 48731890,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "apple-container",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 116.924,
+    "dlo_build_phase_seconds": 0.696,
+    "service_reported_build_seconds": {
+      "app": 23.946,
+      "media": 112.202
+    },
+    "export_seconds": 58.804,
+    "transfer_seconds": 52.735,
+    "unpack_seconds": 0.261,
+    "replacement_seconds": 1.307,
+    "readiness_seconds": 2.647,
+    "unclassified_seconds": 0.474
+  },
+  "cache_and_rebuild": {
+    "cached_steps": 13,
+    "rebuilt_steps": 3,
+    "device_layers_reused": 59,
+    "device_layers_applied": 3,
+    "counting_basis": "Visible app and media builder steps plus device unpack plans."
+  },
+  "image_and_layers": {
+    "image_count": 2,
+    "aggregate_layer_count": 62,
+    "app_builder_reported_blob_megabytes": 217.1,
+    "media_builder_reported_blob_gigabytes": 5.87,
+    "aggregate_image_bytes_exact": null
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "current_unclassified_seconds": 0.474,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 101,
+    "changed_media_lint": "passed",
+    "device_api": "healthy",
+    "camera_frames_advancing": true,
+    "same_origin_camera_preview": "healthy",
+    "selected_fruit": "apple",
+    "selected_fruit_motion_qualified": false,
+    "motion_armed": false,
+    "motion_activated": false,
+    "apple_detection_present": false,
+    "diagnostic_full_frame_unfiltered_result": {
+      "label": "pear",
+      "confidence": 0.5448
+    },
+    "diagnostic_apple_proposals": {
+      "full_frame": 0,
+      "center_512": 0,
+      "floor_384": 0,
+      "floor_256": 0
+    }
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one DLO-observed deployment of a functional camera-path correction and bounded search crop, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "Wendy built both services concurrently, so service-reported build durations overlap and cannot be summed.",
+    "The DLO build phase marker does not represent the full service build wall time for this multi-service Apple Container deployment.",
+    "Builder blob totals are logical image totals, not bytes newly transferred to the device.",
+    "Current isolated observer overhead and exact aggregate image bytes were not emitted.",
+    "The live green apple is consistently confused with pear by the current model; cropping alone did not recover an apple proposal.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
