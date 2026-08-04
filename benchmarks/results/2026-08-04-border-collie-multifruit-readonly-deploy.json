@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_and_media",
+  "change_class": "multifruit_readonly_recognition_selector",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3,
+    "requested_install_ref_available": false
+  },
+  "dockerfile": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+    "media_sha256": "59fec97be9077d49b8e6605e90a7062fa74446617d1eee327abf145457db81d1"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 189.83,
+    "media_builder_reported_megabytes": 48.55,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 140.470,
+    "build_seconds": 61.622,
+    "export_seconds": 73.078,
+    "transfer_seconds": 0.064,
+    "unpack_seconds": 0.189,
+    "replacement_seconds": 1.829,
+    "readiness_seconds": 3.308,
+    "unclassified_seconds": 0.380,
+    "excluded_failed_attempts": [
+      {
+        "duration_seconds": 99.062,
+        "reason": "local_build_storage_exhausted_before_transfer"
+      },
+      {
+        "duration_seconds": 99.054,
+        "reason": "local_build_storage_exhausted_before_transfer"
+      }
+    ]
+  },
+  "cache_and_rebuild": {
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "local_build_storage_gib_before": 60,
+    "local_build_storage_gib_after": 80,
+    "remaining_uncertainty": "The deployment wrapper did not emit step-level cache or rebuild counts."
+  },
+  "image_and_layers": {
+    "aggregate_image_bytes": null,
+    "aggregate_layer_count": null
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "unclassified_seconds": 0.380,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 98,
+    "production_lint": "passed",
+    "device_api": "healthy",
+    "supported_fruits": [
+      "apple",
+      "banana",
+      "pear"
+    ],
+    "selected_fruit": "apple",
+    "selected_fruit_detection_present": false,
+    "camera_frames_advancing": true,
+    "model_loaded": true,
+    "webrtc_connected": true,
+    "bark_ready": true,
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "motion_armed": false,
+    "motion_activated": false,
+    "qualified_demo_fruits": [
+      "pear"
+    ]
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one successful DLO-observed production deployment after two excluded local capacity failures, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "Apple and banana are deployed only for stationary camera recognition; neither class has end-to-end motion qualification.",
+    "No apple or banana was physically present during the post-deployment health check, so class accuracy and confidence remain to be measured by the operator.",
+    "The installed tool remained healthy, but the configured agent-first installation branch was unavailable from the remote during this deployment.",
+    "The successful deployment did not emit current cache-step, rebuild-step, image-byte, layer-count, or isolated observer-overhead measurements.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
