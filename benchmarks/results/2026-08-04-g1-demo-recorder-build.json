@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 81795
+    "final_bytes": 83514
   },
   "build": {
     "platform": "linux/arm64",
@@ -107,24 +107,31 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 1.414,
+        "context_bytes": 83514,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 1.342,
+    "median_duration_seconds": 1.378,
     "median_cached_steps": 8,
     "median_rebuilt_steps": 1
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57102523,
+    "final_bytes": 57102938,
     "final_reused_layers": 0,
     "final_new_layers": 8,
     "latest_baseline_available": false
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.103535,
-    "latest_inspection_seconds": 0.020746,
-    "latest_snapshot_seconds": 0.08088,
-    "median_deployment_unclassified_seconds": 0.496
+    "median_non_build_overhead_seconds": 0.103693,
+    "latest_inspection_seconds": 0.025291,
+    "latest_snapshot_seconds": 0.080312,
+    "median_deployment_unclassified_seconds": 0.481
   },
   "deployment": {
     "target": "unitree-g1-nx-local",
@@ -261,16 +268,27 @@
           "replacement": 0.173,
           "readiness": 2.173
         }
+      },
+      {
+        "duration_seconds": 5.686,
+        "phase_seconds": {
+          "build": 1.261,
+          "export": 1.43,
+          "transfer": 0.372,
+          "unpack": 0.034,
+          "replacement": 0.189,
+          "readiness": 1.978
+        }
       }
     ],
-    "median_duration_seconds": 6.013,
+    "median_duration_seconds": 5.964,
     "latest_runtime_verification": {
       "robot_connected": true,
       "motion_enabled": true,
       "teach_enabled": true,
       "replay_enabled": true,
       "live_joint_count": 17,
-      "lowstate_age_seconds": 0.0009,
+      "lowstate_age_seconds": 0.0001,
       "remote_neutral": true,
       "fsm": "801/0",
       "last_arm_sdk_command": null,
@@ -284,13 +302,22 @@
       "replay_recording_speed_gate": false,
       "replay_first_pose_limit_rad": 0.75,
       "replay_preflight_state_retry_timeout_seconds": 1.0,
+      "replay_preflight_remote_retry_timeout_seconds": 1.0,
+      "replay_active_state_retry_timeout_seconds": 0.1,
       "live_container_state_retry_verified": true,
-      "regression_tests_passed": 23,
+      "live_container_active_state_retry_verified": true,
+      "regression_tests_passed": 27,
       "replay_buttons_enabled": 6,
       "blocked_recordings": 0,
       "browser_replay_controls_verified": true,
       "browser_replay_started": false,
-      "physical_replay_verified": false,
+      "physical_replay_verified": true,
+      "completed_physical_replay": {
+        "name": "Deez Nutz",
+        "frames": 691,
+        "duration_seconds": 14.575407
+      },
+      "active_feed_recovery_physical_replay_verified": false,
       "physical_free_follow_verified": false,
       "physical_full_upper_body_capture_verified": true,
       "previous_full_upper_body_capture": {
@@ -318,9 +345,9 @@
     "reason": "Cold and warmed builds succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Two cold builds and eleven warmed source-only rebuilds exist, but each warm build contained a different source change.",
-    "Only twelve Wendy deployments were measured and they exercised different cache states.",
-    "The transient lowstate recovery path is deployed and verified in the live container, but physical replay remains untested.",
+    "Two cold builds and twelve warmed source-only rebuilds exist, but each warm build contained a different source change.",
+    "Only thirteen Wendy deployments were measured and they exercised different cache states.",
+    "One complete physical replay is recorded, but the newly deployed active-feed recovery behavior has not yet been physically replay-tested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
