@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app",
+  "change_class": "qualify_red_apple_and_add_audience_selector",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "builder_reported_kilobytes": 192.85,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "apple-container",
+    "service": "app",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 6.919,
+    "dlo_build_phase_seconds": 1.368,
+    "service_reported_build_seconds": 5.599,
+    "export_seconds": 3.828,
+    "transfer_seconds": 0.445,
+    "unpack_seconds": 0.091,
+    "replacement_seconds": 0.625,
+    "readiness_observed": false,
+    "unclassified_seconds": 0.562
+  },
+  "cache_and_rebuild": {
+    "cached_steps": 8,
+    "rebuilt_steps": 2,
+    "device_layers_reused": 8,
+    "device_layers_applied": 2
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "builder_reported_blob_megabytes": 217.1,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "current_unclassified_seconds": 0.562,
+    "historical_median_non_build_overhead_seconds": 0.025463
+  },
+  "correctness": {
+    "project_tests_passed": 104,
+    "changed_code_lint": "passed",
+    "qualified_fruits": [
+      "apple",
+      "pear"
+    ],
+    "unqualified_fruits": [
+      "banana"
+    ],
+    "audience_selector": [
+      "Pear",
+      "Red apple"
+    ],
+    "red_apple_selection_rendered": true,
+    "device_mission": "idle",
+    "motion_armed": false,
+    "motion_activated": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one DLO-observed app deployment, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "The builder reported a rounded context size and logical blob total rather than exact transferred bytes.",
+    "Current isolated observer overhead was not emitted; unclassified time is retained separately.",
+    "The deployment wrapper did not observe an explicit readiness phase; the API and UI were verified separately after replacement.",
+    "Red apple recognition passed, but a supervised red-apple end-to-end Demo Run has not yet been recorded.",
+    "Green apple remains outside the qualified operating envelope.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
