@@ -12,7 +12,7 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "final_bytes": 151412
+    "final_bytes": 159440
   },
   "build": {
     "platform": "linux/arm64",
@@ -30,45 +30,68 @@
         "cached_steps": 8,
         "rebuilt_steps": 1,
         "failed_steps": 0
+      },
+      {
+        "duration_seconds": 39.868,
+        "context_bytes": 159440,
+        "cached_steps": 1,
+        "rebuilt_steps": 9,
+        "failed_steps": 0
       }
     ],
-    "median_duration_seconds": 20.375,
-    "median_cached_steps": 4.5,
-    "median_rebuilt_steps": 5
+    "median_duration_seconds": 39.508,
+    "median_cached_steps": 1,
+    "median_rebuilt_steps": 9
   },
   "image": {
     "layers": 8,
-    "final_bytes": 57096307,
-    "final_reused_layers": 7,
-    "final_new_layers": 1
+    "final_bytes": 57096498,
+    "final_reused_layers": 0,
+    "final_new_layers": 8
   },
   "observer": {
-    "median_non_build_overhead_seconds": 0.110561,
+    "median_non_build_overhead_seconds": 0.113259,
     "median_inspection_seconds": 0.028035,
     "median_snapshot_seconds": 0.082527,
-    "deployment_unclassified_seconds": 1.285
+    "median_deployment_unclassified_seconds": 0.851
   },
   "deployment": {
     "target": "unitree-g1-nx-local",
     "status": "success",
-    "duration_seconds": 45.232,
-    "phase_seconds": {
-      "build": 36.635,
-      "export": 2.709,
-      "transfer": 0.982,
-      "unpack": 0.992,
-      "replacement": 0.171,
-      "readiness": 2.458
-    },
-    "runtime_verification": {
-      "motion_enabled": false,
-      "teach_enabled": false,
+    "observations": [
+      {
+        "duration_seconds": 45.232,
+        "phase_seconds": {
+          "build": 36.635,
+          "export": 2.709,
+          "transfer": 0.982,
+          "unpack": 0.992,
+          "replacement": 0.171,
+          "readiness": 2.458
+        }
+      },
+      {
+        "duration_seconds": 6.136,
+        "phase_seconds": {
+          "build": 1.228,
+          "export": 1.582,
+          "transfer": 0.415,
+          "unpack": 0.028,
+          "replacement": 0.294,
+          "readiness": 2.172
+        }
+      }
+    ],
+    "median_duration_seconds": 25.684,
+    "latest_runtime_verification": {
+      "robot_connected": true,
+      "motion_enabled": true,
+      "teach_enabled": true,
+      "replay_enabled": false,
       "live_joint_count": 17,
-      "lowstate_age_seconds": 0.0017,
+      "lowstate_age_seconds": 0.0013,
       "remote_neutral": true,
-      "last_arm_sdk_command": null,
-      "observation_recording_frames": 18,
-      "observation_recording_deleted_after_verification": true
+      "last_arm_sdk_command": null
     }
   },
   "result": {
@@ -78,9 +101,9 @@
     "reason": "A cold build and one warmed source-only rebuild succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Only one cold build and one warmed source-only rebuild exist, so timing and cache counts have not been replicated.",
-    "Only one Wendy deployment was measured.",
-    "Live G1 verification covered read-only recording; replay and teach release remained disabled and did not publish rt/arm_sdk commands.",
+    "Two cold builds and one warmed source-only rebuild exist, so the warm-cache result has not been replicated.",
+    "Only two Wendy deployments were measured and they exercised different cache states.",
+    "Live G1 verification covered the independent gates; the operator had not yet started the physical teach release when this result was recorded.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
