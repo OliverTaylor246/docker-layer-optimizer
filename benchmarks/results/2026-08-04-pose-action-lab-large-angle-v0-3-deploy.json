@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "pose-action-lab",
+  "component": "standalone_app",
+  "change_class": "large_angle_pose_envelope_v0_3",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f524ea3d643eec2c44965d54c130b221654814a01de555938c73cb2e8909db14"
+  },
+  "context": {
+    "bytes": 67340
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 23.985,
+    "cached_steps": 4,
+    "rebuilt_steps": 6,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 64.101,
+    "phase_seconds": {
+      "build": 46.258,
+      "export": 7.555,
+      "transfer": 0.023,
+      "unpack": 5.535,
+      "replacement": 0.903,
+      "readiness": 3.185
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "new_layers": 10,
+    "reused_layers": 0,
+    "image_size_bytes": 97298720,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 24.011266,
+    "build_inspection_seconds": 0.022898,
+    "build_snapshot_seconds": 0.002821,
+    "deployment_unclassified_seconds": 0.642
+  },
+  "correctness": {
+    "project_tests_passed": 21,
+    "container_import": "passed",
+    "runtime_connected": true,
+    "runtime_state_age_seconds": 0.002,
+    "runtime_pose_mode": false,
+    "runtime_active_pose": null,
+    "runtime_pose_envelope": {
+      "roll_degrees": 20.0,
+      "pitch_degrees": 30.0,
+      "yaw_degrees": 25.0,
+      "hold_seconds": 2.5
+    },
+    "runtime_high_angle_confirmation": "passed",
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The large-angle feature build and deployment succeeded, but the uniquely tagged image had no layer baseline and no Dockerfile candidate was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment of this revision were measured, so timing and cache counts are not replicated.",
+    "The observation did not report compressed transfer bytes.",
+    "The uniquely tagged image had no comparable layer baseline, so its layer reuse count is not an optimization comparison.",
+    "Runtime verification covered connectivity and the idle control state only; the large-angle physical poses still require supervised qualification."
+  ]
+}
