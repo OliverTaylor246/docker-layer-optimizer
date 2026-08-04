@@ -170,7 +170,15 @@
       "teach_gain_scale": 1.0,
       "teach_arm_kp_range": [5.0, 15.0],
       "teach_arm_kd_range": [0.4, 1.0],
-      "physical_compliance_verified": false
+      "physical_teach_capture_verified": true,
+      "teach_recording_frames": 349,
+      "teach_recording_duration_seconds": 7.341923,
+      "teach_recording_maximum_joint_speed_rad_s": 1.723963,
+      "largest_joint_range_rad": 0.7838,
+      "exact_teach_command_frames": 349,
+      "teach_weight_range": [0.02, 1.0],
+      "teach_release_final_weight": 0.0,
+      "subjective_compliance_confirmed": false
     }
   },
   "result": {
@@ -182,7 +190,7 @@
   "remaining_uncertainty": [
     "Two cold builds and five warmed source-only rebuilds exist, but each warm build contained a different source change.",
     "Only six Wendy deployments were measured and they exercised different cache states.",
-    "The compliant Teach profile is deployed and idle on a crane, but physical hand-guiding with the new low-gain commands and replay remain untested.",
+    "One human-guided compliant Teach recording completed on the crane, but the operator has not yet confirmed that the physical stiffness is comfortable; replay remains untested.",
     "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
   ]
 }
