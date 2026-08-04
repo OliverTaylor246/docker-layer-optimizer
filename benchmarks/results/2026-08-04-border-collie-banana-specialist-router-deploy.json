@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "border-collie-demo",
+  "component": "media-banana-specialist-router",
+  "change_class": "resident_general_plus_banana_specialist_camera_only",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "45d1976aa03d46917572ca93667a8300be7aa52bb754a7398022be2d1b082a60"
+  },
+  "context": {
+    "bytes": 19223100
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 210.714,
+    "cached_steps": 0,
+    "rebuilt_steps": 7,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof-media-banana-router",
+    "status": "success",
+    "duration_seconds": 78.108,
+    "phase_seconds": {
+      "build": 0.706,
+      "export": 70.785,
+      "transfer": 3.781,
+      "unpack": 0.744,
+      "replacement": 1.029,
+      "readiness": null
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 53,
+    "new_layers": 53,
+    "reused_layers": 0,
+    "image_size_bytes": 6320083017,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 210.791169,
+    "build_non_build_seconds": 0.076171,
+    "build_inspection_seconds": 0.046479,
+    "build_snapshot_seconds": 0.029692,
+    "deployment_unclassified_seconds": 1.063
+  },
+  "correctness": {
+    "project_tests_passed": 124,
+    "container_specialist_load": "passed",
+    "camera_only_runtime_check": "passed",
+    "confirmed_unique_frames": 94,
+    "two_pass_inference_median_ms": 137.736,
+    "two_pass_inference_p95_ms": 189.887,
+    "status_endpoint_median_ms": 18.991,
+    "status_endpoint_p95_ms": 107.343,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "One build and one camera-only deployment succeeded; no paired control/candidate Dockerfile comparison was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment were measured, so timing and cache counts are not replicated.",
+    "The initial build had no comparable DLO baseline for this media Dockerfile digest.",
+    "Compressed transfer bytes and an explicit readiness phase were not observed.",
+    "Banana recognition still lacks an independent negative-frame evaluation and is not qualified for autonomous motion.",
+    "No alternative Dockerfile candidate was measured, so no optimization claim is supported."
+  ]
+}
