@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "person-tracker",
+  "change_class": "reid_gallery_and_burst_enrollment",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "526fc9f262acc2831b985075b4a0931f5c4a4b3b527ec2e1fe21cc2e0e2d33a5"
+  },
+  "context": {
+    "service_build_sent_bytes": 15470000,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "dlo_phase_duration_seconds": 0.512,
+    "service_reported_duration_seconds": 27.36,
+    "cached_layer_steps": 8,
+    "rebuilt_layer_steps": 2,
+    "failed_steps": 0,
+    "count_source": "reconstructed_from_single_service_builder_output"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx",
+    "status": "success",
+    "duration_seconds": 34.894,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 0.512,
+      "export": 26.0,
+      "transfer": 0.849,
+      "unpack": 0.305,
+      "replacement": 1.193,
+      "readiness": 5.658
+    },
+    "unclassified_seconds": 0.377
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "measured_device_layer_count": 11,
+    "measured_reused_layers": 9,
+    "measured_applied_layers": 2,
+    "pushed_blobs": 14,
+    "reported_image_push_size_bytes": 2130000000,
+    "measurement": "device_unpack_counts_and_rounded_push_output"
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.377,
+    "observer_overhead_seconds": null,
+    "overhead_measurement": "not_independently_measured"
+  },
+  "correctness": {
+    "project_tests_passed": 61,
+    "burst_control_served": true,
+    "burst_runtime_state": "idle",
+    "profile_registry_persistent": true,
+    "profile_count": 1,
+    "tracker_motion_control_enabled": false,
+    "tracker_command_zero": true,
+    "main_runtime_active": false,
+    "main_last_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The ReID gallery and burst-enrollment tracker revision deployed successfully while all motion remained disarmed; no controlled Dockerfile comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "Context and image-size values are rounded builder output.",
+    "Cache counts were reconstructed from one service build rather than a direct build-event aggregate.",
+    "Observer overhead was not measured independently from deployment time.",
+    "Only one deployment of this revision was measured, so timing is not replicated.",
+    "Burst timing and ReID quality still require an operator-supervised camera test."
+  ]
+}
