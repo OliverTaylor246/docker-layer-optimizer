@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "pose-action-lab",
+  "component": "standalone_app",
+  "change_class": "native_lay_down_v0_5",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f524ea3d643eec2c44965d54c130b221654814a01de555938c73cb2e8909db14"
+  },
+  "context": {
+    "bytes": 114813
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 21.168,
+    "cached_steps": 4,
+    "rebuilt_steps": 6,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "failure",
+    "attempts": 2,
+    "duration_seconds": [20.517, 20.383],
+    "failure": "device connection timed out before build, transfer, replacement, or readiness"
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 10,
+    "new_layers": 10,
+    "reused_layers": 0,
+    "image_size_bytes": 97303354,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 21.192052,
+    "build_non_build_seconds": 0.023339,
+    "build_inspection_seconds": 0.022282,
+    "build_snapshot_seconds": 0.001057,
+    "deployment_unclassified_seconds": [20.517, 20.383]
+  },
+  "correctness": {
+    "project_tests_passed": 28,
+    "container_package_version": "0.5.0",
+    "container_lay_down_action_catalog": "passed",
+    "runtime_reachable": false,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": false,
+    "optimization_claim": false,
+    "reason": "The ARM64 feature image passed tests and smoke checks, but the target was unreachable before deployment began."
+  },
+  "remaining_uncertainty": [
+    "The target must return to the LAN before deployment and runtime status can be verified.",
+    "The StandDown action was not physically activated and requires the clear-floor and physical-remote safety gate.",
+    "Only one build of this revision was measured, so timing and cache counts are not replicated.",
+    "No compressed transfer measurement exists because deployment did not reach the transfer phase."
+  ]
+}
