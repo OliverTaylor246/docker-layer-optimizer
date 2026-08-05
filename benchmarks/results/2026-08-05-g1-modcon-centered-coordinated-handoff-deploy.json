@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "centered_coordinated_walking_handoff",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 125450,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.361,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0,
+    "aggregate_scope": "main_controller_image"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 19.150,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.361,
+      "export": 2.012,
+      "transfer": 9.219,
+      "unpack": 0.030,
+      "replacement": 1.938,
+      "readiness": 5.206
+    },
+    "unclassified_seconds": 0.384
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "main_service_device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.384
+  },
+  "correctness": {
+    "project_tests_passed": 43,
+    "runtime_disarmed": true,
+    "runtime_zero_velocity": true,
+    "runtime_tracker_gate_off": true,
+    "runtime_target_selected": false,
+    "runtime_r3_neutral": true,
+    "runtime_fsm": "801/0",
+    "runtime_recorder_idle": true,
+    "runtime_camera_healthy": true,
+    "runtime_cuda_tracker_healthy": true,
+    "motion_activated_during_verification": false,
+    "physical_overlap_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The centered coordinated handoff deployment succeeded, but no Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Layer reuse was observed only for the main service; tracker and camera layer aggregates were not emitted.",
+    "Compressed transfer bytes and image sizes were not reported.",
+    "Verification was deliberately non-moving; centering and upper-body overlap still require a supervised harness test."
+  ]
+}
