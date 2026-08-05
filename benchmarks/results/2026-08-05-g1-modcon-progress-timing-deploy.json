@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "progress_based_envelope_timing",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "aggregate_build_sent_bytes": 15598340,
+    "plan_median_bytes": 69806,
+    "service_build_sent_bytes": {
+      "main": 128110,
+      "tracker": 15440000,
+      "camera": 30230
+    },
+    "measurement": "sum_of_rounded_builder_output_and_optimizer_history"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 0.35,
+    "cached_steps": 22,
+    "rebuilt_steps": 1,
+    "resolved_steps": 3,
+    "failed_steps": 0,
+    "count_source": "reconstructed_from_multi_service_builder_output"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 20.514,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.35,
+      "export": 3.301,
+      "transfer": 7.987,
+      "unpack": 0.044,
+      "replacement": 2.24,
+      "readiness": 6.258
+    },
+    "unclassified_seconds": 0.334
+  },
+  "image_and_layers": {
+    "image_count": 3,
+    "measured_device_layer_count": 8,
+    "measured_reused_layers": 7,
+    "measured_applied_layers": 1,
+    "pushed_blobs": 34,
+    "reported_aggregate_push_size_bytes": 2285300000,
+    "scope": "layer counts cover the main service only; push aggregates cover all three services",
+    "measurement": "device_unpack_counts_and_sum_of_rounded_push_output"
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.334
+  },
+  "correctness": {
+    "project_tests_passed": 38,
+    "main_runtime_phase": "disarmed",
+    "main_runtime_active": false,
+    "tracker_selected_target": false,
+    "tracker_motion_control_enabled": false,
+    "tracker_command_zero": true,
+    "camera_endpoint_ok": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The progress-based action timing revision deployed successfully with the main service disarmed and tracker motion gated off; no controlled Dockerfile comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "Service context and push-size values are rounded builder output.",
+    "Cache counts were reconstructed from multi-service output rather than a direct build-event aggregate.",
+    "Layer reuse details were emitted only for the main service.",
+    "Only one deployment of this revision was measured, so timing is not replicated.",
+    "Native-speed envelope behavior while walking still requires a supervised robot test."
+  ]
+}

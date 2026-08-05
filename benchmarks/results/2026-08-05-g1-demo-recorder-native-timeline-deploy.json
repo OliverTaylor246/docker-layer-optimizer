@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "component": "upper-body-demo-recorder",
+  "change_class": "native_timeline_replay_timing",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "build_sent_bytes": 263280,
+    "plan_median_bytes": 91151,
+    "measurement": "rounded_builder_output_and_optimizer_history"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 1.336,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "resolved_steps": 1,
+    "failed_steps": 0,
+    "count_source": "reconstructed_from_builder_output"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 6.526,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 1.336,
+      "export": 1.615,
+      "transfer": 0.298,
+      "unpack": 0.031,
+      "replacement": 0.315,
+      "readiness": 2.666
+    },
+    "unclassified_seconds": 0.265
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "device_layer_count": 8,
+    "reused_layers": 7,
+    "applied_layers": 1,
+    "pushed_blobs": 11,
+    "reported_push_size_bytes": 54500000,
+    "measurement": "device_unpack_counts_and_rounded_push_output"
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.265,
+    "plan_median_non_build_overhead_seconds": 0.10504
+  },
+  "correctness": {
+    "project_tests_passed": 50,
+    "runtime_mode": "idle",
+    "runtime_active": false,
+    "runtime_last_error": null,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The native-timeline recorder revision deployed successfully and remained idle; no controlled Dockerfile comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "The build context and push size are rounded values from builder output.",
+    "Cache counts were reconstructed from human-readable output rather than a direct build-event aggregate.",
+    "Only one deployment of this revision was measured, so timing is not replicated.",
+    "Physical replay timing still requires a supervised robot test."
+  ]
+}
