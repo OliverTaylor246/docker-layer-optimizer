@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "active_status_fsm_cache",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 112090,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.364,
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 19.974,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.364,
+      "export": 1.872,
+      "transfer": 9.425,
+      "unpack": 0.03,
+      "replacement": 2.108,
+      "readiness": 5.765
+    },
+    "unclassified_seconds": 0.41
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "main_service_device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.41
+  },
+  "correctness": {
+    "project_tests_passed": 27,
+    "runtime_disarmed_after_deploy": true,
+    "runtime_r3_neutral": true,
+    "motion_activated_after_deploy": false,
+    "physical_overlap_tested_after_deploy": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The multi-service deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "Build cache and rebuild step counts were not emitted for the deployment build phase.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Layer reuse was observed only for the main service; tracker and camera service layer aggregates were not emitted.",
+    "Compressed transfer bytes and image sizes were not reported.",
+    "The post-deployment physical overlap test was not started because the target left the safe test envelope and the device later became unreachable."
+  ]
+}

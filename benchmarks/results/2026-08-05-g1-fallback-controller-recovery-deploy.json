@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Fallback controller",
+  "change_class": "service_recovery_cold_deploy",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "46e98a27824b7501a0ee47740d58cd498dcab6b2dc7054cb064cafaa7a2f980f"
+  },
+  "context": {
+    "bytes": 26110,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 91.973,
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 102.623,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 91.973,
+      "export": 3.224,
+      "transfer": 1.59,
+      "unpack": 2.087,
+      "replacement": 0.195,
+      "readiness": 3.284
+    },
+    "unclassified_seconds": 0.27
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 3,
+    "reused_layers": 5,
+    "aggregate_scope": "device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.27
+  },
+  "correctness": {
+    "runtime_ready": true,
+    "runtime_dds_receiving": true,
+    "runtime_r3_neutral": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The recovery deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one cold deployment was measured.",
+    "Build cache and rebuild step counts were not emitted for the deployment build phase.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Compressed transfer bytes and image size were not reported.",
+    "Runtime verification was read-only and did not trigger the commissioned action."
+  ]
+}
