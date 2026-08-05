@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "g1-demo-recorder",
+  "change_class": "transient_fsm_read_retry",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "bytes": 29693
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 11.298,
+    "cached_steps": 3,
+    "rebuilt_steps": 6,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 5.868,
+    "phase_seconds": {
+      "build": 1.308,
+      "export": 1.425,
+      "transfer": 0.299,
+      "unpack": 0.027,
+      "replacement": 0.299,
+      "readiness": 2.186
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 8,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 57108312,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 11.509468,
+    "build_inspection_seconds": 0.02105,
+    "build_snapshot_seconds": 0.190045,
+    "build_non_build_seconds": 0.211095,
+    "deployment_unclassified_seconds": 0.324
+  },
+  "correctness": {
+    "project_tests_passed": 35,
+    "runtime_idle": true,
+    "runtime_fsm": "801/0",
+    "runtime_r3_neutral": true,
+    "motion_activated_during_verification": false,
+    "physical_handoff_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The build and deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment of this revision were measured.",
+    "The build measurement ran after deployment and may not represent the deployment command's cache state.",
+    "Compressed transfer bytes were not reported.",
+    "Runtime verification was non-moving; the complete physical handoff remains to be tested under supervision."
+  ]
+}
