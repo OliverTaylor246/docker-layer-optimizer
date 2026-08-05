@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "component": "passive-replay-telemetry",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "observed_bytes_rounded": [
+      214080,
+      215250
+    ]
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "observations": 2,
+    "duration_seconds": [
+      1.258,
+      1.188
+    ],
+    "cached_steps_per_build": 8,
+    "rebuilt_steps_per_build": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "observations": 2,
+    "duration_seconds": [
+      5.973,
+      5.794
+    ],
+    "median_duration_seconds": 5.8835,
+    "median_phase_seconds": {
+      "build": 1.223,
+      "export": 1.337,
+      "transfer": 0.2785,
+      "unpack": 0.028,
+      "replacement": 0.2455,
+      "readiness": 2.1815
+    }
+  },
+  "image": {
+    "layers": 8,
+    "reused_layers_per_deployment": 7,
+    "applied_layers_per_deployment": 1,
+    "reported_push_size_bytes_rounded": 54500000
+  },
+  "observer": {
+    "median_non_build_overhead_seconds": 0.10504,
+    "deployment_unclassified_seconds": [
+      0.685,
+      0.495
+    ]
+  },
+  "uncertainty": [
+    "Context and pushed-image sizes are rounded values reported by the deployment CLI.",
+    "Both observations were warm incremental builds; no cold-build comparison was taken.",
+    "The measurement establishes deployment behavior, not a Dockerfile optimization claim."
+  ]
+}
