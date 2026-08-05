@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app",
+  "change_class": "continue_forward_while_near_target_remains_visible",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "exact_bytes": 63093
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 1.272,
+    "cached_steps": 8,
+    "rebuilt_steps": 2,
+    "total_steps": 11
+  },
+  "image_and_layers": {
+    "image_digest": "sha256:84308c1a0ebd1b7a00ebe1181b2dbec00a9031d03a8f7e7d15f50bf54c3ae902",
+    "image_bytes": 227648357,
+    "layer_count": 10,
+    "new_layers_against_unique_tag_baseline": 10,
+    "reused_layers_against_unique_tag_baseline": 0
+  },
+  "observer": {
+    "wrapper_overhead_seconds": 4.887972,
+    "non_build_seconds": 3.61501,
+    "inspection_seconds": 0.027096,
+    "snapshot_seconds": 3.587913
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 36.618,
+    "build_seconds": 0.623,
+    "export_seconds": 17.077,
+    "transfer_seconds": 13.169,
+    "unpack_seconds": 0.074,
+    "replacement_seconds": 1.62,
+    "readiness_seconds": 2.398,
+    "unclassified_seconds": 1.657,
+    "dominant_phase": "export"
+  },
+  "correctness": {
+    "project_tests_passed": 128,
+    "lint": "passed",
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "device_mission": "idle",
+    "active_run_id": null,
+    "hardware_connected": true,
+    "motion_armed": false,
+    "voice_actions_armed": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one observed build and deployment, not a paired control/candidate optimization proof."
+  },
+  "remaining_uncertainty": [
+    "The captured near-but-visible failure is covered by a deterministic regression test, but the corrected behavior still requires a supervised physical Demo Run.",
+    "The unique image tag had no prior snapshot, so the reported new-versus-reused layer split does not measure registry or device cache reuse.",
+    "The deployment event did not report exact compressed bytes transferred.",
+    "Observer overhead exceeds the isolated warm build duration and must be included in future paired comparisons.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
