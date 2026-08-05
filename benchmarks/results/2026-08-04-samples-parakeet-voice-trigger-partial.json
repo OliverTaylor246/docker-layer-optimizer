@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "samples",
+  "component": "python/parakeet-voice-mcp",
+  "change_class": "border_collie_voice_trigger_and_atomic_model_cache",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "429d7a5033c784e283c542a06995d073ec76c595a3400dda943cac4eb93355b8"
+  },
+  "context": {
+    "bytes": 17140
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 1.005,
+    "cached_steps": 6,
+    "rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "partial",
+    "duration_seconds": null,
+    "failure": "the target left the network during one-time verified model extraction and readiness"
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 12,
+    "new_layers": 12,
+    "reused_layers": 0,
+    "image_size_bytes": 209801389,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 1.029182,
+    "build_non_build_seconds": 0.023394,
+    "build_inspection_seconds": 0.022212,
+    "build_snapshot_seconds": 0.001182,
+    "deployment_unclassified_seconds": null
+  },
+  "correctness": {
+    "sample_tests_passed": 6,
+    "border_collie_tests_passed": 125,
+    "atomic_partial_cache_repair": "passed",
+    "allowlisted_voice_adapter": "passed",
+    "runtime_reachable": false,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": false,
+    "optimization_claim": false,
+    "reason": "The cached source-only image build succeeded, but the target became unreachable before model readiness and live microphone verification completed."
+  },
+  "remaining_uncertainty": [
+    "The target must return to the LAN before verified model loading and DJI receiver selection can be confirmed end to end.",
+    "No complete deployment phase timing or compressed transfer measurement was captured.",
+    "Only one build of this revision was measured, so the timing is not a replicated optimization comparison.",
+    "Wake-word and ASR accuracy still require a supervised transcript-only check before voice actions are armed."
+  ]
+}
