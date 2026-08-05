@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "walking_upper_body_overlap",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 117970,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.355,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0,
+    "aggregate_scope": "main_controller_image"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 18.886,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.355,
+      "export": 1.79,
+      "transfer": 8.937,
+      "unpack": 0.0,
+      "replacement": 2.282,
+      "readiness": 4.967
+    },
+    "unclassified_seconds": 0.555,
+    "preceding_connection_failure_seconds": 17.605
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "main_service_device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.555
+  },
+  "correctness": {
+    "project_tests_passed": 31,
+    "overlap_regression_consecutive_passes": 30,
+    "runtime_disarmed": true,
+    "runtime_zero_velocity": true,
+    "runtime_tracker_gate_off": true,
+    "runtime_target_selected": false,
+    "runtime_r3_neutral": true,
+    "runtime_recorder_idle": true,
+    "runtime_camera_and_depth_healthy": true,
+    "motion_activated_during_verification": false,
+    "physical_overlap_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The tested walking-overlap controller deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "The first deployment attempt failed during device discovery; the successful retry is the only completed deployment measurement for this revision.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Build step counts and layer reuse cover the main controller image only; tracker and camera aggregates were not emitted.",
+    "Compressed transfer bytes and image size were not reported.",
+    "Verification was deliberately non-moving; walking and upper-body replay overlap still requires a supervised harness test with explicit permission."
+  ]
+}
