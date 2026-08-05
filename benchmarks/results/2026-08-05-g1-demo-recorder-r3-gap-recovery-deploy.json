@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "component": "r3-gap-recovery-and-active-status-cache",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "observed_bytes_rounded": 234300
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 1.235,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 5.935,
+    "phase_seconds": {
+      "build": 1.235,
+      "export": 1.363,
+      "transfer": 0.312,
+      "unpack": 0.031,
+      "replacement": 0.248,
+      "readiness": 2.435
+    },
+    "unclassified_seconds": 0.311
+  },
+  "image": {
+    "layers": 8,
+    "reused_layers": 7,
+    "applied_layers": 1,
+    "reported_push_size_bytes_rounded": 54500000
+  },
+  "observer": {
+    "median_non_build_overhead_seconds": 0.10504
+  },
+  "uncertainty": [
+    "Context and pushed-image sizes are rounded values reported by the deployment CLI.",
+    "This was a warm incremental build; no cold-build comparison was taken.",
+    "A preceding 6.272-second deployment exposed a runtime FSM-status contention bug and was superseded by this measured deployment.",
+    "The measurement establishes deployment behavior, not a Dockerfile optimization claim."
+  ]
+}
