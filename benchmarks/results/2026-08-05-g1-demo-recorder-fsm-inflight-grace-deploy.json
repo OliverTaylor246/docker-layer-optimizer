@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "component": "upper-body-demo-recorder",
+  "change_class": "bounded_inflight_fsm_monitor_tolerance",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "build_sent_bytes": 265740,
+    "plan_median_bytes": 91151,
+    "measurement": "rounded_builder_output_and_optimizer_history"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 1.31,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "resolved_steps": 1,
+    "failed_steps": 0,
+    "count_source": "reconstructed_from_builder_output"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 5.923,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 1.31,
+      "export": 1.483,
+      "transfer": 0.26,
+      "unpack": 0.037,
+      "replacement": 0.268,
+      "readiness": 2.19
+    },
+    "unclassified_seconds": 0.375
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "device_layer_count": 8,
+    "reused_layers": 7,
+    "applied_layers": 1,
+    "pushed_blobs": 11,
+    "reported_push_size_bytes": 54500000,
+    "measurement": "device_unpack_counts_and_rounded_push_output"
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.375,
+    "plan_median_non_build_overhead_seconds": 0.10504
+  },
+  "correctness": {
+    "project_tests_passed": 52,
+    "targeted_regression_tests_passed": 5,
+    "runtime_mode": "idle",
+    "runtime_fsm_id": 801,
+    "runtime_fsm_mode": 0,
+    "runtime_last_error": null,
+    "main_demo_disarmed": true,
+    "tracker_motion_control_enabled": false,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The bounded in-flight FSM-monitor fix deployed successfully and remained idle; no controlled Dockerfile comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "The build context and push size are rounded values from builder output.",
+    "Cache counts were reconstructed from human-readable output rather than a direct build-event aggregate.",
+    "Only one deployment of this revision was measured, so timing is not replicated.",
+    "A supervised arms-only replay is still required to verify the live transient FSM-read case end to end."
+  ]
+}
