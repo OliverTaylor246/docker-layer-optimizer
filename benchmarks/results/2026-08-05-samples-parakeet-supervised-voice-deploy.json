@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "samples",
+  "component": "python/parakeet-voice-mcp",
+  "change_class": "supervised_border_collie_voice_trigger",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "17de646c7453ef381bd07cc1de2167bfd4f12eed5c4eb0b62dafe02ade7918db"
+  },
+  "context": {
+    "bytes": 15782
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 0.998,
+    "cached_steps": 6,
+    "rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof",
+    "status": "success",
+    "duration_seconds": 15.683,
+    "phase_seconds": {
+      "build": 5.592,
+      "transfer": 0.0,
+      "unpack": 0.169,
+      "replacement": 0.185,
+      "readiness": 9.373
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "layer_count": 12,
+    "new_layers": 12,
+    "reused_layers": 0,
+    "image_size_bytes": 209834256,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 1.025057,
+    "build_non_build_seconds": 0.026052,
+    "build_inspection_seconds": 0.023413,
+    "build_snapshot_seconds": 0.002639,
+    "deployment_unclassified_seconds": 0.364
+  },
+  "correctness": {
+    "project_tests_passed": 10,
+    "runtime_connected": true,
+    "runtime_action_mode": "border_collie",
+    "runtime_wake_word": "hey_wendy",
+    "runtime_tools_ready": true,
+    "runtime_actions_armed": false,
+    "runtime_continuous_transcription": false,
+    "dji_receiver_selected": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The supervised voice image deployed successfully and reported the expected disarmed Border Collie command mode; no Dockerfile optimization comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "The natural-language pear activation still requires one supervised spoken Demo Run.",
+    "Only one build of this revision was measured, so timing and cache counts are not replicated.",
+    "Compressed transfer bytes were not reported.",
+    "Environmental wake-word and transcription accuracy require continued stage testing."
+  ]
+}
