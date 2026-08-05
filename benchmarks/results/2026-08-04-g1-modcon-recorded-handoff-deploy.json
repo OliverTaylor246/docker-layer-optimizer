@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-04",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "recorded_handoff_integration",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 109992
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "duration_seconds": 35.793,
+    "cached_steps": 1,
+    "rebuilt_steps": 9,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 167.551,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.414,
+      "export": 1.335,
+      "transfer": 79.557,
+      "unpack": 83.102,
+      "replacement": 0.525,
+      "readiness": 2.242
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 8,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 52532075,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 35.830446,
+    "build_inspection_seconds": 0.025465,
+    "build_snapshot_seconds": 0.011584,
+    "deployment_unclassified_seconds": 0.376
+  },
+  "correctness": {
+    "project_tests_passed": 26,
+    "runtime_disarmed": true,
+    "runtime_fsm": "801/0",
+    "runtime_r3_neutral": true,
+    "runtime_camera_inference_live": true,
+    "runtime_recording_name": "Handing a letter trimmed",
+    "runtime_recording_id_prefix": "eceba1e",
+    "runtime_recording_frames": 415,
+    "runtime_recording_duration_seconds": 8.710509,
+    "motion_activated_during_verification": false,
+    "full_sequence_physically_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The integration build and multi-service deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one build and one deployment of this revision were measured, so timings and cache counts are not replicated.",
+    "The standalone build event measured the main controller image only; tracker and RealSense image layer aggregates were not captured by that event.",
+    "Compressed transfer bytes were not reported.",
+    "Runtime verification covered the disarmed integration and live dependencies; the complete person-follow and recorded physical handoff still requires a supervised test."
+  ]
+}
