@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "distance_speed_profile_and_reacquisition_tuning",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "aggregate_build_sent_bytes": 15611590,
+    "plan_median_bytes": 69806,
+    "service_build_sent_bytes": {
+      "main": 131360,
+      "tracker": 15450000,
+      "camera": 30230
+    },
+    "measurement": "sum_of_rounded_builder_output_and_optimizer_history"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "dlo_phase_duration_seconds": 0.349,
+    "service_reported_duration_seconds": {
+      "main": 2.934,
+      "tracker": 10.949,
+      "camera": 1.063
+    },
+    "cached_steps": 23,
+    "rebuilt_steps": 1,
+    "resolved_steps": 3,
+    "failed_steps": 0,
+    "count_source": "reconstructed_from_concurrent_multi_service_builder_output"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 18.660,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.349,
+      "export": 2.813,
+      "transfer": 7.828,
+      "unpack": 0.043,
+      "replacement": 2.298,
+      "readiness": 4.884
+    },
+    "unclassified_seconds": 0.445
+  },
+  "image_and_layers": {
+    "image_count": 3,
+    "measured_device_layer_count": 8,
+    "measured_reused_layers": 7,
+    "measured_applied_layers": 1,
+    "pushed_blobs": 34,
+    "reported_aggregate_push_size_bytes": 2285300000,
+    "scope": "layer counts cover the main service; push aggregates cover all three services",
+    "measurement": "device_unpack_counts_and_sum_of_rounded_push_output"
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.445,
+    "plan_median_non_build_overhead_seconds": 0.035914
+  },
+  "correctness": {
+    "project_tests_passed": 41,
+    "runtime_phase": "disarmed",
+    "runtime_fsm_id": 801,
+    "runtime_fsm_mode": 0,
+    "runtime_action_enabled": false,
+    "runtime_action_active": false,
+    "forward_deadband_m": 0.15,
+    "speed_ramp_start_m": 1.15,
+    "speed_ramp_end_m": 3.0,
+    "profile_registry_persistent": true,
+    "profile_count": 1,
+    "tracker_motion_control_enabled": false,
+    "tracker_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The distance-speed and reacquisition revision deployed successfully while disarmed; no controlled Dockerfile comparison was performed."
+  },
+  "remaining_uncertainty": [
+    "Service context and push-size values are rounded builder output.",
+    "Cache counts were reconstructed from interleaved multi-service output rather than a direct build-event aggregate.",
+    "Layer reuse details were emitted only for the main service.",
+    "Only one deployment of this revision was measured, so timing is not replicated.",
+    "Distance-speed feel and extended search behavior still require a supervised live follow test."
+  ]
+}
