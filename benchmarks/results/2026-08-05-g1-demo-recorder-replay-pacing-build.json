@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "change_class": "replay_pacing_after_rpc_delay",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "bytes": 89730
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 39.656,
+    "cached_steps": 0,
+    "rebuilt_steps": 9,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "status": "not_attempted",
+    "reason": "The target device was unreachable on its last LAN address."
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 8,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 57107600,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "build_wrapper_seconds": 39.846132,
+    "build_inspection_seconds": 0.031208,
+    "build_snapshot_seconds": 0.158579,
+    "build_non_build_seconds": 0.189787
+  },
+  "correctness": {
+    "project_tests_passed": 36,
+    "synthetic_delayed_fsm_reproduction_passed": true,
+    "minimum_tested_command_interval_seconds": 0.01,
+    "motion_activated_during_verification": false,
+    "physical_replay_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": false,
+    "optimization_claim": false,
+    "reason": "The build and timing regression test succeeded, but no deployment or alternative Dockerfile candidate was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one uncached build and one cached follow-up build were measured.",
+    "Compressed transfer bytes were not measured because deployment was not attempted.",
+    "The target device was offline, so the saved physical trajectory and live timing telemetry could not be retrieved.",
+    "A supervised physical replay remains necessary after the target reconnects."
+  ]
+}
