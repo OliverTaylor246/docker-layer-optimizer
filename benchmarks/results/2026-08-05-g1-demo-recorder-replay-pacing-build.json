@@ -22,8 +22,19 @@
     "failed_steps": 0
   },
   "deployment": {
-    "status": "not_attempted",
-    "reason": "The target device was unreachable on its last LAN address."
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 7.427,
+    "phase_seconds": {
+      "build": 1.308,
+      "export": 1.5,
+      "transfer": 1.192,
+      "unpack": 0.162,
+      "replacement": 0.352,
+      "readiness": 2.671
+    },
+    "unclassified_seconds": 0.242
   },
   "image_and_layers": {
     "measured_image_count": 1,
@@ -43,19 +54,22 @@
     "project_tests_passed": 36,
     "synthetic_delayed_fsm_reproduction_passed": true,
     "minimum_tested_command_interval_seconds": 0.01,
+    "runtime_idle": true,
+    "runtime_fsm": "0/0",
+    "runtime_recording_preserved": true,
     "motion_activated_during_verification": false,
     "physical_replay_tested": false
   },
   "result": {
     "built": true,
-    "deployed": false,
+    "deployed": true,
     "optimization_claim": false,
-    "reason": "The build and timing regression test succeeded, but no deployment or alternative Dockerfile candidate was measured."
+    "reason": "The build, timing regression test, and deployment succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
     "Only one uncached build and one cached follow-up build were measured.",
-    "Compressed transfer bytes were not measured because deployment was not attempted.",
-    "The target device was offline, so the saved physical trajectory and live timing telemetry could not be retrieved.",
+    "Compressed transfer bytes were not reported.",
+    "The saved trajectory timestamps were verified, but no post-fix physical command-timing telemetry has been collected.",
     "A supervised physical replay remains necessary after the target reconnects."
   ]
 }
