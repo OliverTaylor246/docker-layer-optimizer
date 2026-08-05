@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "g1-demo-recorder",
+  "component": "Recorder",
+  "change_class": "coordinated_active_walking_fsm",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+  },
+  "context": {
+    "bytes": 244040,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 1.277,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 6.280,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 1.277,
+      "export": 1.393,
+      "transfer": 0.656,
+      "unpack": 0.000,
+      "replacement": 0.253,
+      "readiness": 2.194
+    },
+    "unclassified_seconds": 0.507
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.507
+  },
+  "correctness": {
+    "project_tests_passed": 46,
+    "active_walking_fsm_regression_passed": true,
+    "runtime_idle": true,
+    "runtime_r3_neutral": true,
+    "runtime_fsm": "801/0",
+    "runtime_error": null,
+    "motion_activated_during_verification": false,
+    "physical_replay_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The coordinated active-walking FSM deployment succeeded, but no Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Compressed transfer bytes and image size were not reported.",
+    "Verification was deliberately non-moving; an envelope replay initiated while FSM 801/1 still requires a supervised test."
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "person_follow_yaw_gain_increase",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 126240,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.347,
+    "cached_steps": 9,
+    "rebuilt_steps": 0,
+    "failed_steps": 0,
+    "aggregate_scope": "main_controller_image"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 18.786,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.347,
+      "export": 1.758,
+      "transfer": 9.155,
+      "replacement": 1.788,
+      "readiness": 5.249
+    },
+    "unclassified_seconds": 0.489
+  },
+  "image_and_layers": {
+    "measured_image_count": 3,
+    "measured_layer_count": null,
+    "new_layers": 0,
+    "reused_layers": null,
+    "aggregate_scope": "deployment_images",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.489
+  },
+  "correctness": {
+    "project_tests_passed": 44,
+    "runtime_disarmed": true,
+    "runtime_zero_velocity": true,
+    "runtime_tracker_gate_off": true,
+    "runtime_target_selected": false,
+    "runtime_yaw_scale": 1.75,
+    "runtime_maximum_yaw_radians_per_second": 0.40,
+    "runtime_fsm": "801/0",
+    "runtime_recorder_idle": true,
+    "motion_activated_during_verification": false,
+    "physical_turn_tested": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The higher-yaw-gain configuration deployment succeeded, but no Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this configuration was measured.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "No changed image layer was required because the yaw adjustment is a runtime deployment setting.",
+    "Compressed transfer bytes and image sizes were not reported.",
+    "Verification was deliberately non-moving; the increased yaw response still requires a supervised edge-of-frame test."
+  ]
+}
