@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "max_detection_runtime_probe",
+  "change_class": "pruned_detection_only_max_aot_compile",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "4e91f0fcdef43f4015131b8231a9ad49a70d391156de246b3ba62960c1473f1c"
+  },
+  "context": {
+    "bytes": 80445366
+  },
+  "build": {
+    "duration_seconds": 37.458,
+    "cached_steps": 6,
+    "rebuilt_steps": 4,
+    "status": "success"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "duration_seconds": 41.903,
+    "transfer_seconds": 0.022,
+    "unpack_seconds": 1.32,
+    "replacement_seconds": 0.537,
+    "readiness_seconds": 2.348,
+    "unclassified_seconds": 0.218,
+    "status": "success"
+  },
+  "image_and_layers": {
+    "image_bytes": 2113033624,
+    "image_layers": 9,
+    "matching_layer_diff_ids": 7,
+    "unmatched_layer_diff_ids": 2
+  },
+  "observer": {
+    "overhead_seconds": null,
+    "status": "not_separately_measured"
+  },
+  "runtime_verification": {
+    "compile_timeout_seconds": 480,
+    "peak_observed_rss_bytes": 4992899482,
+    "guard_exit_code": 86,
+    "compile_completed": false,
+    "device_remained_online": true,
+    "fallback_runtime_restored": true
+  },
+  "result": {
+    "deployed": true,
+    "runtime_validated": false,
+    "optimization_claim": false,
+    "reason": "The smaller candidate deployed successfully, but MAX AOT compilation exceeded its safety window and produced no reusable runtime artifact."
+  },
+  "remaining_uncertainty": [
+    "Observer overhead was not separately measured.",
+    "The compile was intentionally terminated at the safety deadline, so final compile time and artifact size are unknown.",
+    "No paired runtime comparison exists because the MAX artifact was not produced.",
+    "The configured agent-first installation ref was unavailable; the already installed verified tool version was used.",
+    "Reported context bytes are the aggregate size of files admitted by the Dockerfile-specific ignore rules, not a BuildKit wire measurement."
+  ]
+}
