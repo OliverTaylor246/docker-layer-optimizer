@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app",
+  "change_class": "direct_sportclient_yaw_routing",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "latest_builder_reported_kilobytes": 210.58,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "attempts": [
+      {
+        "transfer_mode": "automatic_chunk_diff",
+        "duration_seconds": 99.505,
+        "build_seconds": 49.524,
+        "export_seconds": 29.495,
+        "transfer_seconds": 0.022,
+        "unpack_seconds": 17.607,
+        "replacement_seconds": 1.547,
+        "readiness_observed_by_wrapper": false,
+        "unclassified_seconds": 1.310,
+        "command_status": "success",
+        "semantic_verification": "failed_stale_application_source"
+      },
+      {
+        "transfer_mode": "registry",
+        "duration_seconds": 51.375,
+        "build_seconds": 39.089,
+        "export_seconds": 0.654,
+        "transfer_seconds": 0.042,
+        "unpack_seconds": 0.0,
+        "replacement_seconds": 10.323,
+        "readiness_observed_by_wrapper": false,
+        "unclassified_seconds": 1.267,
+        "command_status": "success",
+        "semantic_verification": "passed"
+      }
+    ]
+  },
+  "cache_and_rebuild": {
+    "current_deploy_cached_steps": null,
+    "current_deploy_rebuilt_steps": null,
+    "remaining_uncertainty": "The Wendy output did not emit aggregate cached-step or rebuilt-step counts. The local builder was bootstrapped during this deployment, so this is not treated as a representative warm source-only build."
+  },
+  "image_and_layers": {
+    "aggregate_image_bytes": null,
+    "current_device_layers": null,
+    "historical_app_device_layers": 10,
+    "remaining_uncertainty": "Current image bytes and device-layer counts were not emitted; the layer count is historical context only."
+  },
+  "observer": {
+    "current_wrapper_overhead_seconds": null,
+    "verified_deploy_unclassified_seconds": 1.267,
+    "historical_median_non_build_overhead_seconds": 0.026577
+  },
+  "correctness": {
+    "device_api": "healthy",
+    "camera_frames_advancing": true,
+    "model_router_loaded": true,
+    "bark_ready": true,
+    "activation_ready": true,
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "motion_armed": false,
+    "direct_yaw_method_present": true,
+    "direct_yaw_uses_sportclient_zero_translation": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The verified registry deployment is one observation after an automatic chunk-diff deployment returned success with stale application source. It is not a paired control/candidate proof."
+  },
+  "remaining_uncertainty": [
+    "The direct-yaw routing is present in the live container but still requires a supervised physical rotation test.",
+    "No paired control deployment was run, so these observations cannot support a performance improvement claim.",
+    "The wrapper did not isolate current observer overhead or emit exact context bytes, cache counts, rebuilt-step counts, image bytes, current device layers, or readiness timing.",
+    "Automatic chunk-diff reported command success but retained stale application source; only the registry-path result passed source and API verification."
+  ]
+}
