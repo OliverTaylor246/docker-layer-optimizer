@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "automated_recorded_handoff_enabled",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 143890,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "service_reported_duration_seconds": 2.628,
+    "dlo_phase_duration_seconds": 1.048,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 5.425,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 1.048,
+      "export": 1.348,
+      "transfer": 0.256,
+      "unpack": 0.044,
+      "replacement": 0.252,
+      "readiness": 1.169
+    },
+    "unclassified_seconds": 1.308
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "main_demo_service_device_unpack",
+    "reported_push_blob_count": 11,
+    "reported_push_size_bytes": 50100000
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 1.308,
+    "plan_median_non_build_overhead_seconds": 0.035914
+  },
+  "correctness": {
+    "project_tests_passed": 61,
+    "runtime_phase": "disarmed",
+    "automated_action_enabled": true,
+    "recorded_action_loaded": true,
+    "recorder_idle": true,
+    "backup_controller_ready_for_start": true,
+    "tracker_motion_control_enabled": false,
+    "tracker_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The configuration-only handoff enablement deployed successfully while disarmed; no alternative Dockerfile or repeated timing baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "Context and push-size values are reconstructed from rounded builder output.",
+    "Cache and rebuild counts were reconstructed from builder step output.",
+    "The automated handoff was not physically triggered during deployment verification.",
+    "Live following, centering, overlap timing, and complete trajectory playback require a supervised run."
+  ]
+}
