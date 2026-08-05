@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo RealSense service",
+  "change_class": "production_rgbd_resource_trim",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "92e6933f13787a345314ac532c28c291e728e87df7b76d7c3da459cdae57daad"
+  },
+  "context": {
+    "bytes": 66740,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "status": "success",
+    "service_reported_duration_seconds": 2.627,
+    "dlo_phase_duration_seconds": 0.409,
+    "cached_steps": 4,
+    "rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 4.401,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 0.409,
+      "export": 2.0,
+      "transfer": 0.229,
+      "unpack": 0.02,
+      "replacement": 0.194,
+      "readiness": 1.267
+    },
+    "unclassified_seconds": 0.282
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 6,
+    "new_layers": 1,
+    "reused_layers": 5,
+    "aggregate_scope": "realsense_service_device_unpack",
+    "reported_push_blob_count": 9,
+    "reported_push_size_bytes": 105200000
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.282,
+    "plan_median_non_build_overhead_seconds": 0.035914
+  },
+  "correctness": {
+    "project_tests_passed": 61,
+    "camera_healthy": true,
+    "camera_restart_count": 0,
+    "camera_consecutive_timeouts": 0,
+    "tracker_motion_control_enabled": false,
+    "tracker_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The production RGB-D trim deployed successfully and a point-in-time resource signal improved, but no replicated controlled baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "Context and push-size values are reconstructed from rounded builder output.",
+    "Cache and rebuild counts were reconstructed from builder step output.",
+    "Sustained CPU, input power, temperature, and live tracking quality were not measured in a controlled A/B trial.",
+    "The required recorder service still has a high idle CPU cost and needs separate profiling."
+  ]
+}
