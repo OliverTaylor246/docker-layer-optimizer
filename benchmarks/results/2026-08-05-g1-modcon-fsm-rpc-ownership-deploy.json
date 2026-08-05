@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo",
+  "change_class": "walking_handoff_fsm_rpc_ownership",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+  },
+  "context": {
+    "bytes": 118310,
+    "measurement": "rounded_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.374,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0,
+    "aggregate_scope": "main_controller_image"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 20.954,
+    "service_image_count": 3,
+    "phase_seconds": {
+      "build": 0.374,
+      "export": 1.823,
+      "transfer": 10.214,
+      "unpack": 0.004,
+      "replacement": 2.183,
+      "readiness": 5.294
+    },
+    "unclassified_seconds": 1.062
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 8,
+    "new_layers": 1,
+    "reused_layers": 7,
+    "aggregate_scope": "main_service_device_unpack",
+    "measured_image_size_bytes": null,
+    "compressed_bytes_transferred": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 1.062
+  },
+  "correctness": {
+    "project_tests_passed": 33,
+    "fsm_rpc_contention_regressions_passed": 2,
+    "runtime_disarmed": true,
+    "runtime_zero_velocity": true,
+    "runtime_tracker_gate_off": true,
+    "runtime_target_selected": false,
+    "runtime_r3_neutral": true,
+    "runtime_fsm": "801/0",
+    "motion_activated_after_deploy": false,
+    "physical_overlap_tested_after_deploy": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The FSM RPC ownership fix and deployment succeeded, but no alternative Dockerfile candidate or repeated baseline was measured."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this revision was measured.",
+    "The context byte count is reconstructed from rounded builder output.",
+    "Build step counts and layer reuse cover the main controller image only; tracker and camera aggregates were not emitted.",
+    "Compressed transfer bytes and image size were not reported.",
+    "The pre-fix physical run faulted from a 2.605-second FSM snapshot gap; the deployed ownership fix still requires a supervised harness retest."
+  ]
+}
