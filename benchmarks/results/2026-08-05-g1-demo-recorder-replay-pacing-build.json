@@ -12,53 +12,57 @@
     "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
   },
   "context": {
-    "bytes": 89730
+    "bytes": 90467
   },
   "build": {
     "status": "success",
-    "duration_seconds": 39.656,
-    "cached_steps": 0,
-    "rebuilt_steps": 9,
+    "duration_seconds": 1.539,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
     "failed_steps": 0
   },
   "deployment": {
     "adapter": "wendy",
     "target": "unitree-g1-nx-local",
     "status": "success",
-    "duration_seconds": 7.427,
+    "duration_seconds": 7.007,
     "phase_seconds": {
-      "build": 1.308,
-      "export": 1.5,
-      "transfer": 1.192,
-      "unpack": 0.162,
-      "replacement": 0.352,
-      "readiness": 2.671
+      "build": 1.267,
+      "export": 1.458,
+      "transfer": 1.02,
+      "unpack": 0.002,
+      "replacement": 0.351,
+      "readiness": 2.189
     },
-    "unclassified_seconds": 0.242
+    "unclassified_seconds": 0.72
   },
   "image_and_layers": {
     "measured_image_count": 1,
     "measured_layer_count": 8,
     "new_layers": 8,
     "reused_layers": 0,
-    "measured_image_size_bytes": 57107600,
+    "measured_image_size_bytes": 57107957,
     "compressed_bytes_transferred": null
   },
   "observer": {
-    "build_wrapper_seconds": 39.846132,
-    "build_inspection_seconds": 0.031208,
-    "build_snapshot_seconds": 0.158579,
-    "build_non_build_seconds": 0.189787
+    "build_wrapper_seconds": 1.645132,
+    "build_inspection_seconds": 0.023437,
+    "build_snapshot_seconds": 0.081981,
+    "build_non_build_seconds": 0.105419
   },
   "correctness": {
     "project_tests_passed": 36,
     "synthetic_delayed_fsm_reproduction_passed": true,
     "minimum_tested_command_interval_seconds": 0.01,
     "runtime_idle": true,
-    "runtime_fsm": "0/0",
+    "runtime_fsm": "801/0",
     "runtime_recording_preserved": true,
-    "motion_activated_during_verification": false,
-    "physical_replay_tested": false
+    "motion_activated_during_verification": true,
+    "physical_replay_tested": true,
+    "physical_replay_completed": true,
+    "physical_replay_wall_seconds": 19.308,
+    "physical_replay_timing_overrun_seconds": 4.703,
+    "physical_replay_final_state": "idle"
   },
   "result": {
     "built": true,
@@ -67,9 +71,9 @@
     "reason": "The build, timing regression test, and deployment succeeded, but no alternative Dockerfile candidate was measured."
   },
   "remaining_uncertainty": [
-    "Only one uncached build and one cached follow-up build were measured.",
+    "Only one build and one deployment of the final active-feed-wait revision were measured.",
     "Compressed transfer bytes were not reported.",
-    "The saved trajectory timestamps were verified, but no post-fix physical command-timing telemetry has been collected.",
-    "A supervised physical replay remains necessary after the target reconnects."
+    "The status endpoint retains only recent release commands at completion, so exact physical trajectory command intervals were not recovered after the run.",
+    "One supervised harness replay completed; the full person-tracking and upper-body overlay flow remains to be tested."
   ]
 }
