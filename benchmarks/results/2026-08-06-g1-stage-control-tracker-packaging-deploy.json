@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "f8e2b0712dd74059dccf6a75eb72cf481d5c2642",
+  "component": "Main Demo",
+  "change_class": "stage_controls_and_tracker_packaging_recovery",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    },
+    {
+      "component": "person-tracker",
+      "sha256": "72e932ab56fe6315527b23299bc7d308a4f2302559efa654339c4138a37e100b"
+    },
+    {
+      "component": "realsense",
+      "sha256": "92e6933f13787a345314ac532c28c291e728e87df7b76d7c3da459cdae57daad"
+    }
+  ],
+  "context": {
+    "main_demo_exact_bytes": 319546,
+    "person_tracker_builder_reported_megabytes": 15.47,
+    "person_tracker_exact_bytes_available": false
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "local_main_demo_duration_seconds": 8.621,
+    "local_main_demo_cached_steps": 3,
+    "local_main_demo_rebuilt_steps": 6,
+    "local_main_demo_resolved_steps": 1,
+    "repair_tracker_cached_steps": 8,
+    "repair_tracker_rebuilt_steps": 2,
+    "repair_tracker_failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "duration_seconds": 32.265,
+    "service_image_count": 1,
+    "phase_seconds": {
+      "build": 0.493,
+      "export": 26.208,
+      "transfer": 0.718,
+      "unpack": 0.317,
+      "replacement": 0.335,
+      "readiness": 3.666
+    },
+    "unclassified_seconds": 0.528,
+    "initial_full_deployment_status": "partial",
+    "initial_full_deployment_seconds": 513.304,
+    "initial_failure_class": "missing_runtime_module"
+  },
+  "image_and_layers": {
+    "deployed_application_image_count": 3,
+    "repair_scope_image_count": 1,
+    "repair_device_layers_total": 11,
+    "repair_device_layers_reused": 9,
+    "repair_device_layers_applied": 2,
+    "local_main_demo_image_bytes": 52593954,
+    "local_main_demo_layers": 8,
+    "aggregate_application_image_bytes": null
+  },
+  "observer": {
+    "local_build_non_build_seconds": 0.37457,
+    "local_build_inspection_seconds": 0.031601,
+    "repair_deployment_unclassified_seconds": 0.528
+  },
+  "correctness": {
+    "project_tests_passed": 86,
+    "packaging_regression_passed": true,
+    "application_version": "0.27.0",
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_action_active": false,
+    "runtime_last_velocity_command_zero": true,
+    "controller_dds_receiving": true,
+    "tracker_ready": true,
+    "camera_ready": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The repaired tracker image deployed successfully, but this single recovery run is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "The tracker context size is rounded builder output rather than an exact byte count.",
+    "Aggregate bytes for all three deployed images were not emitted by the deployment adapter.",
+    "The successful measurement covers the repaired tracker service; the immediately preceding full deployment was partial because the tracker image omitted a runtime module.",
+    "Only one successful recovery deployment was measured, so timing is not replicated.",
+    "Verification was deliberately non-moving; the supervised START, follow, and envelope sequence still requires a physical test."
+  ]
+}
