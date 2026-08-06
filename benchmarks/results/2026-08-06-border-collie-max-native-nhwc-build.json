@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-08-06T19:59:22Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-native-nhwc-importer-candidate-build",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 57797
+  },
+  "build": {
+    "status": "success",
+    "platform": "linux/arm64",
+    "duration_seconds": 3.756,
+    "cached_steps": 5,
+    "rebuilt_steps": 4,
+    "resolved_steps": 1,
+    "image_bytes": 2113321505,
+    "image_layers": 9,
+    "changed_layer_positions_without_tag_baseline": 9,
+    "observer_inspection_seconds": 0.026255,
+    "observer_snapshot_seconds": 1.961652,
+    "observer_non_build_seconds": 1.987907,
+    "observer_wrapper_seconds": 5.744827
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "This is one packaging build, not a paired DLO optimization experiment.",
+    "The candidate tag had no tag-local baseline, so image layer reuse cannot be inferred from changed layer positions.",
+    "The MAX graph has not yet been compiled or benchmarked on Woof because its battery was below the checked-in compile-start gate.",
+    "The configured agent-first installation ref was unavailable; the already installed and verified dlo 0.5.0b1 executable was used."
+  ]
+}
