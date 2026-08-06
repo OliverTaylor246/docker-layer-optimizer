@@ -1,0 +1,75 @@
+{
+  "captured_at": "2026-08-06T21:05:52Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-native-detector-skeleton-prototype",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "2ec076a0d97582f6506391be76ad862dc2274342aec823f0182e222120b2dd1b"
+  },
+  "measured_context": {
+    "bytes": 21772
+  },
+  "image": {
+    "bytes": 2064759379,
+    "layers": 7,
+    "digest_redacted": true
+  },
+  "local_build": {
+    "status": "success",
+    "duration_seconds": 24.342,
+    "cached_steps": 3,
+    "rebuilt_steps": 4,
+    "observer_inspection_seconds": 0.03103,
+    "observer_snapshot_seconds": 0.000205,
+    "observer_non_build_seconds": 0.031234,
+    "observer_wrapper_seconds": 24.373958
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 367.909,
+    "build_seconds": 91.503,
+    "export_seconds": 237.455,
+    "transfer_seconds": 0.026,
+    "unpack_seconds": 37.935,
+    "replacement_seconds": 0.674,
+    "unclassified_seconds": 0.316,
+    "dominant_phase": "export"
+  },
+  "runtime_result": {
+    "status": "success",
+    "architecture": "48-convolution MobileNet-style detector skeleton",
+    "parameters": 1248653,
+    "precision": "fp16",
+    "layout": "NHWC",
+    "warmups_per_resolution": 5,
+    "samples_per_resolution": 30,
+    "median_ms": {
+      "320": 28.187594499968327,
+      "416": 39.22626400003537,
+      "640": 66.03156899996065
+    },
+    "p95_ms": {
+      "320": 28.5627780001505,
+      "416": 39.643812999884176,
+      "640": 67.33988399992086
+    },
+    "all_latency_gates_passed": true,
+    "battery_percent_start": 93,
+    "battery_percent_stop": 91,
+    "guarded_temperature_c_stop": 79.0
+  },
+  "optimization_claim": false,
+  "conclusion": "A purpose-built MAX-native fruit detector is worth training. This validates the graph shape and target runtime, not model accuracy or equivalent-model speedup.",
+  "remaining_uncertainty": [
+    "The skeleton used deterministic random weights and zero-tensor inputs.",
+    "Decode, NMS, camera preprocessing, and trained-weight parity remain unmeasured.",
+    "The new app required a one-time full runtime export, so deployment timing does not represent a warm source-only edit.",
+    "The imported YOLOE graph and native skeleton are different architectures and cannot support a direct speedup claim."
+  ]
+}
