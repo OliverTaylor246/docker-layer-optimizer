@@ -1,0 +1,63 @@
+{
+  "captured_at": "2026-08-06T19:24:39Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-pruned-fruit-detection-fp16-probe",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 48240
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 42.344,
+    "build_seconds": 39.191,
+    "transfer_seconds": 0.015,
+    "unpack_seconds": 0.844,
+    "replacement_seconds": 0.466,
+    "readiness_seconds": 1.543,
+    "unclassified_seconds": 0.285,
+    "wendy_reported_cached_steps": 5,
+    "wendy_reported_rebuilt_steps": 5
+  },
+  "guarded_image_build": {
+    "status": "success",
+    "duration_seconds": 3.426,
+    "cached_steps": 5,
+    "rebuilt_steps": 4,
+    "resolved_steps": 1,
+    "image_bytes": 2113319924,
+    "image_layers": 9,
+    "new_layers_without_tag_baseline": 9,
+    "observer_inspection_seconds": 0.020878,
+    "observer_snapshot_seconds": 1.491782,
+    "observer_non_build_seconds": 1.51266,
+    "observer_wrapper_seconds": 4.939368
+  },
+  "device_result": {
+    "cpu_count": 8,
+    "power_mode": "25W",
+    "precision": "fp16",
+    "compile_completed": true,
+    "compile_seconds": 372.40169024299985,
+    "compile_peak_rss_bytes": 10237456384,
+    "runtime_status": "guarded_stop",
+    "runtime_available_memory_bytes_at_abort": 462974976,
+    "runtime_swap_used_bytes_at_abort": 124301312,
+    "runtime_reason": "MAX initialization crossed the 0.5 GiB minimum host-headroom guard; the process exited once before host OOM."
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "The deployment and local image build are separate observations and must not be compared as a DLO speedup experiment.",
+    "The local image used a new tag without a tag-local baseline, so all nine layer positions are reported as new even though five build steps were cached.",
+    "FP16 compilation succeeded but runtime initialization was deliberately stopped; inference correctness, latency, frame rate, and live-demo coexistence remain unmeasured.",
+    "The configured agent-first installation ref was unavailable; the already installed and verified dlo 0.5.0b1 executable was used."
+  ]
+}
