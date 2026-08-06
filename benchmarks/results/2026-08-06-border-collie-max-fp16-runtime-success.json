@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-08-06T19:38:45Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-pruned-fruit-detection-fp16-runtime-proof",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 22694
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 42.662,
+    "build_seconds": 39.479,
+    "transfer_seconds": 0.019,
+    "unpack_seconds": 0.828,
+    "replacement_seconds": 0.476,
+    "readiness_seconds": 1.452,
+    "unclassified_seconds": 0.408,
+    "wendy_reported_cached_steps": 6,
+    "wendy_reported_rebuilt_steps": 4
+  },
+  "guarded_image_build": {
+    "status": "success",
+    "duration_seconds": 3.577,
+    "cached_steps": 6,
+    "rebuilt_steps": 3,
+    "resolved_steps": 1,
+    "image_bytes": 2113320138,
+    "image_layers": 9,
+    "new_layers_without_tag_baseline": 9,
+    "observer_inspection_seconds": 0.021814,
+    "observer_snapshot_seconds": 1.590799,
+    "observer_non_build_seconds": 1.612613,
+    "observer_wrapper_seconds": 5.190896
+  },
+  "device_result": {
+    "cpu_count": 8,
+    "power_mode": "25W",
+    "precision": "fp16",
+    "artifact_reused": true,
+    "runtime_status": "success",
+    "total_startup_seconds": 418.5861727110005,
+    "median_inference_ms": 11851.05166150015,
+    "p95_inference_ms": 11908.426138000323,
+    "fps_from_median": 0.08438069705228306,
+    "peak_process_rss_bytes": 618971136,
+    "minimum_available_host_memory_bytes": 2944606208,
+    "maximum_swap_used_bytes": 182235136,
+    "runtime_reason": "Native FP16 MAX execution completed with PTX JIT disabled and correct output shape, but measured throughput is unusable for live tracking."
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "The deployment and local image build are separate observations and must not be compared as a DLO speedup experiment.",
+    "The local image used a new tag without a tag-local baseline, so all nine layer positions are reported as new even though six build steps were cached.",
+    "The inference benchmark used a zero tensor; TensorRT parity and real-image correctness remain unmeasured.",
+    "The configured agent-first installation ref was unavailable; the already installed and verified dlo 0.5.0b1 executable was used."
+  ]
+}
