@@ -1,0 +1,55 @@
+{
+  "captured_at": "2026-08-06T20:15:52Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-native-nhwc-sm87-runtime-initialization-guard",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 57797
+  },
+  "candidate_image": {
+    "bytes": 2113321505,
+    "layers": 9,
+    "digest_redacted": true
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 41.483,
+    "build_seconds": 38.831,
+    "transfer_seconds": 0.020,
+    "unpack_seconds": 0.813,
+    "replacement_seconds": 0.467,
+    "readiness_seconds": 1.153,
+    "wendy_reported_cached_steps": 6,
+    "wendy_reported_rebuilt_steps": 4
+  },
+  "device_result": {
+    "status": "guard_abort",
+    "exit_code": 86,
+    "backend": "max",
+    "precision": "fp16",
+    "layout": "native_nhwc",
+    "compile_seconds_estimated_from_phase_timestamps": 370.4,
+    "failure_phase": "runtime_initialization",
+    "available_memory_gib_at_abort": 0.41,
+    "configured_available_memory_floor_gib": 0.50,
+    "battery_percent_after_stop": 34,
+    "guarded_temperature_c_after_stop": 80.0,
+    "reason": "The native-NHWC graph reached runtime initialization, then the safety watchdog stopped it when host memory fell below the configured floor."
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "The exact compile duration and artifact manifest remain on the persistent device volume and were not read after the guarded stop.",
+    "Artifact export is inferred from the probe lifecycle reaching runtime initialization; the artifact must be inspected before reuse is claimed.",
+    "No inference ran, so native-NHWC latency and output parity remain unmeasured.",
+    "This is not a paired DLO optimization experiment and does not prove a build or deployment speedup."
+  ]
+}
