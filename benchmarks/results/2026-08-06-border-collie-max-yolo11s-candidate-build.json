@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "border-collie-demo",
+  "component": "MAX YOLO11s whole-fruit candidate",
+  "change_class": "locally_trained_model_candidate_packaging",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "0d4359a084b1f4920075d50459a0ea2ec218363a7efb4ab4b0b0115c7ec9c5d0"
+  },
+  "context": {
+    "initial_build_bytes": 37958468,
+    "warm_noop_observed_bytes": 139
+  },
+  "builds": {
+    "platform": "linux/arm64",
+    "initial_duration_seconds": 153.412,
+    "initial_cached_steps": 3,
+    "initial_rebuilt_steps": 6,
+    "warm_noop_duration_seconds": 1.089,
+    "warm_noop_cached_steps": 8,
+    "warm_noop_rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "image_and_layers": {
+    "image_bytes": 2098812203,
+    "layers_total": 9,
+    "warm_noop_layers_reused": 9,
+    "warm_noop_layers_changed": 0
+  },
+  "observer": {
+    "initial_wrapper_seconds": 153.463503,
+    "initial_non_build_seconds": 0.050186,
+    "initial_inspection_seconds": 0.032886,
+    "initial_snapshot_seconds": 0.017301,
+    "warm_noop_wrapper_seconds": 1.135464,
+    "warm_noop_non_build_seconds": 0.044984,
+    "warm_noop_inspection_seconds": 0.027648,
+    "warm_noop_snapshot_seconds": 0.017336
+  },
+  "correctness": {
+    "project_tests_passed": 26,
+    "onnx_operator_check_passed": true,
+    "motion_capability_included": false
+  },
+  "result": {
+    "built": true,
+    "deployed": false,
+    "optimization_claim": false,
+    "reason": "The measurements establish an initial build and warm no-op baseline; no control-versus-candidate Dockerfile comparison was run."
+  },
+  "remaining_uncertainty": [
+    "Woof was offline, so transfer, replacement, readiness, MAX compilation, and inference were not measured.",
+    "The initial build reused three pre-existing local layers and is not a clean cold build.",
+    "The warm no-op observation reports one zero-duration rebuilt bookkeeping step despite all nine image layers matching.",
+    "No Dockerfile optimization candidate was produced by the read-only plan."
+  ]
+}
