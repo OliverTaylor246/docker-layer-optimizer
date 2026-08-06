@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-08-06T20:05:58Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-native-nhwc-sm87-compile-start",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 57797
+  },
+  "candidate_image": {
+    "bytes": 2113321505,
+    "layers": 9,
+    "digest_redacted": true
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 41.483,
+    "build_seconds": 38.831,
+    "transfer_seconds": 0.020,
+    "unpack_seconds": 0.813,
+    "replacement_seconds": 0.467,
+    "readiness_seconds": 1.153,
+    "unclassified_seconds": 0.199,
+    "wendy_reported_cached_steps": 6,
+    "wendy_reported_rebuilt_steps": 4
+  },
+  "device_start": {
+    "status": "compiling_graph",
+    "backend": "max",
+    "precision": "fp16",
+    "layout": "native_nhwc",
+    "cpu_count": 8,
+    "battery_percent": 40,
+    "guarded_temperature_c": 80.0,
+    "available_host_memory_bytes": 12069154816,
+    "emergency_battery_abort_percent": 25,
+    "thermal_abort_c": 82.0
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "Compilation had started but had not completed when this aggregate was recorded.",
+    "Two immediately preceding deployments stopped at preflight because the installed app retained its earlier 60 percent start environment; no compilation ran in those attempts.",
+    "This is not a paired DLO optimization experiment and does not prove a build or deployment speedup.",
+    "The configured agent-first installation ref was unavailable; the already installed and verified dlo 0.5.0b1 executable was used."
+  ]
+}
