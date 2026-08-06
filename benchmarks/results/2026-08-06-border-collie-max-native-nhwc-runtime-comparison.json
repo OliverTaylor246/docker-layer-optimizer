@@ -1,0 +1,92 @@
+{
+  "captured_at": "2026-08-06T20:32:25Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-native-nhwc-sm87-runtime-comparison",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 57797
+  },
+  "candidate_image": {
+    "bytes": 2113321505,
+    "layers": 9,
+    "digest_redacted": true
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 43.201,
+    "build_seconds": 40.051,
+    "transfer_seconds": 0.021,
+    "unpack_seconds": 0.927,
+    "replacement_seconds": 0.566,
+    "readiness_seconds": 1.368,
+    "unclassified_seconds": 0.268,
+    "wendy_reported_cached_steps": 6,
+    "wendy_reported_rebuilt_steps": 4,
+    "observer_overhead_seconds": null
+  },
+  "benchmark_protocol": {
+    "warmup_inferences": 5,
+    "timed_inferences": 30,
+    "input": "deterministic zero tensor",
+    "precision": "fp16",
+    "ptx_jit_disabled": true,
+    "artifact_reused": true
+  },
+  "control": {
+    "layout": "transpose-mediated",
+    "total_startup_seconds": 418.5861727110005,
+    "median_inference_ms": 11851.05166150015,
+    "p95_inference_ms": 11908.426138000323,
+    "maximum_inference_ms": 23695.158642000024,
+    "fps_from_median": 0.08438069705228306,
+    "output_shape": [1, 7, 8400],
+    "output_dtype": "float16",
+    "output_digest_sha256": "a791e999270ff9202d81f9cad82c43981ce883a045850cd0cb6ef5abcdd80821"
+  },
+  "candidate": {
+    "layout": "native_nhwc",
+    "logical_input_shape": [1, 3, 640, 640],
+    "physical_input_shape": [1, 640, 640, 3],
+    "total_startup_seconds": 420.7885213139998,
+    "median_inference_ms": 11916.18619000019,
+    "p95_inference_ms": 11968.84405899982,
+    "maximum_inference_ms": 23868.58639500042,
+    "fps_from_median": 0.08391946752553923,
+    "peak_process_rss_bytes": 609603584,
+    "minimum_available_host_memory_bytes": 3044630528,
+    "maximum_swap_used_bytes": 322482176,
+    "output_shape": [1, 7, 8400],
+    "output_dtype": "float16",
+    "output_digest_sha256": "a791e999270ff9202d81f9cad82c43981ce883a045850cd0cb6ef5abcdd80821",
+    "mef_sha256": "060f1f2815f3b0840658a4ad4b39fbdadf3689271b45db314dbee746b4536f0f",
+    "weights_sha256": "d0d9eb9b6575871947282f12599f33f9c54db95240221904b1afb07b71dd0417"
+  },
+  "comparison": {
+    "startup_delta_seconds": 2.2023486029993364,
+    "startup_regression_percent": 0.5261398360905433,
+    "median_delta_ms": 65.13452850003887,
+    "median_regression_percent": 0.5496096917005077,
+    "p95_delta_ms": 60.417920999498165,
+    "p95_regression_percent": 0.5073543749555776,
+    "fps_change_percent": -0.5466054949250309,
+    "outputs_identical": true
+  },
+  "optimization_claim": false,
+  "conclusion": "The native-NHWC importer preserved deterministic output but did not improve latency. Its 0.55% median regression is too small to distinguish from run noise and is far below the project's 10% and 0.5-second optimization thresholds.",
+  "remaining_uncertainty": [
+    "Only one paired candidate run is available; additional repetitions are required to estimate noise, median, and p95 reliably.",
+    "The benchmark used a zero tensor rather than representative camera frames.",
+    "The control MEF was replaced under the shared artifact stem, so the comparison uses the preserved control result rather than a fresh alternating A/B run.",
+    "DLO observer overhead was not separately emitted for this deployment and remains unmeasured.",
+    "This runtime comparison does not prove a Docker build or deployment optimization."
+  ]
+}
