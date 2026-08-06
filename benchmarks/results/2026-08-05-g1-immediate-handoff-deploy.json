@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "change_class": "immediate_arms_only_handoff_with_following",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "measurement": {
+    "source_repository": "G1-Modcon-Demo",
+    "source_commit": "0b40986fafe4d15fa4d1b840a68cc3c8ac0227f5",
+    "application_version": "0.25.0",
+    "dockerfiles": [
+      {
+        "component": "main-demo",
+        "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+      },
+      {
+        "component": "person-tracker",
+        "sha256": "526fc9f262acc2831b985075b4a0931f5c4a4b3b527ec2e1fe21cc2e0e2d33a5"
+      },
+      {
+        "component": "realsense",
+        "sha256": "92e6933f13787a345314ac532c28c291e728e87df7b76d7c3da459cdae57daad"
+      }
+    ],
+    "context": {
+      "aggregate_bytes": 15691210,
+      "measurement": "sum_of_rounded_parallel_builder_outputs"
+    },
+    "build": {
+      "platform": "linux/arm64",
+      "status": "success",
+      "service_reported_duration_seconds": {
+        "main-demo": 2.907,
+        "person-tracker": 10.882,
+        "realsense": 1.057
+      },
+      "dlo_phase_duration_seconds": 0.341,
+      "cached_steps": 23,
+      "rebuilt_steps": 1,
+      "failed_steps": 0
+    },
+    "deployment": {
+      "status": "success",
+      "duration_seconds": 18.013,
+      "service_image_count": 3,
+      "observer_unclassified_seconds": 0.387,
+      "plan_median_non_build_overhead_seconds": 0.035914
+    },
+    "image_and_layers": {
+      "measured_image_count": 1,
+      "unmeasured_image_count": 2,
+      "measured_layer_count": 8,
+      "reused_layers": 7,
+      "applied_layers": 1,
+      "reported_push_blob_count": 34,
+      "reported_push_size_bytes": 2285300000
+    }
+  },
+  "correctness": {
+    "project_tests_passed": 64,
+    "main_runtime_phase": "disarmed",
+    "main_action_start_with_follow": true,
+    "main_action_active": false,
+    "main_last_command_zero": true,
+    "recorder_runtime_mode": "idle",
+    "tracker_motion_control_enabled": false,
+    "r3_safety_monitor_ready_for_start": true,
+    "motion_triggered_by_deployment_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The revision deployed successfully, but no repeated baseline or alternative Dockerfile was measured."
+  },
+  "remaining_uncertainty": [
+    "The revision was deployed once, so timing is not replicated.",
+    "Context and push sizes are reconstructed from rounded builder output.",
+    "Cache and rebuild counts are reconstructed from human-readable build steps.",
+    "Device layer counts were reported only for the main-demo image, so two service images remain unmeasured.",
+    "A supervised physical START is still required to validate simultaneous walking and recorded arm motion."
+  ]
+}
