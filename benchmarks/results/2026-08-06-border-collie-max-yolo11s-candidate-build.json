@@ -10,11 +10,12 @@
     "event_schema_version": 3
   },
   "dockerfile": {
-    "sha256": "0d4359a084b1f4920075d50459a0ea2ec218363a7efb4ab4b0b0115c7ec9c5d0"
+    "sha256": "e12251fbcd481539985e8ad8f7dfa4fb5fa78328543c01a6b41d060784b5bf06"
   },
   "context": {
     "initial_build_bytes": 37958468,
-    "warm_noop_observed_bytes": 139
+    "warm_noop_observed_bytes": 139,
+    "current_candidate_bytes": 37834952
   },
   "builds": {
     "platform": "linux/arm64",
@@ -24,13 +25,18 @@
     "warm_noop_duration_seconds": 1.089,
     "warm_noop_cached_steps": 8,
     "warm_noop_rebuilt_steps": 1,
+    "current_duration_seconds": 3.967,
+    "current_cached_steps": 4,
+    "current_rebuilt_steps": 7,
     "failed_steps": 0
   },
   "image_and_layers": {
-    "image_bytes": 2098812203,
-    "layers_total": 9,
+    "image_bytes": 2105647574,
+    "layers_total": 11,
     "warm_noop_layers_reused": 9,
-    "warm_noop_layers_changed": 0
+    "warm_noop_layers_changed": 0,
+    "current_layers_reused_against_previous_local_image": 5,
+    "current_layers_changed_against_previous_local_image": 6
   },
   "observer": {
     "initial_wrapper_seconds": 153.463503,
@@ -40,23 +46,44 @@
     "warm_noop_wrapper_seconds": 1.135464,
     "warm_noop_non_build_seconds": 0.044984,
     "warm_noop_inspection_seconds": 0.027648,
-    "warm_noop_snapshot_seconds": 0.017336
+    "warm_noop_snapshot_seconds": 0.017336,
+    "current_wrapper_seconds": 4.025816,
+    "current_non_build_seconds": 0.057776,
+    "current_inspection_seconds": 0.022262,
+    "current_snapshot_seconds": 0.035514
   },
   "correctness": {
-    "project_tests_passed": 26,
+    "project_tests_passed": 28,
     "onnx_operator_check_passed": true,
     "motion_capability_included": false
   },
+  "deployments": {
+    "successful": 3,
+    "failed_preflight": 1,
+    "initial_seconds": 398.413,
+    "runtime_416_seconds": 49.772,
+    "snapshot_endpoint_seconds": 41.972,
+    "latest_phases_seconds": {
+      "build": 33.084,
+      "export": 4.965,
+      "transfer": 0.106,
+      "unpack": 0.636,
+      "replacement": 1.572,
+      "readiness": 1.154,
+      "unclassified": 0.455
+    }
+  },
   "result": {
     "built": true,
-    "deployed": false,
+    "deployed": true,
     "optimization_claim": false,
-    "reason": "The measurements establish an initial build and warm no-op baseline; no control-versus-candidate Dockerfile comparison was run."
+    "reason": "DLO measured the build and three successful deployments, but no paired control-versus-candidate Dockerfile experiment was run. Faster later deployments mainly reflect cached and device-reused layers, not a proven optimizer rewrite."
   },
   "remaining_uncertainty": [
-    "Woof was offline, so transfer, replacement, readiness, MAX compilation, and inference were not measured.",
     "The initial build reused three pre-existing local layers and is not a clean cold build.",
     "The warm no-op observation reports one zero-duration rebuilt bookkeeping step despite all nine image layers matching.",
+    "The current local build includes the final snapshot endpoint but was measured after the deployment cache had already been warmed.",
+    "The 398.413-second initial deployment and later 49.772/41.972-second deployments are not paired control/candidate trials.",
     "No Dockerfile optimization candidate was produced by the read-only plan."
   ]
 }
