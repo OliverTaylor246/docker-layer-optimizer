@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "e527ec9",
+  "component": "Main Demo",
+  "change_class": "sequential_start_identity_and_capacity_speech",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    },
+    {
+      "component": "person-tracker",
+      "sha256": "72e932ab56fe6315527b23299bc7d308a4f2302559efa654339c4138a37e100b"
+    }
+  ],
+  "context": {
+    "main_demo_bytes": 186108,
+    "person_tracker_builder_reported_megabytes": 15.47
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "main_demo_duration_seconds": 1.115,
+    "main_demo_cached_steps": 8,
+    "main_demo_rebuilt_steps": 1,
+    "main_demo_resolved_steps": 1,
+    "person_tracker_cached_steps": 8,
+    "person_tracker_rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "aggregate_duration_seconds": 41.477,
+    "services": {
+      "person_tracker": {
+        "duration_seconds": 34.620,
+        "phase_seconds": {
+          "build": 0.499,
+          "export": 26.340,
+          "transfer": 0.734,
+          "unpack": 0.389,
+          "replacement": 1.268,
+          "readiness": 5.156
+        }
+      },
+      "main_demo": {
+        "duration_seconds": 6.857,
+        "phase_seconds": {
+          "build": 1.106,
+          "export": 1.422,
+          "transfer": 0.243,
+          "unpack": 0.049,
+          "replacement": 0.252,
+          "readiness": 3.160
+        }
+      }
+    }
+  },
+  "image_and_layers": {
+    "image_count": 2,
+    "main_demo_image_bytes": 52596276,
+    "aggregate_image_bytes": null,
+    "device_layers_total": 19,
+    "device_layers_reused": 16,
+    "device_layers_applied": 3
+  },
+  "observer": {
+    "aggregate_unclassified_seconds": 0.859,
+    "main_demo_unclassified_seconds": 0.625,
+    "person_tracker_unclassified_seconds": 0.234,
+    "local_build_wrapper_seconds": 1.4718,
+    "local_build_non_build_seconds": 0.355476,
+    "local_build_inspection_seconds": 0.02291,
+    "local_build_snapshot_seconds": 0.332566
+  },
+  "correctness": {
+    "project_tests_passed": 114,
+    "application_version": "0.27.3",
+    "start_identity_pattern": "demo N",
+    "registry_capacity": 8,
+    "capacity_error_is_spoken": true,
+    "follow_gate_opened_on_capacity_error": false,
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured two-service feature deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "The tracker context size was rounded builder output.",
+    "The tracker image byte total was not emitted by the deployment adapter.",
+    "Only one deployment of each final service revision was measured.",
+    "Sequential enrollment and capacity speech passed deterministic tests but still require supervised controller verification on the physical robot."
+  ]
+}
