@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "max_sm87_native_vector_add_probe",
+  "change_class": "source_only_probe_update",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "ccf6d5c58b633961cd88dffef1bd127fc9ab93c91903b02536a686b6b3ef175e"
+  },
+  "context": {
+    "bytes": 23512
+  },
+  "build": {
+    "duration_seconds": 1.031,
+    "cached_steps": 3,
+    "rebuilt_steps": 1,
+    "resolved_steps": 1,
+    "status": "success"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "duration_seconds": 4.844,
+    "readiness_seconds": 1.356,
+    "unclassified_seconds": 3.488,
+    "status": "success"
+  },
+  "image_and_layers": {
+    "image_bytes": 550093906,
+    "image_layers": 5,
+    "matching_layer_diff_ids": 4,
+    "unmatched_layer_diff_ids": 1,
+    "changed_positions": 1
+  },
+  "observer": {
+    "overhead_seconds": 0.018827,
+    "inspection_seconds": 0.018377,
+    "snapshot_seconds": 0.00045,
+    "wrapper_seconds": 1.050328
+  },
+  "runtime_verification": {
+    "requested_device": "accelerator",
+    "resolved_device": "gpu",
+    "gpu_arch": "sm_87",
+    "ptx_jit_disabled": true,
+    "native_cubin_found": true,
+    "native_cubin_loaded": true,
+    "result_correct": true,
+    "negative_sm80_native_image_rejected": true,
+    "temperature_before_c": 49.625,
+    "temperature_after_c": 50.375
+  },
+  "result": {
+    "deployed": true,
+    "runtime_validated": true,
+    "optimization_claim": false,
+    "reason": "The measurement proves native MAX sm_87 execution, not a Docker optimization. Only a warm source-only build and incremental deployment were measured."
+  },
+  "remaining_uncertainty": [
+    "Deployment phase parsing classified 3.488 seconds as unclassified and did not identify transfer or replacement segments.",
+    "No paired control/candidate build series was run, so no Docker speedup is claimed.",
+    "The complete fruit model still requires MAX/TensorRT output parity and steady-state performance measurements.",
+    "Woof's Tegra CUDA driver reported CUDA_ERROR_INVALID_SOURCE rather than CUDA_ERROR_NO_BINARY_FOR_GPU for the exact sm_80 negative-control CUBIN.",
+    "The configured agent-first installation ref was unavailable; the already installed verified dlo 0.5.0b1 executable was used."
+  ]
+}
