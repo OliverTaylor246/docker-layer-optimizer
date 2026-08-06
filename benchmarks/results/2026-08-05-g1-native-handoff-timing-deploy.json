@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "change_class": "native_speed_walking_handoff_timing",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "measurements": [
+    {
+      "source_repository": "g1-demo-recorder",
+      "source_commit": "2cc3e3d87d211ac915906e8e37b00f43948f2b9f",
+      "dockerfiles": [
+        {
+          "component": "recorder",
+          "sha256": "30a09c68002e0fa148acd8e21b2687b0fd3454ffa6462aa5ddc7b85ba60f9278"
+        }
+      ],
+      "context": {
+        "bytes": 271280,
+        "measurement": "rounded_builder_output"
+      },
+      "build": {
+        "platform": "linux/arm64",
+        "status": "success",
+        "service_reported_duration_seconds": 2.896,
+        "dlo_phase_duration_seconds": 1.263,
+        "cached_steps": 8,
+        "rebuilt_steps": 1,
+        "failed_steps": 0
+      },
+      "deployment": {
+        "status": "success",
+        "duration_seconds": 6.593,
+        "service_image_count": 1,
+        "observer_unclassified_seconds": 1.257,
+        "plan_median_non_build_overhead_seconds": 0.10504
+      },
+      "image_and_layers": {
+        "measured_image_count": 1,
+        "measured_layer_count": 8,
+        "reused_layers": 7,
+        "applied_layers": 1,
+        "reported_push_blob_count": 11,
+        "reported_push_size_bytes": 54500000
+      }
+    },
+    {
+      "source_repository": "G1-Modcon-Demo",
+      "source_commit": "aef9cb028b3306445ed1549bc4093089d0ca2cd3",
+      "dockerfiles": [
+        {
+          "component": "main-demo",
+          "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+        },
+        {
+          "component": "person-tracker",
+          "sha256": "526fc9f262acc2831b985075b4a0931f5c4a4b3b527ec2e1fe21cc2e0e2d33a5"
+        },
+        {
+          "component": "realsense",
+          "sha256": "92e6933f13787a345314ac532c28c291e728e87df7b76d7c3da459cdae57daad"
+        }
+      ],
+      "context": {
+        "aggregate_bytes": 15688720,
+        "measurement": "sum_of_rounded_parallel_builder_outputs"
+      },
+      "build": {
+        "platform": "linux/arm64",
+        "status": "success",
+        "service_reported_duration_seconds": {
+          "main-demo": 2.904,
+          "person-tracker": 25.918,
+          "realsense": 0.852
+        },
+        "dlo_phase_duration_seconds": 0.327,
+        "cached_steps": 21,
+        "rebuilt_steps": 3,
+        "failed_steps": 0
+      },
+      "deployment": {
+        "status": "success",
+        "duration_seconds": 33.497,
+        "service_image_count": 3,
+        "observer_unclassified_seconds": 0.405,
+        "plan_median_non_build_overhead_seconds": 0.035914
+      },
+      "image_and_layers": {
+        "measured_image_count": 2,
+        "unmeasured_image_count": 1,
+        "measured_layer_count": 19,
+        "reused_layers": 16,
+        "applied_layers": 3,
+        "reported_push_blob_count": 34,
+        "reported_push_size_bytes": 2285300000
+      }
+    }
+  ],
+  "correctness": {
+    "project_tests_passed": 118,
+    "recorder_runtime_mode": "idle",
+    "main_runtime_phase_after_stop": "stopped",
+    "main_last_command_zero": true,
+    "tracker_motion_control_enabled": false,
+    "legacy_r3_controller_stopped": true,
+    "motion_triggered_by_deployment_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "Both revisions deployed successfully, but no repeated baseline or alternative Dockerfile was measured."
+  },
+  "remaining_uncertainty": [
+    "Each revision was deployed once, so timings are not replicated.",
+    "Context and push sizes are reconstructed from rounded builder output.",
+    "Cache and rebuild counts are reconstructed from human-readable build steps.",
+    "The realsense device unpack did not report layer counts, so aggregate layer counts cover two of three main-demo images.",
+    "A supervised physical run is still required to validate simultaneous walking and recorded arm motion."
+  ]
+}
