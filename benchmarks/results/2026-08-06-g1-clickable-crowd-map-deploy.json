@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "ad54e48",
+  "component": "Main Demo",
+  "change_class": "clickable_robot_relative_crowd_map",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    }
+  ],
+  "context": {
+    "main_demo_bytes": 36967
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "duration_seconds": 1.447,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "service": "main-demo",
+    "status": "success",
+    "duration_seconds": 6.221,
+    "phase_seconds": {
+      "build": 1.159,
+      "export": 1.376,
+      "transfer": 0.286,
+      "unpack": 0.034,
+      "replacement": 0.289,
+      "readiness": 2.663
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "image_bytes": 52599563,
+    "device_layers_total": 8,
+    "device_layers_reused": 7,
+    "device_layers_applied": 1
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.414,
+    "local_build_wrapper_seconds": 1.824413,
+    "local_build_non_build_seconds": 0.376125,
+    "local_build_inspection_seconds": 0.030926,
+    "local_build_snapshot_seconds": 0.345199
+  },
+  "correctness": {
+    "project_tests_passed": 117,
+    "application_version": "0.27.5",
+    "browser_click_direction": "front",
+    "browser_click_updated_unsaved_anchor": true,
+    "test_click_was_discarded_by_reload": true,
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured UI deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of the final service revision was measured.",
+    "The direction map conversion was verified in-browser without saving an anchor or physically turning the robot."
+  ]
+}
