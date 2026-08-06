@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "max_full_segmentation_runtime_probe",
+  "change_class": "full_max_aot_compile",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "4e91f0fcdef43f4015131b8231a9ad49a70d391156de246b3ba62960c1473f1c"
+  },
+  "context": {
+    "bytes": 89647239
+  },
+  "build": {
+    "duration_seconds": 38.409,
+    "cached_steps": 7,
+    "rebuilt_steps": 3,
+    "status": "success"
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "duration_seconds": 42.141,
+    "transfer_seconds": 0.022,
+    "unpack_seconds": 1.551,
+    "replacement_seconds": 0.634,
+    "readiness_seconds": 1.341,
+    "unclassified_seconds": 0.184,
+    "status": "success"
+  },
+  "image_and_layers": {
+    "image_bytes": 2118631211,
+    "image_layers": 9,
+    "matching_layer_diff_ids": 0,
+    "unmatched_layer_diff_ids": 9
+  },
+  "observer": {
+    "overhead_seconds": null,
+    "status": "not_separately_measured"
+  },
+  "runtime_verification": {
+    "observed_compile_seconds": 1623,
+    "peak_observed_rss_bytes": 13958643712,
+    "compile_completed": false,
+    "artifact_produced": false,
+    "stopped_for_battery_percent": 11,
+    "device_remained_online": true,
+    "heavy_services_left_stopped": true
+  },
+  "result": {
+    "deployed": true,
+    "runtime_validated": false,
+    "optimization_claim": false,
+    "reason": "The full MAX graph remained in AOT compilation after roughly 27 minutes and was stopped because the robot battery reached 11 percent."
+  },
+  "remaining_uncertainty": [
+    "MAX graph compilation does not expose a resumable checkpoint, so final compile time and artifact size remain unknown.",
+    "Observer overhead was not separately measured.",
+    "No MAX inference ran and no paired runtime comparison exists.",
+    "The configured agent-first installation ref was unavailable; the already installed verified tool version was used."
+  ]
+}
