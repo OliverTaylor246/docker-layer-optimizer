@@ -42,6 +42,22 @@
     "snapshot_seconds": 0.00045,
     "wrapper_seconds": 1.050328
   },
+  "cpu_limited_measurement": {
+    "cpu_limit_cores": 1.0,
+    "host_logical_cpu_count": 4,
+    "proof_wall_seconds": 144.06386533600016,
+    "proof_cpu_seconds": 142.17327899999998,
+    "average_cpu_cores_used": 0.9868767485060131,
+    "sm87_compile_seconds": 34.91743439799984,
+    "sm87_compile_peak_rss_bytes": 914067456,
+    "uncapped_sm87_compile_seconds": 25.81133605900004,
+    "slowdown_ratio": 1.3527945364077594,
+    "temperature_delta_c": 0.906,
+    "dlo_build_seconds": 1.48,
+    "dlo_build_context_bytes": 25045,
+    "dlo_observer_overhead_seconds": 0.023444,
+    "dlo_deploy_seconds": 5.533
+  },
   "runtime_verification": {
     "requested_device": "accelerator",
     "resolved_device": "gpu",
@@ -59,6 +75,15 @@
     "runtime_validated": true,
     "optimization_claim": false,
     "reason": "The measurement proves native MAX sm_87 execution, not a Docker optimization. Only a warm source-only build and incremental deployment were measured."
+  },
+  "full_model_planning": {
+    "prior_incomplete_compile_seconds": 1623,
+    "prior_peak_rss_bytes": 13958643712,
+    "one_core_scaled_lower_bound_seconds": 2195.5855325897933,
+    "one_core_scaled_lower_bound_minutes": 36.59309220982989,
+    "planning_window_minutes": "60-90",
+    "completion_expected_on_woof": false,
+    "reason": "The CPU-limited lower bound is useful for scheduling, but prior Woof and AGX observations show compiler memory—not CPU time—is the dominant feasibility risk."
   },
   "remaining_uncertainty": [
     "Deployment phase parsing classified 3.488 seconds as unclassified and did not identify transfer or replacement segments.",
