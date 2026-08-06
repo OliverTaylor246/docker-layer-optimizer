@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "ad54e48",
+  "component": "Main Demo",
+  "change_class": "crowd_map_fallback_wave_and_speech",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    }
+  ],
+  "context": {
+    "main_demo_bytes_approx": 342140,
+    "precision": "rounded Wendy build output"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "service_duration_seconds": 2.728,
+    "measured_build_phase_seconds": 1.131,
+    "measured_export_phase_seconds": 1.304,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "service": "main-demo",
+    "chunking": "off",
+    "status": "success",
+    "duration_seconds": 6.066,
+    "phase_seconds": {
+      "build": 1.131,
+      "export": 1.304,
+      "transfer": 0.313,
+      "unpack": 0.035,
+      "replacement": 0.266,
+      "readiness": 2.667
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "registry_reported_image_bytes_approx": 50200000,
+    "device_layers_total": 8,
+    "device_layers_reused": 7,
+    "device_layers_applied": 1
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.35
+  },
+  "correctness": {
+    "project_tests_passed": 119,
+    "application_version": "0.27.6",
+    "runtime_phase_before_speech": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "runtime_control_owner": "none",
+    "speech_request_count": 1,
+    "speech_code": 0,
+    "speech_phrase": "Hi! I am a unitree G1 running MAX",
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured feature deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of this service revision was measured.",
+    "The build context and registry image sizes were rounded by Wendy output.",
+    "The device accepted local TTS with code zero; perceived volume and pronunciation require the supervising listener's confirmation."
+  ]
+}
