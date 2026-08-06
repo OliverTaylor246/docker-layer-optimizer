@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "7d98363",
+  "component": "Main Demo",
+  "change_class": "start_demo1_persistent_enrollment",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    },
+    {
+      "component": "person-tracker",
+      "sha256": "72e932ab56fe6315527b23299bc7d308a4f2302559efa654339c4138a37e100b"
+    }
+  ],
+  "context": {
+    "main_demo_bytes": 9878,
+    "person_tracker_builder_reported_megabytes": 15.47
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "main_demo_duration_seconds": 1.395,
+    "main_demo_cached_steps": 8,
+    "main_demo_rebuilt_steps": 1,
+    "main_demo_resolved_steps": 1,
+    "person_tracker_cached_steps": 8,
+    "person_tracker_rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "service": "person-tracker",
+    "status": "success",
+    "duration_seconds": 34.329,
+    "phase_seconds": {
+      "build": 0.488,
+      "export": 26.376,
+      "transfer": 0.672,
+      "unpack": 0.402,
+      "replacement": 0.951,
+      "readiness": 5.157
+    }
+  },
+  "image_and_layers": {
+    "locally_measured_images": 1,
+    "main_demo_image_bytes": 52595208,
+    "main_demo_layers_total": 8,
+    "tracker_device_layers_total": 11,
+    "tracker_device_layers_reused": 9,
+    "tracker_device_layers_applied": 2,
+    "tracker_image_bytes": null
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.283,
+    "local_build_wrapper_seconds": 1.604303,
+    "local_build_non_build_seconds": 0.208676,
+    "local_build_inspection_seconds": 0.024873,
+    "local_build_snapshot_seconds": 0.183804
+  },
+  "correctness": {
+    "project_tests_passed": 111,
+    "application_version": "0.27.2",
+    "fixed_identity_name": "demo 1",
+    "stored_identity_matching_on_start": false,
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured tracker bug-fix deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "The tracker context size was rounded builder output.",
+    "The tracker image byte total was not emitted by the deployment adapter.",
+    "Only one deployment of the final service revision was measured.",
+    "The persistent demo identity path passed deterministic tests but still requires the supervised physical START, follow, and envelope run.",
+    "A service-only deployment updated the tracker code while the device application registry continued to display the prior aggregate application version."
+  ]
+}
