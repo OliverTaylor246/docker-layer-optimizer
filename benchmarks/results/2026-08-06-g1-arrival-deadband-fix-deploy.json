@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "1be718d",
+  "component": "Main Demo",
+  "change_class": "arrival_deadband_handoff_fix",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    }
+  ],
+  "context": {
+    "main_demo_bytes": 176605
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "duration_seconds": 1.606,
+    "cached_steps": 8,
+    "rebuilt_steps": 1,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "service": "main-demo",
+    "status": "success",
+    "duration_seconds": 6.130,
+    "phase_seconds": {
+      "build": 1.136,
+      "export": 1.360,
+      "transfer": 0.267,
+      "unpack": 0.043,
+      "replacement": 0.262,
+      "readiness": 2.687
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "image_bytes": 52596463,
+    "device_layers_total": 8,
+    "device_layers_reused": 7,
+    "device_layers_applied": 1
+  },
+  "observer": {
+    "deployment_unclassified_seconds": 0.375,
+    "local_build_wrapper_seconds": 1.881808,
+    "local_build_non_build_seconds": 0.274633,
+    "local_build_inspection_seconds": 0.056588,
+    "local_build_snapshot_seconds": 0.218045
+  },
+  "correctness": {
+    "project_tests_passed": 115,
+    "application_version": "0.27.4",
+    "target_distance_m": 1.0,
+    "forward_deadband_m": 0.15,
+    "arrival_distance_m": 1.15,
+    "production_distance_reproduction_m": 1.11,
+    "reproduction_reached_completed": true,
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured bug-fix deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "Only one deployment of the final service revision was measured.",
+    "The corrected 1.11 m path passed a deterministic controller reproduction but still requires a supervised physical START and handoff run."
+  ]
+}
