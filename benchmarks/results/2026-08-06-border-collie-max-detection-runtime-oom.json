@@ -1,0 +1,61 @@
+{
+  "captured_at": "2026-08-06T19:09:33Z",
+  "source_repository": "border-collie-demo",
+  "component": "max-pruned-fruit-detection-cpu8-probe",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "c14c69cd9434c0718d732ae676d7b3a38c1f3b8503651a935dc79873e793e2c5"
+  },
+  "measured_context": {
+    "bytes": 80452825
+  },
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 43.216,
+    "build_seconds": 39.999,
+    "transfer_seconds": 0.022,
+    "unpack_seconds": 0.82,
+    "replacement_seconds": 0.329,
+    "readiness_seconds": 1.157,
+    "unclassified_seconds": 0.889,
+    "wendy_reported_cached_steps": 6,
+    "wendy_reported_rebuilt_steps": 4
+  },
+  "guarded_image_build": {
+    "status": "success",
+    "duration_seconds": 3.656,
+    "cached_steps": 6,
+    "rebuilt_steps": 3,
+    "resolved_steps": 1,
+    "image_bytes": 2113319510,
+    "image_layers": 9,
+    "new_layers_without_tag_baseline": 9,
+    "observer_inspection_seconds": 0.021994,
+    "observer_snapshot_seconds": 1.873545,
+    "observer_non_build_seconds": 1.895539,
+    "observer_wrapper_seconds": 5.552086
+  },
+  "device_result": {
+    "cpu_count": 8,
+    "power_mode": "25W",
+    "compile_completed": true,
+    "compile_seconds": 665.2525458249997,
+    "compile_peak_observed_rss_gib": 13.115726470947266,
+    "runtime_status": "host_oom",
+    "runtime_peak_observed_swap_used_gib": 6.824512481689453,
+    "runtime_reason": "The pruned FP32 detector removed ConvTranspose but MAX initialization exhausted unified memory and triggered the host OOM killer."
+  },
+  "optimization_claim": false,
+  "remaining_uncertainty": [
+    "The deployment and guarded local image build are separate observations and must not be compared as a DLO speedup experiment.",
+    "The image comparison used a new tag without a prior tag-local baseline, so all nine layer positions are reported as new even though six build steps were cached.",
+    "The detector compiled but did not initialize; MAX output parity, inference latency, frame rate, steady-state memory, and coexistence with the demo remain unmeasured.",
+    "The configured agent-first installation ref was unavailable; the already installed and verified dlo 0.5.0b1 executable was used."
+  ]
+}
