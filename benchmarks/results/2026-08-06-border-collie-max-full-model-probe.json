@@ -1,0 +1,47 @@
+{
+  "captured_at": "2026-08-06T17:52:35Z",
+  "source_repository": "border-collie-demo",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "build_schema_version": 3,
+    "deploy_schema_version": 3
+  },
+  "dockerfile": {
+    "path_redacted": true,
+    "sha256": "cc9dfb1a9d47dd869664c8d61ff92628e80b553ff1159a3fa13529d4fd9ab4f9"
+  },
+  "latest_build": {
+    "duration_seconds": 3.968,
+    "context_bytes": 16611,
+    "image_bytes": 2118916041,
+    "image_layers": 9,
+    "matching_layers": 7,
+    "changed_layers": 2,
+    "cached_steps": 6,
+    "rebuilt_steps": 3,
+    "observer_inspection_seconds": 0.027019,
+    "observer_snapshot_seconds": 1.806137,
+    "observer_wrapper_seconds": 5.802438
+  },
+  "latest_deployment": {
+    "status": "success",
+    "duration_seconds": 50.083,
+    "build_seconds": 45.506,
+    "transfer_seconds": 0.022,
+    "unpack_seconds": 1.549,
+    "replacement_seconds": 0.591,
+    "readiness_seconds": 1.644,
+    "unclassified_seconds": 0.771
+  },
+  "runtime_probe": {
+    "status": "guarded_failure",
+    "reason": "full corrected MAX graph exceeded the safe compile-memory envelope",
+    "full_graph_compile_seconds_before_runtime_fix": 1793.0325839220002,
+    "corrected_peak_rss_gib": 13.55,
+    "software_memory_limit_gib": 13.5,
+    "hard_container_limit_gib": 14.0,
+    "exit_code": 86
+  },
+  "remaining_uncertainty": "This evidence measures Docker build and Wendy deployment plus the guarded runtime attempt; it does not prove a DLO speedup, a successful corrected full-model compile, inference parity, or production performance."
+}
