@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-05",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "max_agx_orin_aot_compile",
+  "change_class": "full_and_detection_only_max_aot_compile",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "device": {
+    "class": "Jetson AGX Orin",
+    "architecture": "arm64",
+    "memory_total_bytes": 65869377536,
+    "gpu_compute_capability": "sm_87",
+    "jetpack_version": "7.2"
+  },
+  "full_graph": {
+    "dockerfile_sha256": "84452d927ff9f744b9ad82ac1e95c1e6db956e753c9ad080de0f9bbf6f19de21",
+    "context_bytes": 89647239,
+    "build": {
+      "duration_seconds": 125.263,
+      "cached_steps": 6,
+      "rebuilt_steps": 4,
+      "status": "success"
+    },
+    "deployment": {
+      "duration_seconds": 327.376,
+      "transfer_seconds": 0.011,
+      "unpack_seconds": 199.686,
+      "replacement_seconds": 0.220,
+      "readiness_seconds": 1.058,
+      "unclassified_seconds": 1.138,
+      "status": "success"
+    },
+    "image_and_layers": {
+      "image_bytes": 2118631428,
+      "image_layers": 9
+    },
+    "runtime_verification": {
+      "observed_compile_seconds_approximate": 583,
+      "peak_observed_rss_gib": 58.51,
+      "guard_exit_code": 86,
+      "compile_completed": false,
+      "artifact_produced": false,
+      "maximum_observed_temperature_c": 50.6
+    }
+  },
+  "detection_only_graph": {
+    "dockerfile_sha256": "53f492297b7658ec403df9e3f95e6b706a423db23980b8b26fbf4f54413fc836",
+    "model_sha256": "ecfb3c7bfa88661338cf08cb1d639c4cb570f7a308f3173eee2351571cf3dfea",
+    "context_bytes": 80446286,
+    "build": {
+      "duration_seconds": 35.182,
+      "cached_steps": 7,
+      "rebuilt_steps": 3,
+      "status": "success"
+    },
+    "deployment": {
+      "duration_seconds": 42.758,
+      "transfer_seconds": 0.013,
+      "unpack_seconds": 5.288,
+      "replacement_seconds": 0.529,
+      "readiness_seconds": 1.311,
+      "unclassified_seconds": 0.435,
+      "status": "success"
+    },
+    "image_and_layers": {
+      "image_bytes": 2113033798,
+      "image_layers": 9,
+      "matching_layer_diff_ids": 0,
+      "unmatched_layer_diff_ids": 9
+    },
+    "runtime_verification": {
+      "source_nodes": 477,
+      "compiled_candidate_nodes": 439,
+      "output_channels": 7,
+      "observed_compile_seconds_approximate": 530,
+      "peak_observed_rss_gib": 50.90,
+      "guard_exit_code": 86,
+      "compile_completed": false,
+      "artifact_produced": false,
+      "maximum_observed_temperature_c": 50.7,
+      "nvidia_allocation_failure_observed": true
+    }
+  },
+  "observer": {
+    "overhead_seconds": null,
+    "status": "not_separately_measured"
+  },
+  "result": {
+    "deployed": true,
+    "runtime_validated": false,
+    "optimization_claim": false,
+    "reason": "Both candidates reached late MAX AOT compiler memory surges. The full graph crossed 58 GiB RSS; the detection-only graph crossed 50 GiB and the NVIDIA allocator failed before a reusable artifact was exported."
+  },
+  "remaining_uncertainty": [
+    "The safety guard terminates at the observed surge, so the compiler's unconstrained peak and final compile time remain unknown.",
+    "No artifact was produced and no MAX inference or output-parity comparison ran.",
+    "The compiler device used JetPack 7.2 while the intended robot runtime uses an older JetPack release; artifact portability remains untested.",
+    "Observer overhead was not separately measured.",
+    "The configured agent-first installation ref was unavailable; the already installed verified tool version was used."
+  ]
+}
