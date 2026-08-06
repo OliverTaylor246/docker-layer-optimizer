@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "max-tts",
+  "change_class": "native_max_kokoro_first_device_compile",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "912a344bdff9bbe19d8cdc68c31825e72174e2fd8def24e9f11eb9e5435db773"
+  },
+  "context": {
+    "builder_reported_kilobytes": 45.31,
+    "exact_bytes_available": false
+  },
+  "build": {
+    "full_runtime_build_seconds": 163.883,
+    "latest_source_edit_build_seconds": 42.529,
+    "status": "success",
+    "cache_and_rebuild_counts_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "partial",
+    "image_push_and_container_creation_succeeded": true,
+    "runtime_readiness_succeeded": false
+  },
+  "image_and_layers": {
+    "aggregate_image_bytes": 2401858298,
+    "image_count": 1,
+    "device_layer_count": 11,
+    "first_full_runtime_reused_layers": 4,
+    "first_full_runtime_applied_layers": 7,
+    "latest_source_edit_reused_layers": 10,
+    "latest_source_edit_applied_layers": 1
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null,
+    "measurement": "not emitted for the interrupted readiness run"
+  },
+  "correctness": {
+    "project_tests_passed": 100,
+    "motion_commands_sent": false,
+    "audio_played": false,
+    "gpu_and_drm_entitlements_verified": true,
+    "max_graph_compilation_started": true,
+    "known_device_placement_errors_corrected": [
+      "cumsum",
+      "resize_nearest",
+      "resize_linear",
+      "pad"
+    ],
+    "final_cache_ready": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The image and manifest were deployed and the compiler passed the observed placement failures, but the device became unreachable before readiness or cached inference could be verified."
+  },
+  "remaining_uncertainty": [
+    "The G1 left both local network paths during the long first MAX compile, so the final compile and fixed-line inference outcome are unknown.",
+    "The builder reported a rounded context size rather than exact bytes.",
+    "The deployment wrapper did not emit isolated observer overhead or per-step cache counts.",
+    "No paired baseline and candidate were measured, so this result cannot support an optimization claim.",
+    "The requested agent-first installation branch was unavailable; the existing verified DLO 0.5.0b1 executable recorded the work."
+  ]
+}
