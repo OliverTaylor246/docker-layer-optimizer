@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-06",
+  "source_repository": "G1-Modcon-Demo",
+  "source_commit": "7586658",
+  "component": "Main Demo",
+  "change_class": "one_button_start_target_acquisition",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "main-demo",
+      "sha256": "35035836ab242e68d4e251ae0e217edba3c8ca4ddfabaa1b4637f28fd4cea1ad"
+    },
+    {
+      "component": "person-tracker",
+      "sha256": "72e932ab56fe6315527b23299bc7d308a4f2302559efa654339c4138a37e100b"
+    }
+  ],
+  "context": {
+    "main_demo_exact_pre_final_bytes": 173735,
+    "main_demo_final_builder_reported_kilobytes": 323.91,
+    "person_tracker_builder_reported_megabytes": 15.47
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "main_demo_local_duration_seconds": 1.530,
+    "main_demo_cached_steps": 8,
+    "main_demo_rebuilt_steps": 1,
+    "main_demo_resolved_steps": 1,
+    "person_tracker_cached_steps": 8,
+    "person_tracker_rebuilt_steps": 2,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "final_two_service_duration_seconds": 43.183,
+    "main_demo_duration_seconds": 6.537,
+    "person_tracker_duration_seconds": 36.646,
+    "phase_seconds": {
+      "main_demo": {
+        "build": 1.101,
+        "export": 1.384,
+        "transfer": 0.231,
+        "unpack": 0.064,
+        "replacement": 0.247,
+        "readiness": 3.159
+      },
+      "person_tracker": {
+        "build": 0.495,
+        "export": 27.592,
+        "transfer": 1.647,
+        "unpack": 0.360,
+        "replacement": 1.111,
+        "readiness": 5.178
+      }
+    }
+  },
+  "image_and_layers": {
+    "image_count": 2,
+    "device_layers_total": 19,
+    "device_layers_reused": 16,
+    "device_layers_applied": 3,
+    "main_demo_nearest_measured_image_bytes": 52594443,
+    "aggregate_image_bytes": null
+  },
+  "observer": {
+    "main_demo_unclassified_seconds": 0.351,
+    "person_tracker_unclassified_seconds": 0.263,
+    "aggregate_unclassified_seconds": 0.614,
+    "local_build_non_build_seconds": 0.358557
+  },
+  "correctness": {
+    "project_tests_passed": 110,
+    "application_version": "0.27.1",
+    "controller_start_bit_observed": "0x0004",
+    "auto_target_acquisition_regression_passed": true,
+    "provider_conflict_message_regression_passed": true,
+    "services_running": 3,
+    "runtime_phase": "disarmed",
+    "runtime_last_velocity_command_zero": true,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "A single measured two-service bug-fix deployment is not a controlled Dockerfile optimization comparison."
+  },
+  "remaining_uncertainty": [
+    "Final service context sizes were rounded builder output; the exact local context measurement preceded the last provider-only edit.",
+    "Aggregate compressed image bytes were not emitted by the deployment adapter.",
+    "Only one deployment of each final service revision was measured.",
+    "The automatic acquisition path passed deterministic tests but still requires the supervised physical START, follow, and envelope run.",
+    "START intentionally rejects when zero or multiple people are visible, or when the visible person does not match a stored identity."
+  ]
+}
