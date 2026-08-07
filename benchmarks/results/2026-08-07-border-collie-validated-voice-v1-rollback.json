@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_service",
+  "change_class": "validated_voice_v1_checkpoint_redeployment",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": null
+  },
+  "dockerfiles": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 201.75,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "target": "woof",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 12.579,
+    "build_seconds": 11.430,
+    "export_seconds": 0.152,
+    "transfer_seconds": 0.019,
+    "unpack_seconds": 0.070,
+    "replacement_seconds": 0.266,
+    "readiness_seconds": null,
+    "unclassified_seconds": 0.642,
+    "dominant_phase": "build"
+  },
+  "cache_and_rebuild": {
+    "cached_steps": 9,
+    "rebuilt_steps": 1,
+    "device_layers_reused": 8,
+    "device_layers_applied": 2
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "aggregate_layer_count": 10,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null,
+    "unclassified_seconds": 0.642
+  },
+  "correctness": {
+    "project_tests_passed": 128,
+    "checkpoint_commit": "de5cee8",
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "activation_blockers": [],
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "camera_status_fresh": true,
+    "motion_armed": false,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is a single measured checkpoint redeployment, not paired control/candidate evidence."
+  },
+  "remaining_uncertainty": [
+    "The builder reported rounded context size rather than exact context bytes.",
+    "Isolated wrapper overhead was not emitted; unclassified time is retained separately.",
+    "Only the controller/UI service required replacement; the already-running validated TensorRT media service was reused.",
+    "The final supervised physical end-to-end run remains user-triggered.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
