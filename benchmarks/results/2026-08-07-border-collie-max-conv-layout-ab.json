@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "MAX Conv2D filter-layout A/B probe",
+  "change_class": "isolated_sm87_conv_filter_layout_diagnostic",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "38af1eb9705792026b695ce536e79f4ee4e2e2d74f17526d3322bb55c945f413"
+  },
+  "context": {
+    "bytes": 8490,
+    "measurement": "optimizer_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 227.276,
+    "cached_steps": 1,
+    "rebuilt_steps": 7,
+    "resolved_steps": 0,
+    "failed_steps": 0,
+    "total_steps": 8
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "woof-sm87",
+    "status": "success",
+    "duration_seconds": 531.177,
+    "phases": {
+      "build_seconds": 137.015,
+      "export_seconds": 103.329,
+      "transfer_seconds": 258.638,
+      "unpack_seconds": 31.350,
+      "replacement_seconds": 0.496,
+      "unclassified_seconds": 0.349,
+      "dominant_phase": "transfer"
+    },
+    "device_unpack": {
+      "layer_count": 7,
+      "reused_layers": 3,
+      "applied_layers": 4
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 7,
+    "new_layers": 7,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 2044155067
+  },
+  "observer": {
+    "wrapper_duration_seconds": 227.309875,
+    "non_build_overhead_seconds": 0.032456,
+    "inspection_seconds": 0.032030,
+    "snapshot_seconds": 0.000426
+  },
+  "runtime_result": {
+    "status": "partial",
+    "rscf_control_completed": true,
+    "fcrs_cudnn_completed": false,
+    "dispatch_to_cudnn_confirmed": true,
+    "optimization_claim": false
+  },
+  "remaining_uncertainty": [
+    "The FCRS cuDNN branch failed allocation before a latency comparison could complete.",
+    "The probe isolates one representative convolution rather than the full detector graph.",
+    "The failing allocation may originate in MAX's cuDNN integration, workspace selection, or device-memory handling; the probe does not distinguish those causes.",
+    "Only one device and one MAX release were measured, so no cross-version or cross-architecture conclusion is claimed."
+  ]
+}
