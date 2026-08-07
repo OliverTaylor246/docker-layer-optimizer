@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_service",
+  "change_class": "minimum_0_6m_commanded_step_back_credit",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+  "context_bytes": null,
+  "deployment": {
+    "status": "success",
+    "duration_seconds": 17.098,
+    "build_seconds": 10.498,
+    "export_seconds": 0.335,
+    "transfer_seconds": 0.018,
+    "unpack_seconds": 0.067,
+    "replacement_seconds": 5.224,
+    "readiness_seconds": null,
+    "unclassified_seconds": 0.956,
+    "dominant_phase": "build"
+  },
+  "cache_and_rebuild": {
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "observed_build_segments": 1
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "aggregate_layer_count": null,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null
+  },
+  "correctness": {
+    "project_tests_passed": 157,
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "hardware_connected": true,
+    "fresh_pose": true,
+    "remote_takeover_monitor_ready": true,
+    "motion_armed_after_verification": false,
+    "commanded_step_back_mps": 1.0,
+    "commanded_step_back_duration_seconds": 0.6,
+    "nominal_step_back_distance_m": 0.6,
+    "nominal_return_pulse_credit": 6
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one correctness-oriented deployment observation without paired optimization evidence."
+  },
+  "remaining_uncertainty": [
+    "Exact context size, cache and rebuild counts, image bytes, and layer counts were not emitted.",
+    "Wrapper overhead was not measured independently.",
+    "The 0.6 m commanded reverse step and six-pulse subtraction require a supervised physical run."
+  ]
+}
