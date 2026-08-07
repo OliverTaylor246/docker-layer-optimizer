@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_service",
+  "change_class": "post_action_step_back_and_return_pulse_credit",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+  "context_bytes": null,
+  "deployments": [
+    {
+      "commit": "d4cb8b85369678e3edd8bb0cbc9c63e2aa1745d7",
+      "status": "success",
+      "duration_seconds": 11.948,
+      "build_seconds": 10.790,
+      "export_seconds": 0.429,
+      "transfer_seconds": 0.020,
+      "unpack_seconds": 0.064,
+      "replacement_seconds": 0.345,
+      "unclassified_seconds": 0.300
+    },
+    {
+      "commit": "9d1157f1fd4482e72ee2aa836fcc98185b53eb7c",
+      "status": "success",
+      "duration_seconds": 11.833,
+      "build_seconds": 10.888,
+      "export_seconds": 0.140,
+      "transfer_seconds": 0.020,
+      "unpack_seconds": 0.064,
+      "replacement_seconds": 0.364,
+      "unclassified_seconds": 0.357
+    }
+  ],
+  "cache_and_rebuild": {
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "observed_build_segments_per_deployment": 1
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "aggregate_layer_count": null,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null
+  },
+  "correctness": {
+    "project_tests_passed": 135,
+    "runtime_mode": "production",
+    "activation_ready_after_corrected_deploy": true,
+    "hardware_connected": true,
+    "fresh_pose": true,
+    "motion_armed_after_verification": false,
+    "physical_run_2_duration_seconds": 36.58441377200006,
+    "physical_run_2_outcome": "FAILED",
+    "physical_run_2_reason": "RETURN_HOME_FAILURE",
+    "physical_run_2_home_distance_m": 0.375,
+    "physical_run_2_step_back_commands_sent": 0,
+    "physical_run_2_finding": "The first deployment started the 0.4-second pulse deadline before the 0.5-second motion-arm settle, deducted two return pulses, and sent no reverse command.",
+    "corrective_deployment": "The pulse deadline now starts after arming and a zero-command step fails instead of receiving return credit.",
+    "corrected_physical_run_completed": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "Two correctness-oriented deployments are observations, not a paired performance proof."
+  },
+  "remaining_uncertainty": [
+    "Exact context bytes, cache and rebuild counts, image bytes, and layer counts were not emitted.",
+    "Wrapper overhead was not measured independently.",
+    "The corrected step-back pulse and credited return require another supervised physical run."
+  ]
+}
