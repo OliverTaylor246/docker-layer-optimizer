@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/templates",
+  "component": "python/g1-rc/motion",
+  "change_class": "g1_dedicated_bms_topic_telemetry",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f4795e9bfccb10e36d33860290f683f8f38b3f6da80312c6a5910bc489df1f6e",
+    "rendered_template": true
+  },
+  "context": {
+    "bytes": 52057,
+    "measurement": "optimizer_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 6.677,
+    "cached_steps": 6,
+    "rebuilt_steps": 0,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "recorded_duration_seconds": 145.0,
+    "service_image_count": 3,
+    "observed_device_unpack": {
+      "image_count": 2,
+      "layer_count": 16,
+      "reused_layers": 14,
+      "applied_layers": 2
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 7,
+    "new_layers": 7,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 270758225,
+    "aggregate_scope": "motion_image_local_build"
+  },
+  "observer": {
+    "non_build_overhead_seconds": 0.318577,
+    "inspection_seconds": 0.316262,
+    "snapshot_seconds": 0.002316
+  },
+  "correctness": {
+    "project_tests_passed": 18,
+    "discovered_bms_topic": "rt/lf/bmsstate",
+    "live_battery_soc_percent": 18,
+    "runtime_fsm": 801,
+    "physical_motion_commanded": false,
+    "original_robot_apps_restored": true
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The rendered motion image built and the corrected battery telemetry was validated live, but no paired optimization candidate was measured."
+  },
+  "remaining_uncertainty": [
+    "The local rendered-image build was fully cached, while the three-service Wendy deployment rebuilt and transferred the application group.",
+    "The deployment wrapper was interrupted after readiness to stop attached log streaming, so the recorded duration is an observed aggregate rather than an isolated phase breakdown.",
+    "Layer-by-layer unpack output was emitted for the motion and RC images but not the camera image.",
+    "No physical movement was commanded during battery validation.",
+    "The requested agent-first installation branch was unavailable; the existing verified DLO 0.5.0b1 executable recorded the work."
+  ]
+}
