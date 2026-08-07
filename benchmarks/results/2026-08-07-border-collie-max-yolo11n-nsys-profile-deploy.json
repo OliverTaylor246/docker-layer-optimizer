@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "border-collie-demo",
+  "component": "MAX YOLO11n bounded Nsight profiling image",
+  "change_class": "instrumentation_only_profile_redeploy",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "2838fcfa90a46c81721844ad1fae7edb5f034e384408aa59bd60906594ca3398"
+  },
+  "context": {
+    "builder_reported_bytes_approximate": 10580000,
+    "builder_reported_display": "10.58 MB"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 0.55,
+    "cached_steps": 10,
+    "rebuilt_steps": 3,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "status": "success",
+    "duration_seconds": 45.736,
+    "phases_seconds": {
+      "build": 0.55,
+      "export": 42.001,
+      "transfer": 1.123,
+      "unpack": 0.187,
+      "replacement": 0.585,
+      "readiness": 0.0,
+      "unclassified": 1.29
+    }
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "device_layer_count": 14,
+    "device_layers_reused": 11,
+    "device_layers_applied": 3,
+    "builder_reported_image_bytes_approximate": 2530000000,
+    "instrumentation_only": true
+  },
+  "observer": {
+    "overhead_seconds": null,
+    "unclassified_deployment_seconds": 1.29,
+    "note": "The deploy wrapper emitted phase timings but did not isolate observer overhead for this run."
+  },
+  "correctness": {
+    "deployment_completed": true,
+    "bounded_profile_completed": true,
+    "warmups_outside_capture": 5,
+    "profiled_inferences": 1,
+    "motion_capability_included": false,
+    "profiling_app_stopped_after_capture": true
+  },
+  "result": {
+    "optimization_claim": false,
+    "reason": "This was a single cached instrumentation redeploy, not a paired control-versus-candidate Dockerfile experiment. Export dominated the elapsed time."
+  },
+  "remaining_uncertainty": [
+    "Context and image byte totals are rounded values reported by the builder rather than exact serialized sizes.",
+    "Cached and rebuilt step counts were parsed from the builder progress stream rather than emitted in the deployment event.",
+    "Observer overhead was not separately measured.",
+    "No no-op or dependency-edit control was run for this instrumentation image.",
+    "The image contains Nsight and is not representative of the production deployment image."
+  ]
+}
