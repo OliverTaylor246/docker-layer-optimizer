@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repositories": [
+    "wendylabsinc/border-collie-demo",
+    "wendylabsinc/samples"
+  ],
+  "change_class": "integrated_voice_remote_takeover_and_run_reliability",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "deployments": [
+    {
+      "component": "border_collie_app",
+      "dockerfile_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70",
+      "context_bytes": null,
+      "status": "success",
+      "duration_seconds": 19.898,
+      "build_seconds": 18.293,
+      "export_seconds": 0.741,
+      "transfer_seconds": 0.017,
+      "unpack_seconds": 0.081,
+      "replacement_seconds": 0.441,
+      "readiness_seconds": null,
+      "unclassified_seconds": 0.325
+    },
+    {
+      "component": "parakeet_voice_mcp",
+      "dockerfile_sha256": "17de646c7453ef381bd07cc1de2167bfd4f12eed5c4eb0b62dafe02ade7918db",
+      "context_bytes": null,
+      "status": "success",
+      "duration_seconds": 87.144,
+      "build_seconds": 72.488,
+      "export_seconds": null,
+      "transfer_seconds": 0.028,
+      "unpack_seconds": 6.413,
+      "replacement_seconds": 0.132,
+      "readiness_seconds": 7.8,
+      "unclassified_seconds": 0.283
+    }
+  ],
+  "cache_and_rebuild": {
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "observed_build_segments_per_deployment": 1
+  },
+  "image_and_layers": {
+    "image_count": 2,
+    "aggregate_layer_count": null,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null
+  },
+  "correctness": {
+    "border_collie_tests_passed": 156,
+    "voice_tests_passed": 12,
+    "hardware_connected": true,
+    "fresh_pose": true,
+    "camera_and_tensorrt_ready": true,
+    "remote_takeover_monitor_ready": true,
+    "motion_armed_after_verification": false,
+    "microphone_ready": false,
+    "microphone_finding": "The deployed voice service failed loudly because the DJI MIC MINI receiver was not enumerated; only Jetson built-in inputs were visible."
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "These are two correctness-oriented deployment observations without a paired control/candidate comparison."
+  },
+  "remaining_uncertainty": [
+    "Exact context size, cache and rebuild counts, image bytes, and layer counts were not emitted.",
+    "Wrapper overhead was not measured independently.",
+    "The DJI microphone must be re-enumerated before the voice path can pass readiness.",
+    "The integrated physical routine and new reliability report still require a supervised run."
+  ]
+}
