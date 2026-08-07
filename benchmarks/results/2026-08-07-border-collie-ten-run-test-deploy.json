@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_service",
+  "change_class": "shorter_final_approach_and_supervised_ten_run_timing",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "exact_bytes": null,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "target": "woof",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 28.965,
+    "build_seconds": 10.915,
+    "export_seconds": 17.300,
+    "transfer_seconds": 0.022,
+    "unpack_seconds": 0.069,
+    "replacement_seconds": 0.338,
+    "readiness_seconds": null,
+    "unclassified_seconds": 0.321,
+    "dominant_phase": "export"
+  },
+  "cache_and_rebuild": {
+    "cached_steps": null,
+    "rebuilt_steps": null,
+    "observed_build_segments": 1
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "aggregate_layer_count": null,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null,
+    "unclassified_seconds": 0.321
+  },
+  "discarded_attempts": [
+    {
+      "builder": "apple-container",
+      "duration_seconds": 10.124,
+      "correct": false,
+      "reason": "The deployed app image omitted the Python main module."
+    },
+    {
+      "builder": "apple-container",
+      "duration_seconds": 2.831,
+      "correct": false,
+      "reason": "Versioned redeploy reused the invalid stale app image."
+    }
+  ],
+  "correctness": {
+    "project_tests_passed": 132,
+    "checkpoint_commit": "35f3a45",
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "activation_blockers": [],
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "fresh_pose": true,
+    "motion_armed": false,
+    "motion_activated_during_verification": false,
+    "deployed_final_push_mps": 0.3,
+    "deployed_final_push_duration_seconds": 0.5,
+    "ten_run_ui_served": true
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is one correctness-qualified deployment; the faster Apple-container observations were rejected because their runtime artifacts were incorrect."
+  },
+  "remaining_uncertainty": [
+    "Exact build-context bytes, cache-step counts, image bytes, and layer counts were not emitted by the JSON observation.",
+    "Isolated wrapper overhead was not emitted; unclassified time is retained separately.",
+    "Readiness was verified after deployment but was not classified by the deploy adapter.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim.",
+    "The shorter final approach still requires the supervised ten-run physical series."
+  ]
+}
