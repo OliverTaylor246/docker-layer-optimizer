@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "G1-Modcon-Demo",
+  "component": "Main Demo person-tracker MAX YOLO11n readiness probe",
+  "change_class": "max_yolo11n_jit_readiness_probe",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfiles": [
+    {
+      "component": "person-tracker",
+      "sha256": "72e932ab56fe6315527b23299bc7d308a4f2302559efa654339c4138a37e100b"
+    },
+    {
+      "component": "realsense",
+      "sha256": "92e6933f13787a345314ac532c28c291e728e87df7b76d7c3da459cdae57daad"
+    }
+  ],
+  "context": {
+    "person_tracker_builder_reported_bytes_approximate": 15470000,
+    "person_tracker_builder_reported_display": "15.47 MB"
+  },
+  "build": {
+    "platform": "linux/arm64",
+    "isolated_candidate_status": "success",
+    "isolated_candidate_duration_seconds": 0.538,
+    "isolated_candidate_cached_steps": 10,
+    "isolated_candidate_rebuilt_steps": 0,
+    "isolated_candidate_failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "candidate_status": "partial",
+    "candidate_duration_seconds": 136.204,
+    "candidate_phase_seconds": {
+      "build": 0.538,
+      "export": 14.505,
+      "transfer": 0.286,
+      "replacement": 0.315,
+      "readiness": 120.239,
+      "unclassified": 0.321
+    },
+    "bounded_runtime_readiness_observation_seconds": 301,
+    "production_restore_status": "success",
+    "production_restore_duration_seconds": 22.878,
+    "production_restore_readiness_seconds": 6.176,
+    "camera_restore_status": "success",
+    "camera_restore_duration_seconds": 3.397
+  },
+  "image_and_layers": {
+    "candidate_image_count": 1,
+    "builder_reported_image_bytes_approximate": 2130000000,
+    "builder_reported_blob_count": 14,
+    "device_layer_count": 11,
+    "first_candidate_device_layers_reused": 9,
+    "first_candidate_device_layers_applied": 2
+  },
+  "observer": {
+    "overhead_seconds": null,
+    "candidate_unclassified_deployment_seconds": 0.321,
+    "note": "The deployment event did not isolate observer overhead."
+  },
+  "correctness": {
+    "project_tests_passed": 124,
+    "motion_control_enabled_during_test": false,
+    "nonzero_velocity_command_observed": false,
+    "baseline_provider": "CUDAExecutionProvider",
+    "baseline_device": "cuda:0",
+    "baseline_observation_seconds": 25.614,
+    "baseline_median_inference_ms": 73.625,
+    "baseline_p95_inference_ms": 73.993,
+    "baseline_effective_inference_hz": 9.214,
+    "candidate_http_ready": false,
+    "candidate_inferences_completed": 0,
+    "candidate_memory_used_mb_at_cutoff": 15339,
+    "candidate_memory_total_mb": 15655,
+    "candidate_memory_available_mb_at_cutoff": 89,
+    "candidate_swap_used_mb_at_cutoff": 7719,
+    "candidate_swap_total_mb": 7827,
+    "production_provider_restored": "CUDAExecutionProvider",
+    "production_camera_restored": true,
+    "production_motion_control_enabled": false,
+    "production_last_velocity_command_zero": true
+  },
+  "result": {
+    "optimization_claim": false,
+    "candidate_viable": false,
+    "production_backend_changed": false,
+    "reason": "The on-device MAX JIT candidate exhausted practical memory and did not become ready or complete an inference within the bounded observation window. Production was restored to ONNX Runtime CUDA."
+  },
+  "remaining_uncertainty": [
+    "No MAX steady-state inference latency or recall result exists because the candidate never became ready.",
+    "The probe measured on-device JIT translation and does not represent an offline-precompiled optimized MAX artifact.",
+    "GPU utilization telemetry was unavailable even though provider metadata confirmed CUDA execution.",
+    "The baseline scene contained one person and was not a controlled multi-distance accuracy dataset.",
+    "Context and image byte totals are rounded builder output rather than exact serialized sizes.",
+    "Observer overhead was not separately measured.",
+    "The device was operating in its tested 15 W four-core mode."
+  ]
+}
