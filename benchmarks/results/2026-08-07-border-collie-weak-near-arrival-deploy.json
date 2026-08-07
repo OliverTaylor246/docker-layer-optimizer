@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/border-collie-demo",
+  "component": "app_service",
+  "change_class": "weak_near_track_arrival_transition",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": null
+  },
+  "dockerfiles": {
+    "app_sha256": "a9c9d59ea2cfd3ec614d32bac8907ef6cfe2473cc53be5744c6026f1b5622b70"
+  },
+  "context": {
+    "app_builder_reported_kilobytes": 203.20,
+    "exact_bytes_available": false
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "builder": "docker",
+    "target": "woof",
+    "transfer_mode": "registry",
+    "status": "success",
+    "duration_seconds": 11.716,
+    "build_seconds": 10.735,
+    "export_seconds": 0.177,
+    "transfer_seconds": 0.010,
+    "unpack_seconds": 0.051,
+    "replacement_seconds": 0.423,
+    "readiness_seconds": null,
+    "unclassified_seconds": 0.320,
+    "dominant_phase": "build"
+  },
+  "cache_and_rebuild": {
+    "cached_steps": 8,
+    "rebuilt_steps": 2,
+    "device_layers_reused": 8,
+    "device_layers_applied": 2
+  },
+  "image_and_layers": {
+    "image_count": 1,
+    "aggregate_layer_count": 10,
+    "image_bytes_exact": null
+  },
+  "observer": {
+    "wrapper_overhead_seconds": null,
+    "unclassified_seconds": 0.320
+  },
+  "correctness": {
+    "project_tests_passed": 131,
+    "checkpoint_commit": "46afcf6",
+    "runtime_mode": "production",
+    "activation_ready": true,
+    "activation_blockers": [],
+    "device_mission": "idle",
+    "hardware_connected": true,
+    "camera_status_fresh": true,
+    "motion_armed": false,
+    "motion_activated_during_verification": false
+  },
+  "result": {
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "This is a single measured corrective deployment, not paired control/candidate evidence."
+  },
+  "remaining_uncertainty": [
+    "The builder reported rounded context size rather than exact context bytes.",
+    "Isolated wrapper overhead was not emitted; unclassified time is retained separately.",
+    "The existing validated TensorRT media service was reused because only controller logic changed.",
+    "The corrected arrival transition still requires the supervised physical rerun.",
+    "No paired control deployment was run, so this observation cannot support a performance improvement claim."
+  ]
+}
