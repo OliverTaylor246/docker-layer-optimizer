@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/templates",
+  "component": "python/g1-rc/rc",
+  "change_class": "wendy_branded_non_overlapping_control_ui",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "12ac151d5b4ba9674d9d740774629abf92b5e48385fc2ed1115cbdd42ca18a56"
+  },
+  "context": {
+    "bytes": 53998,
+    "measurement": "optimizer_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 9.331,
+    "cached_steps": 3,
+    "rebuilt_steps": 2,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "recorded_duration_seconds": 62.0,
+    "service_image_count": 3,
+    "rc_device_unpack": {
+      "layer_count": 9,
+      "reused_layers": 8,
+      "applied_layers": 1
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 9,
+    "new_layers": 9,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 57620169,
+    "aggregate_scope": "rc_image_local_build"
+  },
+  "observer": {
+    "non_build_overhead_seconds": 0.360475,
+    "inspection_seconds": 0.358796,
+    "snapshot_seconds": 0.001679
+  },
+  "correctness": {
+    "project_tests_passed": 14,
+    "page_http_status": 200,
+    "stylesheet_http_status": 200,
+    "logo_http_status": 200,
+    "camera_resolution": "640x480",
+    "camera_fps": 30.0,
+    "runtime_fsm": 801,
+    "forbidden_layout_overlap_count": 0,
+    "action_button_overlap_count": 0,
+    "drive_or_posture_commanded_during_validation": false,
+    "original_robot_apps_restored": true
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The revised RC image built and deployed successfully, but no paired baseline and candidate were measured."
+  },
+  "remaining_uncertainty": [
+    "Only one optimizer build of the final Dockerfile revision was measured.",
+    "The deployment duration is an observed aggregate rather than an isolated phase breakdown because log streaming was interrupted after readiness.",
+    "The responsive CSS was visually inspected at the available desktop viewport; the landscape and portrait media rules were not rendered on physical phones.",
+    "Physical driving was deliberately not commanded.",
+    "The requested agent-first installation branch was unavailable; the existing verified DLO 0.5.0b1 executable recorded the work."
+  ]
+}
