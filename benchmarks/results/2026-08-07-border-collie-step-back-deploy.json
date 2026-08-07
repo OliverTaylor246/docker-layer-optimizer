@@ -33,6 +33,17 @@
       "unpack_seconds": 0.064,
       "replacement_seconds": 0.364,
       "unclassified_seconds": 0.357
+    },
+    {
+      "commit": "219eb34604bb4dd1442ce2580c8d75cde3dbe0af",
+      "status": "success",
+      "duration_seconds": 11.973,
+      "build_seconds": 10.818,
+      "export_seconds": 0.354,
+      "transfer_seconds": 0.024,
+      "unpack_seconds": 0.054,
+      "replacement_seconds": 0.338,
+      "unclassified_seconds": 0.385
     }
   ],
   "cache_and_rebuild": {
@@ -62,6 +73,7 @@
     "physical_run_2_step_back_commands_sent": 0,
     "physical_run_2_finding": "The first deployment started the 0.4-second pulse deadline before the 0.5-second motion-arm settle, deducted two return pulses, and sent no reverse command.",
     "corrective_deployment": "The pulse deadline now starts after arming and a zero-command step fails instead of receiving return credit.",
+    "stronger_step_back_deployment": "The bounded step-back signal was raised from 0.5 m/s to 1.0 m/s for the same 0.4 seconds, with return credit raised from two to four pulses.",
     "corrected_physical_run_completed": false
   },
   "result": {
