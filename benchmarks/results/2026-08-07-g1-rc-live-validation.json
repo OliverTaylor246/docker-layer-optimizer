@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-07",
+  "source_repository": "wendylabsinc/templates",
+  "component": "python/g1-rc/motion",
+  "change_class": "first_live_g1_template_validation",
+  "tool": {
+    "name": "docker-layer-optimizer",
+    "version": "0.5.0b1",
+    "event_schema_version": 3
+  },
+  "dockerfile": {
+    "sha256": "f4795e9bfccb10e36d33860290f683f8f38b3f6da80312c6a5910bc489df1f6e"
+  },
+  "context": {
+    "bytes": 48632,
+    "measurement": "optimizer_builder_output"
+  },
+  "build": {
+    "status": "success",
+    "duration_seconds": 56.929,
+    "cached_steps": 0,
+    "rebuilt_steps": 6,
+    "resolved_steps": 1,
+    "failed_steps": 0
+  },
+  "deployment": {
+    "adapter": "wendy",
+    "target": "unitree-g1-nx-local",
+    "status": "success",
+    "recorded_duration_seconds": 105.0,
+    "service_image_count": 3,
+    "device_unpack_observed": {
+      "image_count": 2,
+      "layer_count": 16,
+      "reused_layers": 14,
+      "applied_layers": 2
+    }
+  },
+  "image_and_layers": {
+    "measured_image_count": 1,
+    "measured_layer_count": 7,
+    "new_layers": 7,
+    "reused_layers": 0,
+    "measured_image_size_bytes": 270757578,
+    "aggregate_scope": "motion_image_local_build"
+  },
+  "observer": {
+    "non_build_overhead_seconds": 0.031282,
+    "inspection_seconds": 0.031001,
+    "snapshot_seconds": 0.000281
+  },
+  "correctness": {
+    "project_tests_passed": 10,
+    "camera_resolution": "640x480",
+    "camera_fps": 30.0,
+    "runtime_fsm": 801,
+    "passive_page_sent_velocity": false,
+    "physical_motion_commanded": false,
+    "original_robot_apps_restored": true
+  },
+  "result": {
+    "built": true,
+    "deployed": true,
+    "optimization_claim": false,
+    "reason": "The template was built and validated live, but no paired baseline and candidate were measured."
+  },
+  "remaining_uncertainty": [
+    "Only one successful optimizer build of this Dockerfile revision was measured.",
+    "The deployment wrapper was interrupted after readiness to stop log streaming, so the recorded deployment duration is an observed aggregate rather than an isolated phase breakdown.",
+    "The camera image did not emit layer-by-layer unpack counts during the final deployment.",
+    "Physical movement was deliberately not commanded without an operator gantry and E-stop confirmation.",
+    "The requested agent-first installation branch was unavailable; the existing verified DLO 0.5.0b1 executable recorded the work."
+  ]
+}
